@@ -5,6 +5,7 @@
     "typeCheck": true
   },
   "globals": {
+    "console": "readonly",
     "document": "readonly",
     "process": "readonly"
   },
@@ -198,6 +199,23 @@
       "files": ["**/e2e/**"],
       "rules": {
         "vitest/prefer-importing-vitest-globals": "off"
+      }
+    },
+    {
+      "files": ["scripts/**", "**/*.config.*"],
+      "rules": {
+        "@rikalabs/no-hardcoded-secrets": "off",
+        "@rikalabs/no-low-signal-variable-names": "off",
+        "@rikalabs/no-trivial-runtime-guard-helpers": "off",
+        "eslint/curly": "off",
+        "eslint/no-continue": "off",
+        "eslint/no-console": "off",
+        "eslint/no-undefined": "off",
+        "eslint/one-var": "off",
+        "eslint/prefer-destructuring": "off",
+        "import/no-nodejs-modules": "off",
+        "typescript/no-unnecessary-condition": "off",
+        "unicorn/import-style": "off"
       }
     }
   ],

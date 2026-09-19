@@ -3,12 +3,12 @@ import { ALL_REACT_DOCTOR_RULES } from "oxlint-plugin-react-doctor";
 
 const reactQualityRules = Object.fromEntries(
   Object.keys(ALL_REACT_DOCTOR_RULES).map((ruleName) => [
-    ruleName.replace(/^react-doctor\//, "react-quality/"),
+    ruleName.replace(/^react-doctor\//u, "react-quality/"),
     "warn",
   ]),
 );
 
-export default {
+const config = {
   ...baseConfig,
   jsPlugins: [
     ...(baseConfig.jsPlugins ?? []),
@@ -115,3 +115,5 @@ export default {
     "vitest/prefer-to-be-object": "error",
   },
 };
+
+export default config;

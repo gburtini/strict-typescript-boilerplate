@@ -3,10 +3,11 @@
   "workspaces": {
     ".": {
       "entry": [
-        "scripts/check-enforcement-fixtures.mjs",
-        "scripts/check-package-exports.mjs"
+        "scripts/check-package-exports.ts",
+        "scripts/check-enforcement-fixtures.ts",
+        "scripts/check-exceptions.ts"
       ],
-      "project": ["scripts/**/*.mjs"]
+      "project": ["scripts/**/*.ts"]
     },
     "apps/web": {
       "entry": ["index.html"],

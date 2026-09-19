@@ -17,7 +17,7 @@ export function ForbiddenFixture() {
 `,
 );
 
-const result = spawnSync(
+const lintResult = spawnSync(
   "pnpm",
   [
     "exec",
@@ -32,11 +32,11 @@ const result = spawnSync(
 
 rmSync(temporaryDirectory, { recursive: true, force: true });
 
-const output = `${result.stdout ?? ""}\n${result.stderr ?? ""}`;
+const output = `${lintResult.stdout}\n${lintResult.stderr}`;
 const expectedFindings = ["shadcn(no-raw-colors)", "shadcn(no-arbitrary-values)"];
 const missingFindings = expectedFindings.filter((finding) => !output.includes(finding));
 
-if (result.status === 0 || missingFindings.length > 0) {
+if (lintResult.status === 0 || missingFindings.length > 0) {
   console.error(output);
   console.error(`Missing enforcement findings: ${missingFindings.join(", ")}`);
   process.exitCode = 1;

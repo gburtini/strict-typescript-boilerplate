@@ -5,12 +5,11 @@ Tests are evidence of observable behavior, in addition to static verification.
 ## Required commands
 
 ```text
-pnpm check
-pnpm build
-pnpm test:e2e
+pnpm check:all
 ```
 
-The first command runs formatting, package API checks, type checking, linting,
+The command runs runtime preflight, formatting, package API checks, type checking,
+linting,
 enforcement fixtures, dead-code analysis, architecture checks, package hygiene,
 coverage-enabled unit tests, and zero-warning enforcement.
 

@@ -14,10 +14,11 @@ correctness as enforceable contracts.
 
 ```sh
 pnpm install
-pnpm check
+pnpm check:all
 ```
 
-`pnpm check` runs formatting, strict type checking, Oxlint with type-aware
+`pnpm check:all` runs the complete repository gate: formatting, runtime preflight,
+strict type checking, Oxlint with type-aware
 rules, all 842 rules in the installed React Doctor registry, React and
 accessibility rules, shadcn design-system rules, Knip, dependency-cruiser,
 Sherif, and Vitest. React Doctor keeps its upstream warning severity, while

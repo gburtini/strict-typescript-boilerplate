@@ -9,7 +9,7 @@ This directory implements reusable UI primitives for the workspace.
 - Keep appearance ownership here: callers should receive variants, not raw
   implementation details.
 - Do not add application-specific business concepts to this package.
-- Run `pnpm check` after changes; do not weaken the package lint overrides.
+- Run `pnpm check:all` after changes; do not weaken the package lint overrides.
 
 The local shadcn overrides exist only because this directory owns primitive
 appearance and prop forwarding. They do not authorize raw colors or unsafe

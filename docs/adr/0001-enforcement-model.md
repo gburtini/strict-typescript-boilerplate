@@ -6,7 +6,7 @@
 ## Decision
 
 The repository uses separate enforcement layers with one required command:
-`pnpm check`.
+`pnpm check:all`.
 
 - Oxfmt owns formatting.
 - TypeScript owns type soundness.

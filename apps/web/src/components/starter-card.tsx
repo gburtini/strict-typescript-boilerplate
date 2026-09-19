@@ -17,7 +17,7 @@ export function StarterCard(): ReactElement {
         Correctness, consistency, and design-system boundaries are checked by one
         command:{" "}
         <code className="rounded bg-background px-1.5 py-0.5 text-sm text-primary">
-          pnpm check
+          pnpm check:all
         </code>
         .
       </p>
