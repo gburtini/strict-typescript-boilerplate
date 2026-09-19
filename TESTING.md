@@ -24,6 +24,17 @@ coverage-enabled unit tests, and zero-warning enforcement.
 
 Do not replace cheap unit or integration evidence with end-to-end tests.
 
+## Evidence by change
+
+| Change                   | Required evidence                                                         |
+| ------------------------ | ------------------------------------------------------------------------- |
+| Pure domain logic        | Unit tests, boundary cases, and mutation or equivalent red-state evidence |
+| Infrastructure adapter   | Integration or contract tests against the real adapter boundary           |
+| UI behavior              | Component tests with accessibility assertions                             |
+| Critical workflow        | End-to-end test of the user-visible workflow                              |
+| Bug fix                  | Regression test that fails on the prior implementation                    |
+| Configuration or tooling | Positive and negative enforcement fixtures                                |
+
 ## Test behavior, not implementation
 
 Use given/when/then behavior and externally observable results. Prefer accessible
@@ -53,9 +64,11 @@ this proof.
 
 ## Determinism and isolation
 
-Unit tests use fake timers and reject outbound `fetch` by default. Mock or inject
-external boundaries explicitly. Do not add sleeps, indefinite retries, or
-arbitrary timeout increases to hide flakiness.
+Unit tests reject outbound `fetch` by default. Fake timers are opt-in for tests
+that explicitly control time; prefer an injected clock when the behavior is
+important enough to test as a contract. The default test timeout is configured
+once in Vitest rather than copied into every test. Do not add sleeps, indefinite
+retries, or arbitrary timeout increases to hide flakiness.
 
 Playwright tests must wait on observable application state, use stable semantic
 selectors, and be safe to run in parallel.

@@ -127,7 +127,7 @@
     "unicorn/filename-case": ["error", { "case": "kebabCase" }],
     "vitest/no-importing-vitest-globals": "off",
     "vitest/no-focused-tests": "error",
-    "vitest/require-test-timeout": "error",
+    "vitest/require-test-timeout": "off",
     "@rikalabs/no-unlisted-external-imports": "off",
     "@rikalabs/no-generic-module-names": "off",
     "@rikalabs/no-placeholder-implementation": "off",

@@ -21,12 +21,29 @@ Secrets must not enter client bundles, logs, errors, analytics, or source
 control. Read them through centralized validated configuration rather than
 arbitrary application modules.
 
+For multi-tenant applications, every data read and write must be scoped to the
+authorized tenant in the server-side query or service boundary. Never accept a
+tenant identifier from the client as proof of access. Session cookies should be
+Secure, HttpOnly, and appropriately SameSite-scoped; state-changing browser
+requests require the repository's approved CSRF protection.
+
+Classify sensitive data before storing, logging, exporting, or sending it to a
+third party. Redact secrets and personal data at logging boundaries, not after
+they have already entered a shared log sink.
+
 ## Dangerous sinks
 
 Do not render untrusted HTML without approved sanitization. Do not build SQL,
 shell commands, URLs, or filesystem paths through unsafe string concatenation.
 Do not use dynamic code execution. Oxlint, Rika Labs rules, Semgrep, and CodeQL
 enforce the mechanically detectable cases.
+
+Outbound URL fetches must use an allowlist or equivalent SSRF protection and
+must not reach private network destinations. Uploads require size, type,
+content, and storage-key validation; never trust a client-provided filename or
+MIME type. Webhooks require authenticated signature verification, replay
+protection where applicable, and idempotent handling. Public or expensive
+endpoints require rate limiting appropriate to their abuse cost.
 
 ## Logging and dependencies
 
@@ -37,6 +54,18 @@ diagnose failures safely.
 Every dependency needs a concrete purpose and acceptable maintenance/security
 posture. Dependency review, OSV scanning, Sherif, and the lockfile are part of
 the review surface. Do not weaken security configuration for local convenience.
+Dependency lifecycle scripts are disabled or explicitly reviewed; exceptions
+must name the package, script, reason, owner, and expiry in the dependency
+policy. Vulnerability exceptions require a documented impact assessment,
+tracking issue, owner, and review date.
+
+## Incident response
+
+Suspected credential exposure, unauthorized access, data loss, or exploitable
+dependency findings must be reported through the project's incident channel
+immediately. Preserve relevant logs and timestamps, avoid destructive cleanup,
+and do not publish exploit details before the incident owner coordinates a
+response.
 
 ## Cryptography
 

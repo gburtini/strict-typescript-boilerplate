@@ -10,6 +10,9 @@ Read the policy document relevant to the change:
 - `DESIGN.md` — UI composition and styling ownership
 - `TESTING.md` — required evidence and test boundaries
 - `SECURITY.md` — trust boundaries and security-sensitive behavior
+- `COMPATIBILITY.md` — public contracts, migrations, and rollout safety
+- `GENERATED.md` — generated-file ownership and freshness
+- `DEPENDENCIES.md` — dependency age, lifecycle, and exception policy
 - `EXCEPTIONS.md` — the only protocol for justified deviations
 - nested `AGENTS.md` files — local subtree exceptions
 

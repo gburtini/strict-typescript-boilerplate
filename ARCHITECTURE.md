@@ -1,8 +1,10 @@
 # Architecture
 
-This is a pnpm monorepo. Architecture is enforced by TypeScript project
-references, dependency-cruiser, package exports, Knip, and Sherif where those
-tools can express the invariant.
+This is a pnpm monorepo. Architecture is enforced by dependency-cruiser,
+package exports, Knip, and Sherif where those tools can express the invariant.
+The layer names below are the canonical direction for projects that introduce
+those directories; the current starter enforces workspace/package boundaries
+and cycles, not an imaginary domain layer that does not yet exist.
 
 ## Workspace boundaries
 

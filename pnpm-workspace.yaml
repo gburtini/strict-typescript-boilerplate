@@ -2,5 +2,8 @@ packages:
   - "apps/*"
   - "packages/*"
 
+# Do not consume newly published versions until they have had time for
+# ecosystem and security review. Explicit exceptions require documentation.
+minimumReleaseAge: 10080
 minimumReleaseAgeExclude:
   - "@shadcn/lint"
