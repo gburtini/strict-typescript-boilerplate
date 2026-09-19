@@ -20,6 +20,10 @@ const config = {
       name: "react-quality",
       specifier: "oxlint-plugin-react-doctor",
     },
+    {
+      name: "drizzle",
+      specifier: "eslint-plugin-drizzle",
+    },
   ],
   rules: {
     ...baseConfig.rules,
@@ -121,7 +125,7 @@ const config = {
       {
         message:
           "Database implementation belongs in @template/db adapters; inject a repository or port instead.",
-        patterns: ["drizzle-orm/**"],
+        patterns: ["drizzle-orm", "drizzle-orm/**"],
       },
       {
         message:
@@ -129,6 +133,8 @@ const config = {
         name: "postgres",
       },
     ],
+    "drizzle/enforce-delete-with-where": "error",
+    "drizzle/enforce-update-with-where": "error",
     "vitest/no-conditional-tests": "error",
     "vitest/consistent-test-filename": "error",
     "vitest/prefer-called-once": "error",

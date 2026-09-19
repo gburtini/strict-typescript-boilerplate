@@ -88,6 +88,10 @@ permission to weaken enforcement:
   `import/group-exports` — database schema and client implementation only:
   Drizzle schema declarations have dependency order, and the adapter is the
   explicitly permitted owner of the restricted database imports.
+- `eslint/no-restricted-properties` — generated migrations and explicitly
+  marked database internals only; this is the narrow escape hatch for SQL
+  syntax that cannot be expressed by Drizzle. Application and adapter source
+  code must use parameterized `sql\`\`` or the typed query builder.
 
 The current ignored paths are `dist`, `coverage`, and `node_modules`; they are
 generated or dependency output and must never be used to hide source files.

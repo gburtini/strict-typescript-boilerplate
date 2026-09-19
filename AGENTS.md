@@ -57,6 +57,25 @@ maintainability limits such as maximum lines, statements, parameters, and
 function depth, but correctness, accessibility, React, React Doctor, and
 focused-test rules remain enforced.
 
+## Database
+
+- Use Drizzle through the `@template/db` adapter and its repository ports.
+- Do not use `sql.raw()`; use the typed query builder or parameterized
+  `sql\`...\`` for unsupported SQL.
+- Do not issue `UPDATE` or `DELETE` statements without a `WHERE` clause.
+- Do not import Drizzle or the raw PostgreSQL client outside the database
+  adapter boundary.
+- Schema changes require generated and committed migrations.
+- Never use `drizzle-kit push` for production schema changes.
+- Database-enforceable invariants belong in constraints, not only application
+  code.
+- Define foreign keys for relational integrity unless an exception is
+  documented, and index foreign keys used for joins or lookups.
+- Use transactions when multiple writes form one atomic operation.
+- Prefer existing query/repository functions over creating another access path.
+- Run `pnpm db:check` after schema changes and include migration metadata in
+  the same change.
+
 ## Workspace boundaries
 
 - `apps/*` contains runnable applications.

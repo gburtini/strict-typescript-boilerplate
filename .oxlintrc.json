@@ -91,6 +91,11 @@
         "message": "Import useMemo directly from react.",
         "object": "React",
         "property": "useMemo"
+      },
+      {
+        "message": "sql.raw() is prohibited. Use parameterized sql`` or a reviewed migration exception.",
+        "object": "sql",
+        "property": "raw"
       }
     ],
     "no-with": "error",
@@ -174,6 +179,16 @@
         "eslint/one-var": "off",
         "eslint/sort-vars": "off",
         "import/group-exports": "off"
+      }
+    },
+    {
+      "files": [
+        "**/src/db/migrations/**",
+        "**/src/db/internal/**",
+        "packages/db/drizzle/**"
+      ],
+      "rules": {
+        "eslint/no-restricted-properties": "off"
       }
     },
     {

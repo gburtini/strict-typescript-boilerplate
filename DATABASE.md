@@ -36,6 +36,21 @@ not a domain model package.
 - Add indexes for observed query patterns and verify them with query plans; do
   not add speculative indexes.
 
+Choose the narrowest Drizzle API that matches the query:
+
+| Query shape                      | Required API                               |
+| -------------------------------- | ------------------------------------------ |
+| Simple CRUD and relational reads | Drizzle relational query API               |
+| Complex SQL and aggregation      | Drizzle query builder                      |
+| SQL unsupported by Drizzle       | Parameterized `sql\`...\`` tagged SQL      |
+| Any dynamic SQL text             | Prohibited; `sql.raw()` is never permitted |
+
+`drizzle/enforce-delete-with-where` and
+`drizzle/enforce-update-with-where` are errors. The repository also rejects
+`sql.raw()` and direct Drizzle/Postgres imports outside the database adapter.
+The static checks cannot prove every query is bounded or every multi-write is
+atomic, so those requirements remain mandatory review and test invariants.
+
 ## Schema and migration rules
 
 - `packages/db/src/schema.ts` is the source of truth for the schema.

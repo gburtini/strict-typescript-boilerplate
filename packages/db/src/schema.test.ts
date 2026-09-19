@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { insertUserSchema, selectUserSchema } from "./schema";
+import { insertUserSchema, selectUserSchema, users } from "./schema";
 
 describe("database schemas", () => {
   it("accepts a valid user insert at the persistence boundary", () => {
@@ -23,5 +23,15 @@ describe("database schemas", () => {
     });
 
     expect(result.success).toBeFalsy();
+  });
+
+  it("declares the identity and nullability invariants in the schema", () => {
+    expect.hasAssertions();
+
+    expect(users.id.primary).toBeTruthy();
+    expect(users.id.notNull).toBeTruthy();
+    expect(users.email.notNull).toBeTruthy();
+    expect(users.createdAt.notNull).toBeTruthy();
+    expect(users.updatedAt.notNull).toBeTruthy();
   });
 });
