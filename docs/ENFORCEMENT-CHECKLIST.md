@@ -28,10 +28,9 @@ remaining work instead of hiding it in prose.
       tests, and explicit test timeouts.
 - [x] Add coverage thresholds.
 - [x] Add unit-test network isolation.
-- [ ] Add deterministic time controls for projects that need them.
+- [x] Add deterministic fake-timer controls for unit tests.
 - [x] Make CI run format, typecheck, lint, dead-code, architecture, package,
       tests, and production build as separate required checks.
-- [ ] Add CODEOWNERS protection for enforcement configuration and workflow files.
 - [x] Add dependency review, OSV vulnerability scanning, CodeQL, and custom
       hardcoded-secret/SQL rules.
 - [ ] Add native secret scanning and Semgrep policy checks.
