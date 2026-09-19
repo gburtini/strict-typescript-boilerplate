@@ -3,8 +3,9 @@
 Generated output is owned by its generator, schema, or source template. Do not
 edit generated output directly.
 
-This starter currently has no committed generated application files. When one
-is added, record it here using this form before committing it:
+The machine-readable manifest is `generated-files.json`; CI validates that every
+declared source and output exists. This starter currently has no generated
+application files. When one is added, record it in that manifest and here:
 
 | Generated path   | Source of truth  | Regeneration command | CI freshness check           |
 | ---------------- | ---------------- | -------------------- | ---------------------------- |

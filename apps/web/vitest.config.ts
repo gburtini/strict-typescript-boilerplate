@@ -6,7 +6,7 @@ export default defineConfig({
       exclude: ["src/main.tsx", "src/**/*.test.ts", "src/**/*.test.tsx"],
       include: ["src/**/*.{ts,tsx}"],
       provider: "v8",
-      reporter: ["text", "lcov"],
+      reporter: ["text", "json-summary", "lcov"],
       thresholds: {
         branches: 70,
         functions: 70,

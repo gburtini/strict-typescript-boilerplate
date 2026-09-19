@@ -5,7 +5,12 @@
       "entry": [
         "scripts/check-package-exports.ts",
         "scripts/check-enforcement-fixtures.ts",
-        "scripts/check-exceptions.ts"
+        "scripts/check-exceptions.ts",
+        "scripts/check-architecture-fixtures.ts",
+        "scripts/check-generated.ts",
+        "scripts/check-test-evidence.ts",
+        "scripts/check-coverage-ratchet.ts",
+        "scripts/generate-enforcement-manifest.ts"
       ],
       "project": ["scripts/**/*.ts"]
     },

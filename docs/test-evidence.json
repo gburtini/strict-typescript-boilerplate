@@ -1,0 +1,11 @@
+{
+  "$schema": "./schemas/test-evidence.schema.json",
+  "records": [
+    {
+      "change": "starter screen accessibility",
+      "test": "apps/web/e2e/accessibility.browser.ts",
+      "redState": "Removed accessible labels and confirmed axe reported violations before restoring them.",
+      "redStateConfirmed": true
+    }
+  ]
+}

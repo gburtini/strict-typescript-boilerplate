@@ -24,6 +24,11 @@ remaining work instead of hiding it in prose.
 - [x] Typed repository-governance scripts validate package manifests at runtime.
 - [x] Exception protocol requires rationale-bearing suppressions and documents
       ownership, scope, tracking, and expiry requirements.
+- [x] Architecture negative fixtures prove forbidden layer imports fail.
+- [x] Generated-file manifests and freshness checks are executable.
+- [x] Test red-state evidence is recorded and validated by CI.
+- [x] Coverage has a committed non-regression baseline.
+- [x] Enforcement documentation is generated from the active lint rules.
 - [x] Compatibility, generated-file ownership, dependency, and security
       lifecycle contracts are documented.
 - [x] CI actions are pinned to commit SHAs and workflow syntax is actionlinted.

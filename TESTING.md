@@ -90,7 +90,10 @@ weakest form of this failure, but reviewers must enforce the broader policy.
 
 Focused tests are errors. Skipped tests require a concrete reason and should be
 uncommon. Coverage is a guardrail, not the objective; do not add meaningless
-assertions to raise a percentage.
+assertions to raise a percentage. The repository stores a coverage baseline and
+fails when aggregate coverage regresses. Critical domain, authorization, and
+security code should additionally use higher local thresholds or mutation
+evidence rather than relying on the repository-wide baseline.
 
 The test override intentionally relaxes production size/complexity limits, but
 correctness, accessibility, React, React Doctor, and focused-test rules remain
