@@ -9,9 +9,8 @@ pnpm check:all
 ```
 
 The command runs runtime preflight, formatting, package API checks, type checking,
-linting,
-enforcement fixtures, dead-code analysis, architecture checks, package hygiene,
-coverage-enabled unit tests, and zero-warning enforcement.
+linting, enforcement fixtures, dead-code analysis, architecture checks, package
+hygiene, coverage-enabled unit tests, and zero lint-warning enforcement.
 
 ## Test levels
 
