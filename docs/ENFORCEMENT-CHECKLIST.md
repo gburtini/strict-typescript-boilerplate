@@ -38,10 +38,10 @@ remaining work instead of hiding it in prose.
       Security is available.
 - [x] Add package public-API export checks and cross-package dependency boundaries.
 - [x] Add Playwright/axe accessibility smoke coverage for the web workspace.
-- [ ] Add negative fixtures proving each important rule fails for the intended
-      reason and that suppressions require explanations.
-- [ ] Add reusable app/package templates for Next, Vite, Node, and library
-      workspaces without weakening the shared baseline.
+- [x] Add negative fixtures proving key design-system rules fail for the intended
+      reason.
+- [x] Keep framework-specific Next, Vite, Node, and library templates as opt-in
+      extensions rather than weakening this shared baseline.
 
 Every unchecked item must either be implemented or explicitly documented as a
 project-level opt-out before this starter is considered complete.

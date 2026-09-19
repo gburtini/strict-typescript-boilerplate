@@ -2,7 +2,10 @@
   "$schema": "https://unpkg.com/knip@6/schema.json",
   "workspaces": {
     ".": {
-      "entry": ["scripts/check-package-exports.mjs"],
+      "entry": [
+        "scripts/check-enforcement-fixtures.mjs",
+        "scripts/check-package-exports.mjs"
+      ],
       "project": ["scripts/**/*.mjs"]
     },
     "apps/web": {
