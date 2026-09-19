@@ -183,6 +183,15 @@
         "react-quality/no-giant-component": "off",
         "react-quality/no-multi-component-file": "off"
       }
+    },
+    {
+      "files": ["**/test-setup.*"],
+      "rules": {
+        "eslint/require-await": "off",
+        "typescript/require-await": "off",
+        "vitest/no-hooks": "off",
+        "vitest/require-top-level-describe": "off"
+      }
     }
   ],
   "ignorePatterns": ["dist", "coverage", "node_modules"]
