@@ -8,34 +8,45 @@
   --color-card-foreground: var(--card-foreground);
   --color-border: var(--border);
   --color-input: var(--input);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
-  --color-muted-foreground: var(--muted-foreground);
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
   --color-ring: var(--ring);
 }
 
 :root {
+  /* Tailwind Slate + Sky semantic palette, expressed in OKLCH for stable contrast. */
   --accent: oklch(0.3 0.04 260);
   --accent-foreground: oklch(0.95 0.02 260);
   --background: oklch(0.13 0.03 260);
   --border: oklch(0.32 0.04 260);
   --card: oklch(0.2 0.04 260);
   --card-foreground: oklch(0.96 0.02 260);
+  --destructive: oklch(0.65 0.2 25);
+  --destructive-foreground: oklch(0.98 0.01 25);
   --foreground: oklch(0.92 0.03 260);
   --input: oklch(0.32 0.04 260);
+  --muted: oklch(0.24 0.04 260);
   --muted-foreground: oklch(0.72 0.04 260);
+  --popover: oklch(0.18 0.04 260);
+  --popover-foreground: oklch(0.96 0.02 260);
   --primary: oklch(0.72 0.14 220);
   --primary-foreground: oklch(0.16 0.03 260);
   --ring: oklch(0.72 0.14 220);
   --secondary: oklch(0.3 0.04 260);
   --secondary-foreground: oklch(0.95 0.02 260);
+  background: var(--background);
+  color: var(--foreground);
   font-family: ui-sans-serif, system-ui, sans-serif;
-  color: #e2e8f0;
-  background: #0f172a;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
 }
@@ -48,44 +59,4 @@ body {
 
 button {
   cursor: pointer;
-}
-
-.app-shell {
-  display: grid;
-  min-height: 100vh;
-  place-items: center;
-  padding: 2rem;
-}
-
-.eyebrow {
-  margin: 0 0 0.75rem;
-  color: #38bdf8;
-  font-size: 0.75rem;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-}
-
-h1 {
-  max-width: 28rem;
-  margin: 0;
-  color: #f8fafc;
-  font-size: clamp(2rem, 6vw, 4rem);
-  line-height: 1;
-}
-
-.body-copy {
-  max-width: 34rem;
-  margin: 1.5rem 0 2rem;
-  color: #cbd5e1;
-  font-size: 1.125rem;
-  line-height: 1.6;
-}
-
-code {
-  padding: 0.15rem 0.35rem;
-  border-radius: 0.25rem;
-  color: #bae6fd;
-  background: #0f172a;
-  font-size: 0.9em;
 }

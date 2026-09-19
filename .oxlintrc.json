@@ -31,6 +31,12 @@
       "specifier": "@shadcn/lint"
     }
   ],
+  "settings": {
+    "shadcn": {
+      "note": "Use semantic theme tokens, primitive variants, and the shared spacing scale. Exceptions require an explained suppression.",
+      "ui": "@template/ui"
+    }
+  },
   "rules": {
     "eslint/func-style": "off",
     "eslint/no-magic-numbers": "off",
@@ -124,33 +130,26 @@
     "@rikalabs/no-generic-module-names": "off",
     "@rikalabs/no-placeholder-implementation": "off",
     "vitest/require-hook": "off",
-    "shadcn/no-arbitrary-values": [
-      "error",
-      {
-        "allow": ["animate-*", "data-[state=*]"]
-      }
-    ],
+    "shadcn/no-arbitrary-values": "error",
     "shadcn/no-inline-styles": "error",
-    "shadcn/no-raw-colors": [
+    "shadcn/no-raw-colors": "error",
+    "shadcn/no-restyle": [
       "error",
       {
-        "allow": [
-          "*-background",
-          "*-foreground",
-          "*-card",
-          "*-popover",
-          "*-primary",
-          "*-secondary",
-          "*-muted",
-          "*-accent",
-          "*-destructive",
-          "*-border",
-          "*-input",
-          "*-ring"
+        "allow": ["layout"],
+        "contracts": [
+          {
+            "allow": ["layout"],
+            "deny": ["w-*", "h-*"],
+            "pattern": "^Button$"
+          },
+          {
+            "allow": ["layout"],
+            "pattern": "^(Card|Input|Label)$"
+          }
         ]
       }
     ],
-    "shadcn/no-restyle": "error",
     "shadcn/no-unknown-classes": "error",
     "shadcn/require-static-classes": "error"
   },
