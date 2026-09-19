@@ -63,6 +63,17 @@ in components.
 Side effects belong at boundaries. Keep pure computation separate from network,
 filesystem, database, time, randomness, and process state.
 
+Prefer lightweight dependency injection at those boundaries: pass a narrow
+interface, function, or immutable context into the code that needs it. Do not
+introduce a global container or framework-wide service locator. Dependency
+injection should make the dependency visible and replaceable without making the
+application architecture indirect.
+
+For example, application code may accept a `Clock` or `UserRepository`
+interface while infrastructure provides the concrete implementation at startup.
+Domain code should remain usable with ordinary in-memory values and should not
+know which adapter supplied them.
+
 Parse and validate environment configuration once near application startup.
 Application code must consume typed configuration rather than reading
 `process.env` throughout the tree.
