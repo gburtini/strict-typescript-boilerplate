@@ -21,11 +21,23 @@ through declared `workspace:*` dependencies and public package exports.
 Application code should flow toward stable abstractions:
 
 ```text
-UI -> application -> domain
-                         ^
-                         |
-                  infrastructure adapters
+oRPC transport/public API contract
+                 ↓
+Effect application + domain computations
+                 ↓
+adapters: database / HTTP / filesystem / queues / telemetry
 ```
+
+oRPC owns transport-facing schemas, procedure inputs/outputs, and public API
+contracts. It must not contain database or filesystem behavior.
+
+Effect owns application and domain computations, typed failure channels,
+cancellation, bounded retries, and spans. It must not know which concrete
+adapter implements a boundary.
+
+Adapters own side effects. They receive validated inputs, translate external
+failures into typed infrastructure errors while preserving `cause`, and are
+provided to application code through explicit dependency injection.
 
 ### Domain
 
@@ -82,6 +94,14 @@ Application code must consume typed configuration rather than reading
 
 Validate untrusted input at HTTP, external API, environment, persistence, and
 queue boundaries. TypeScript types are not runtime validation.
+
+Environment variables are validated once with T3 Env and Zod at startup. Raw
+`process.env` or `import.meta.env` access is forbidden outside the environment
+module. Public request boundaries use oRPC contracts with runtime schemas.
+
+Telemetry is an adapter. Domain code may add semantic spans through the core
+Effect helper, but exporters, SDK registration, credentials, and transport
+configuration belong in runtime-specific adapter startup code.
 
 ## Architecture changes
 

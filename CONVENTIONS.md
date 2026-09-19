@@ -23,6 +23,10 @@ TypeScript, React Doctor, and custom rules enforce the mechanical parts.
 - Give functions and module boundaries explicit return types.
 - Prefer discriminated unions over bags of optional fields for state machines.
 - Keep exported types named and small.
+- Use Zod 4 schemas at runtime boundaries and infer types from the schemas;
+  never treat a TypeScript annotation as input validation.
+- Use Effect for application/domain computations that can fail, retry, be
+  cancelled, or need a span. Keep adapter effects at the boundary.
 
 ## Functions and control flow
 

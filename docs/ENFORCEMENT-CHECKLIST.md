@@ -18,7 +18,14 @@ remaining work instead of hiding it in prose.
       unknown classes, static classes, and component restyling.
 - [x] Semantic OKLCH palette with Tailwind/shadcn tokens and primitive contracts.
 - [x] Rika Labs custom anti-slop rules for unsafe fallbacks, AI debt comments,
-      assertions, secrets, SQL concatenation, duplicate branches, and helper indirection.
+      assertions, secrets, SQL concatenation, duplicate branches, and helper
+      indirection.
+- [x] T3 Env + Zod 4 runtime configuration validation and oRPC runtime
+      contracts in the shared core package.
+- [x] Effect error/retry/span helpers, Node telemetry composition, and strict
+      Rika Effect runtime/error/service-hygiene rules.
+- [x] Repository Semgrep rules for empty catches, non-Error throws, lost error
+      causes, raw fetch, and unbounded `Promise.all`/`Promise.allSettled` maps.
 - [x] Knip strict dead-code/dependency analysis, Sherif package hygiene, and
       dependency-cruiser boundaries.
 - [x] Typed repository-governance scripts validate package manifests at runtime.

@@ -217,6 +217,26 @@
         "typescript/no-unnecessary-condition": "off",
         "unicorn/import-style": "off"
       }
+    },
+    {
+      "files": ["packages/core/src/api/contract.ts"],
+      "rules": {
+        "eslint/one-var": "off",
+        "unicorn/max-nested-calls": "off"
+      }
+    },
+    {
+      "files": ["packages/core/src/api/router.ts"],
+      "rules": {
+        "@rikalabs/effect-no-async-await": "off",
+        "@rikalabs/effect-no-terminal-runners": "off"
+      }
+    },
+    {
+      "files": ["packages/core/src/telemetry-node.ts"],
+      "rules": {
+        "@rikalabs/effect-no-layer-in-leaf-modules": "off"
+      }
     }
   ],
   "ignorePatterns": ["dist", "coverage", "node_modules"]

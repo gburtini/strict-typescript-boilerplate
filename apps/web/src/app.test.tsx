@@ -9,7 +9,7 @@ describe("application", () => {
 
     expect(
       screen.getByRole("heading", {
-        name: "A strict React + TypeScript starting point.",
+        name: /a strict React \+ TypeScript starting point\./u,
       }),
     ).toBeDefined();
   }, 5000);

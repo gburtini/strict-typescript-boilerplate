@@ -34,3 +34,59 @@ rules:
     pattern-either:
       - pattern: child_process.exec($COMMAND, ...)
       - pattern: exec($COMMAND, ...)
+
+  - id: no-empty-catch
+    languages:
+      - javascript
+      - typescript
+    message: Catch blocks must report, translate, or rethrow the failure.
+    severity: ERROR
+    pattern: |
+      try:
+        ...
+      catch ($ERROR) { }
+
+  - id: throw-error-values
+    languages:
+      - javascript
+      - typescript
+    message: Throw an Error or a typed application failure, never a string or arbitrary value.
+    severity: ERROR
+    patterns:
+      - pattern: throw $VALUE
+      - pattern-not: throw new $ERROR(...)
+      - pattern-not: throw $ERROR
+
+  - id: catch-wrapping-preserves-cause
+    languages:
+      - javascript
+      - typescript
+    message: "Wrapped errors must preserve the original failure with { cause: $ERROR }."
+    severity: ERROR
+    patterns:
+      - pattern-inside: |
+          try:
+            ...
+          catch ($ERROR) {
+            ...
+          }
+      - pattern: throw new $WRAPPER(...)
+      - pattern-not: "throw new $WRAPPER(..., { cause: $ERROR }, ...)"
+
+  - id: no-raw-fetch
+    languages:
+      - javascript
+      - typescript
+    message: Use an injected HTTP adapter; raw fetch is forbidden in application and domain code.
+    severity: ERROR
+    pattern: fetch(...)
+
+  - id: no-unbounded-promise-all-map
+    languages:
+      - javascript
+      - typescript
+    message: Promise collection over an unbounded map requires an explicit concurrency limiter.
+    severity: ERROR
+    pattern-either:
+      - pattern: Promise.all($ITEMS.map($CALLBACK))
+      - pattern: Promise.allSettled($ITEMS.map($CALLBACK))

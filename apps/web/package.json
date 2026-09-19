@@ -11,9 +11,11 @@
     "test:e2e": "playwright test"
   },
   "dependencies": {
+    "@t3-oss/env-core": "0.13.11",
     "@template/ui": "workspace:*",
     "react": "19.3.0",
-    "react-dom": "19.3.0"
+    "react-dom": "19.3.0",
+    "zod": "4.1.13"
   },
   "devDependencies": {
     "@axe-core/playwright": "4.13.0",

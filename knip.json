@@ -13,16 +13,28 @@
         "scripts/check-coverage-ratchet.ts",
         "scripts/generate-enforcement-manifest.ts"
       ],
+      "ignoreDependencies": ["@effect/tsgo"],
       "project": ["scripts/**/*.ts"]
     },
     "apps/web": {
-      "entry": ["index.html"],
+      "entry": ["index.html", "src/env.ts"],
       "project": ["src/**/*.{ts,tsx,css}"],
-      "ignoreDependencies": ["@template/ui"]
+      "ignoreDependencies": ["@template/ui", "@t3-oss/env-core", "zod"]
     },
     "packages/ui": {
       "entry": ["src/components/ui/*.tsx"],
       "project": ["src/**/*.{ts,tsx}"]
+    },
+    "packages/core": {
+      "entry": [
+        "src/index.ts",
+        "src/api/index.ts",
+        "src/api/contract.ts",
+        "src/api/router.ts",
+        "src/telemetry-node.ts"
+      ],
+      "project": ["src/**/*.ts"],
+      "ignoreDependencies": ["@orpc/contract", "@orpc/server", "zod"]
     }
   }
 }

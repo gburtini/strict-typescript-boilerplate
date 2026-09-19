@@ -1,5 +1,6 @@
 import { Button, Card, Input, Label } from "@template/ui";
 import type { ReactElement } from "react";
+import { env } from "../env";
 
 export function StarterCard(): ReactElement {
   return (
@@ -11,7 +12,7 @@ export function StarterCard(): ReactElement {
         className="max-w-xl text-4xl leading-none text-foreground sm:text-6xl"
         id="app-title"
       >
-        A strict React + TypeScript starting point.
+        {env.VITE_APP_NAME}: a strict React + TypeScript starting point.
       </h1>
       <p className="my-6 max-w-xl text-lg leading-relaxed text-muted-foreground">
         Correctness, consistency, and design-system boundaries are checked by one

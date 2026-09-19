@@ -85,3 +85,15 @@ permission to weaken enforcement:
 
 The current ignored paths are `dist`, `coverage`, and `node_modules`; they are
 generated or dependency output and must never be used to hide source files.
+
+The oRPC/Zod contract builder at `packages/core/src/api/contract.ts` disables
+`eslint/one-var` and `unicorn/max-nested-calls` only because staged schema
+construction is clearer and safer than flattening a contract into unrelated
+helpers. Its input/output schemas and route remain runtime-validated.
+
+The oRPC transport adapter at `packages/core/src/api/router.ts` disables
+`@rikalabs/effect-no-async-await` and
+`@rikalabs/effect-no-terminal-runners` because this is the explicit Effect
+runtime boundary where a validated request becomes a transport Promise. The
+Node telemetry layer disables `@rikalabs/effect-no-layer-in-leaf-modules`
+because it is the runtime layer assembly point.
