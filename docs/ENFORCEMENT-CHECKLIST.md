@@ -24,6 +24,7 @@ remaining work instead of hiding it in prose.
 - [x] Typed repository-governance scripts validate package manifests at runtime.
 - [x] Exception protocol requires rationale-bearing suppressions and documents
       ownership, scope, tracking, and expiry requirements.
+- [x] Disabled rules and ignored paths require entries in the exception registry.
 - [x] Architecture negative fixtures prove forbidden layer imports fail.
 - [x] Generated-file manifests and freshness checks are executable.
 - [x] Test red-state evidence is recorded and validated by CI.
@@ -50,6 +51,9 @@ remaining work instead of hiding it in prose.
 - [x] Add Playwright/axe accessibility smoke coverage for the web workspace.
 - [x] Add negative fixtures proving key design-system rules fail for the intended
       reason.
+- [x] Add negative fixtures for unsafe sinks, secrets, explicit `any`, floating
+      promises, focused tests, default exports, and anonymous suppressions.
+- [x] Validate CI action pinning and least-privilege workflow permissions.
 - [x] Keep framework-specific Next, Vite, Node, and library templates as opt-in
       extensions rather than weakening this shared baseline.
 - [ ] Enable GitHub-native secret scanning when the consuming repository has
