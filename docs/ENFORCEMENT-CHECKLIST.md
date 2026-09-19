@@ -37,7 +37,7 @@ remaining work instead of hiding it in prose.
 - [ ] Enable GitHub-native secret scanning for repositories where Advanced
       Security is available.
 - [ ] Add package public-API and cross-package import fixture tests.
-- [ ] Add Playwright/axe accessibility smoke coverage for web workspaces.
+- [x] Add Playwright/axe accessibility smoke coverage for the web workspace.
 - [ ] Add negative fixtures proving each important rule fails for the intended
       reason and that suppressions require explanations.
 - [ ] Add reusable app/package templates for Next, Vite, Node, and library

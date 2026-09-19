@@ -5,7 +5,8 @@
     "typeCheck": true
   },
   "globals": {
-    "document": "readonly"
+    "document": "readonly",
+    "process": "readonly"
   },
   "categories": {
     "correctness": "error",
@@ -191,6 +192,12 @@
         "typescript/require-await": "off",
         "vitest/no-hooks": "off",
         "vitest/require-top-level-describe": "off"
+      }
+    },
+    {
+      "files": ["**/e2e/**"],
+      "rules": {
+        "vitest/prefer-importing-vitest-globals": "off"
       }
     }
   ],
