@@ -3,6 +3,15 @@
 This repository is intentionally strict. `pnpm check` is the definition of a
 valid repository state.
 
+Read the policy document relevant to the change:
+
+- `ARCHITECTURE.md` — workspace boundaries and dependency direction
+- `CONVENTIONS.md` — canonical code forms
+- `DESIGN.md` — UI composition and styling ownership
+- `TESTING.md` — required evidence and test boundaries
+- `SECURITY.md` — trust boundaries and security-sensitive behavior
+- nested `AGENTS.md` files — local subtree exceptions
+
 ## Required verification
 
 Before completing any change, run `pnpm check`. It must pass with zero errors
