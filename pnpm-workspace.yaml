@@ -7,3 +7,11 @@ packages:
 minimumReleaseAge: 10080
 minimumReleaseAgeExclude:
   - "@shadcn/lint"
+
+# dependency-cruiser 18.2 still consumes the TypeScript 6 compiler API. The
+# repository's `tsc` remains the TypeScript 7 binary exposed by @typescript/native;
+# this package extension supplies only the legacy API to dependency-cruiser.
+packageExtensions:
+  dependency-cruiser@18.2.0:
+    dependencies:
+      typescript: "npm:@typescript/typescript6@6.0.2"

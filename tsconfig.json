@@ -15,7 +15,6 @@
     "noEmit": true,
     "module": "ESNext",
     "moduleResolution": "Bundler",
-    "ignoreDeprecations": "6.0",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noUncheckedSideEffectImports": true,

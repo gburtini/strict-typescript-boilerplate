@@ -24,6 +24,7 @@
     "lint": "oxlint -c oxlint.config.ts --type-aware --type-check --deny-warnings --report-unused-disable-directives-severity error apps packages scripts oxlint.config.ts",
     "lint:fix": "oxlint -c oxlint.config.ts --fix apps packages scripts oxlint.config.ts",
     "packages": "sherif --fail-on-warnings --ignore-rule root-package-dependencies",
+    "prepare": "effect-tsgo patch --oxlint --typescript",
     "preview": "pnpm --filter @template/web preview",
     "coverage:ratchet": "node --experimental-strip-types scripts/check-coverage-ratchet.ts",
     "test": "pnpm --filter @template/web test && pnpm coverage:ratchet",
@@ -36,6 +37,7 @@
     "@rikalabs/oxlint-standards": "0.8.1",
     "@shadcn/lint": "0.1.1",
     "@types/node": "24.13.4",
+    "@typescript/native": "npm:typescript@7.0.2",
     "dependency-cruiser": "18.2.0",
     "knip": "6.35.0",
     "oxfmt": "0.66.0",
@@ -43,7 +45,7 @@
     "oxlint-plugin-react-doctor": "0.9.12",
     "oxlint-tsgolint": "7.0.2001",
     "sherif": "1.13.0",
-    "typescript": "6.0.3"
+    "typescript": "npm:@typescript/typescript6@6.0.2"
   },
   "engines": {
     "node": ">=24.0.0"
