@@ -30,6 +30,24 @@ Fix failures at their cause. Do not:
 - Prefer existing components and abstractions over duplicate implementations.
 - Keep render functions pure and do not mutate props, state, or module globals.
 - Respect dependency-cruiser boundaries and keep imports canonical.
+- Use the existing shadcn primitives from `packages/ui/`; do not invent
+  one-off controls or bypass their variants.
+- React Doctor recommendations are warnings by upstream mode, but
+  `pnpm check` denies warnings. Fix them rather than suppressing them.
+
+## Tests
+
+Test files have a dedicated lint override. They may exceed production
+maintainability limits such as maximum lines, statements, parameters, and
+function depth, but correctness, accessibility, React, React Doctor, and
+focused-test rules remain enforced.
+
+## Workspace boundaries
+
+- `apps/*` contains runnable applications.
+- `packages/*` contains reusable libraries and design-system primitives.
+- Packages must not import application code.
+- Use `workspace:*` for internal package dependencies.
 
 ## Done
 

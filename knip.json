@@ -1,4 +1,14 @@
 {
   "$schema": "https://unpkg.com/knip@6/schema.json",
-  "project": ["src/**/*.{ts,tsx,css}"]
+  "workspaces": {
+    "apps/web": {
+      "entry": ["index.html"],
+      "project": ["src/**/*.{ts,tsx,css}"],
+      "ignoreDependencies": ["@template/ui"]
+    },
+    "packages/ui": {
+      "entry": ["src/components/ui/*.tsx"],
+      "project": ["src/**/*.{ts,tsx}"]
+    }
+  }
 }

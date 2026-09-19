@@ -5,14 +5,14 @@ module.exports = {
     {
       name: "no-tests-in-production",
       severity: "error",
-      from: { path: "^src/", pathNot: "\\.test\\." },
+      from: { path: "^(apps|packages)/", pathNot: "\\.test\\." },
       to: { path: "\\.test\\." },
     },
     {
       name: "ui-components-do-not-import-applications",
       severity: "error",
-      from: { path: "^src/components/ui/" },
-      to: { path: "^src/app" },
+      from: { path: "^packages/ui/" },
+      to: { path: "^apps/" },
     },
   ],
   options: {

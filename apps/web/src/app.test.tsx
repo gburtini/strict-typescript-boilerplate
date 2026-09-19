@@ -12,5 +12,5 @@ describe("application", () => {
         name: "A strict React + TypeScript starting point.",
       }),
     ).toBeDefined();
-  });
+  }, 5000);
 });

@@ -4,12 +4,17 @@
     "typeAware": true,
     "typeCheck": true
   },
+  "globals": {
+    "document": "readonly"
+  },
   "categories": {
     "correctness": "error",
     "suspicious": "error",
     "pedantic": "error",
     "perf": "error",
-    "style": "error"
+    "style": "error",
+    "nursery": "error",
+    "restriction": "error"
   },
   "plugins": [
     "import",
@@ -20,21 +25,48 @@
     "unicorn",
     "vitest"
   ],
-  "jsPlugins": ["@shadcn/lint"],
+  "jsPlugins": [
+    {
+      "name": "shadcn",
+      "specifier": "@shadcn/lint"
+    }
+  ],
   "rules": {
     "eslint/func-style": "off",
     "eslint/no-magic-numbers": "off",
     "eslint/sort-imports": "off",
     "eslint/sort-keys": "off",
+    "import/no-relative-parent-imports": "off",
     "import/no-named-export": "off",
     "import/no-commonjs": "error",
     "import/no-default-export": "error",
+    "import/consistent-type-specifier-style": "off",
     "import/no-unassigned-import": "off",
     "import/prefer-default-export": "off",
     "no-console": "error",
     "no-eval": "error",
     "no-implied-eval": "error",
     "no-new-func": "error",
+    "react/button-has-type": "error",
+    "react/no-danger-with-children": "error",
+    "react/no-find-dom-node": "error",
+    "react/no-string-refs": "error",
+    "typescript/no-require-imports": "error",
+    "typescript/only-throw-error": "error",
+    "typescript/no-unsafe-function-type": "error",
+    "typescript/explicit-function-return-type": "error",
+    "typescript/explicit-module-boundary-types": "error",
+    "max-depth": ["error", 4],
+    "max-lines": [
+      "error",
+      { "max": 500, "skipBlankLines": true, "skipComments": true }
+    ],
+    "max-lines-per-function": [
+      "error",
+      { "max": 80, "skipBlankLines": true, "skipComments": true }
+    ],
+    "max-params": ["error", 5],
+    "max-statements": ["error", 40],
     "no-restricted-properties": [
       "error",
       {
@@ -63,6 +95,9 @@
     "react/immutability": "error",
     "react/no-danger": "error",
     "react/react-in-jsx-scope": "off",
+    "react/forbid-component-props": "off",
+    "react/jsx-filename-extension": "off",
+    "react/jsx-no-literals": "off",
     "react/jsx-max-depth": "off",
     "react/jsx-props-no-spreading": "off",
     "react/purity": "error",
@@ -80,18 +115,74 @@
     "typescript/no-explicit-any": "error",
     "typescript/prefer-readonly-parameter-types": "off",
     "typescript/no-confusing-void-expression": "off",
+    "typescript/consistent-type-imports": "off",
     "unicorn/filename-case": ["error", { "case": "kebabCase" }],
     "vitest/no-importing-vitest-globals": "off",
     "vitest/no-focused-tests": "error",
-    "vitest/require-hook": "off"
+    "vitest/require-test-timeout": "error",
+    "@rikalabs/no-unlisted-external-imports": "off",
+    "@rikalabs/no-generic-module-names": "off",
+    "@rikalabs/no-placeholder-implementation": "off",
+    "vitest/require-hook": "off",
+    "shadcn/no-arbitrary-values": [
+      "error",
+      {
+        "allow": ["animate-*", "data-[state=*]"]
+      }
+    ],
+    "shadcn/no-inline-styles": "error",
+    "shadcn/no-raw-colors": [
+      "error",
+      {
+        "allow": [
+          "*-background",
+          "*-foreground",
+          "*-card",
+          "*-popover",
+          "*-primary",
+          "*-secondary",
+          "*-muted",
+          "*-accent",
+          "*-destructive",
+          "*-border",
+          "*-input",
+          "*-ring"
+        ]
+      }
+    ],
+    "shadcn/no-restyle": "error",
+    "shadcn/no-unknown-classes": "error",
+    "shadcn/require-static-classes": "error"
   },
   "overrides": [
     {
-      "files": ["src/components/ui/**"],
+      "files": ["packages/ui/**"],
       "rules": {
+        "react-quality/forbid-component-props": "off",
+        "react-quality/jsx-props-no-spreading": "off",
+        "react-quality/react-in-jsx-scope": "off",
+        "react/button-has-type": "off",
         "shadcn/no-restyle": "off",
-        "shadcn/no-arbitrary-values": "off",
-        "shadcn/require-static-classes": "off"
+        "jsx-a11y/label-has-associated-control": "off"
+      }
+    },
+    {
+      "files": ["**/*.config.*"],
+      "rules": {
+        "import/no-default-export": "off"
+      }
+    },
+    {
+      "files": ["**/*.test.*", "**/*.spec.*", "test/**", "tests/**"],
+      "rules": {
+        "eslint/max-depth": "off",
+        "eslint/max-lines": "off",
+        "eslint/max-lines-per-function": "off",
+        "eslint/max-params": "off",
+        "eslint/max-statements": "off",
+        "react/no-multi-comp": "off",
+        "react-quality/no-giant-component": "off",
+        "react-quality/no-multi-component-file": "off"
       }
     }
   ],
