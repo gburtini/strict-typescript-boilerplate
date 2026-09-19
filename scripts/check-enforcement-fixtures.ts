@@ -5,6 +5,7 @@ import { spawnSync } from "node:child_process";
 
 const temporaryDirectory = mkdtempSync(join(tmpdir(), "typescript-boilerplate-"));
 const fixturePath = join(temporaryDirectory, "forbidden.browser.tsx");
+const testFixturePath = join(temporaryDirectory, "forbidden.test.ts");
 
 writeFileSync(
   fixturePath,
@@ -17,7 +18,16 @@ export function ForbiddenFixture() {
 
 export const unsafe: any = 1;
 export default ForbiddenFixture;
+const secret = "sk_live_1234567890abcdef";
+eval(secret);
+declare function startWork(): Promise<void>;
+startWork();
 `,
+);
+
+writeFileSync(
+  testFixturePath,
+  'import { it } from "vitest";\nit.only("focused", () => {});\n',
 );
 
 const lintResult = spawnSync(
@@ -29,6 +39,9 @@ const lintResult = spawnSync(
     join(process.cwd(), "oxlint.config.ts"),
     "--deny-warnings",
     fixturePath,
+    testFixturePath,
+    "--type-aware",
+    "--type-check",
   ],
   { encoding: "utf8" },
 );
@@ -41,6 +54,10 @@ const expectedFindings = [
   "shadcn(no-arbitrary-values)",
   "typescript(no-explicit-any)",
   "import(no-default-export)",
+  "typescript(no-floating-promises)",
+  "eslint(no-eval)",
+  "vitest(no-focused-tests)",
+  "@rikalabs(no-hardcoded-secrets)",
 ];
 const missingFindings = expectedFindings.filter((finding) => !output.includes(finding));
 

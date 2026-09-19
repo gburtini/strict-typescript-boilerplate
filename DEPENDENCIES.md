@@ -14,3 +14,6 @@ tracked directly from their upstream release process and requires review.
 - Keep dependency updates routine rather than allowing an unreviewed backlog.
 - GitHub Actions are pinned to immutable commit SHAs. Update the SHA and its
   version comment together, and review the upstream release before changing it.
+- The repository's CI-policy check verifies SHA pinning and least-privilege
+  workflow permissions; branch protection must require `Check`, `Browser E2E`,
+  `Actionlint`, and the applicable security workflows in the consuming repo.

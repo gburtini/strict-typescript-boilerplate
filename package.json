@@ -6,8 +6,9 @@
   "scripts": {
     "api:check": "node --experimental-strip-types scripts/check-package-exports.ts",
     "architecture:fixtures": "node --experimental-strip-types scripts/check-architecture-fixtures.ts",
+    "ci:policy": "node --experimental-strip-types scripts/check-ci-policy.ts",
     "build": "pnpm --filter @template/web build",
-    "check": "pnpm check:runtime && pnpm format:check && pnpm api:check && pnpm typecheck && pnpm lint && pnpm exceptions:check && pnpm enforcement:fixtures && pnpm architecture:fixtures && pnpm generated:check && pnpm test:evidence && pnpm enforcement:manifest:check && pnpm deadcode && pnpm deps && pnpm packages && pnpm test",
+    "check": "pnpm check:runtime && pnpm format:check && pnpm api:check && pnpm typecheck && pnpm lint && pnpm exceptions:check && pnpm enforcement:fixtures && pnpm architecture:fixtures && pnpm ci:policy && pnpm generated:check && pnpm test:evidence && pnpm enforcement:manifest:check && pnpm deadcode && pnpm deps && pnpm packages && pnpm test",
     "check:all": "pnpm check && pnpm build && pnpm test:e2e",
     "check:runtime": "node --experimental-strip-types scripts/check-runtime.ts",
     "deadcode": "NODE_OPTIONS=--disable-warning=DEP0205 knip --strict",
