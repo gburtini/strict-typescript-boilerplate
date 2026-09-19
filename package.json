@@ -4,8 +4,9 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "api:check": "node scripts/check-package-exports.mjs",
     "build": "pnpm --filter @template/web build",
-    "check": "pnpm format:check && pnpm typecheck && pnpm lint && pnpm deadcode && pnpm deps && pnpm packages && pnpm test",
+    "check": "pnpm format:check && pnpm api:check && pnpm typecheck && pnpm lint && pnpm deadcode && pnpm deps && pnpm packages && pnpm test",
     "deadcode": "NODE_OPTIONS=--disable-warning=DEP0205 knip --strict",
     "deps": "dependency-cruiser --validate .dependency-cruiser.cjs apps packages",
     "dev": "pnpm --filter @template/web dev",

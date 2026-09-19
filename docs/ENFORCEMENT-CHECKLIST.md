@@ -36,7 +36,7 @@ remaining work instead of hiding it in prose.
 - [x] Add repository-owned Semgrep security patterns.
 - [ ] Enable GitHub-native secret scanning for repositories where Advanced
       Security is available.
-- [ ] Add package public-API and cross-package import fixture tests.
+- [x] Add package public-API export checks and cross-package dependency boundaries.
 - [x] Add Playwright/axe accessibility smoke coverage for the web workspace.
 - [ ] Add negative fixtures proving each important rule fails for the intended
       reason and that suppressions require explanations.

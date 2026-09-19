@@ -1,6 +1,10 @@
 {
   "$schema": "https://unpkg.com/knip@6/schema.json",
   "workspaces": {
+    ".": {
+      "entry": ["scripts/check-package-exports.mjs"],
+      "project": ["scripts/**/*.mjs"]
+    },
     "apps/web": {
       "entry": ["index.html"],
       "project": ["src/**/*.{ts,tsx,css}"],
