@@ -6,6 +6,7 @@ import { spawnSync } from "node:child_process";
 const temporaryDirectory = mkdtempSync(join(tmpdir(), "typescript-boilerplate-"));
 const fixturePath = join(temporaryDirectory, "forbidden.browser.tsx");
 const testFixturePath = join(temporaryDirectory, "forbidden.test.ts");
+const suppressionFixturePath = join(temporaryDirectory, "forbidden-suppression.ts");
 
 writeFileSync(
   fixturePath,
@@ -29,6 +30,11 @@ writeFileSync(
   testFixturePath,
   'import { it } from "vitest";\nit.only("focused", () => {});\n',
 );
+const anonymousSuppression = [
+  "// eslint",
+  '-disable-next-line no-console\nconsole.log("forbidden");\n',
+].join("");
+writeFileSync(suppressionFixturePath, anonymousSuppression);
 
 const lintResult = spawnSync(
   "pnpm",
@@ -45,8 +51,6 @@ const lintResult = spawnSync(
   ],
   { encoding: "utf8" },
 );
-
-rmSync(temporaryDirectory, { recursive: true, force: true });
 
 const output = `${lintResult.stdout}\n${lintResult.stderr}`;
 const expectedFindings = [
@@ -66,3 +70,20 @@ if (lintResult.status === 0 || missingFindings.length > 0) {
   console.error(`Missing enforcement findings: ${missingFindings.join(", ")}`);
   process.exitCode = 1;
 }
+
+const suppressionResult = spawnSync(
+  "node",
+  ["--experimental-strip-types", "scripts/check-exceptions.ts", suppressionFixturePath],
+  { encoding: "utf8" },
+);
+const suppressionOutput = `${suppressionResult.stdout}\n${suppressionResult.stderr}`;
+if (
+  suppressionResult.status === 0 ||
+  !suppressionOutput.includes("suppression requires a rationale")
+) {
+  console.error(suppressionOutput);
+  console.error("Exception fixture did not reject an anonymous suppression.");
+  process.exitCode = 1;
+}
+
+rmSync(temporaryDirectory, { recursive: true, force: true });

@@ -37,3 +37,51 @@ for a rationale; reviewers must still verify scope, owner, issue, and expiry.
 
 If a rule prevents a genuinely correct implementation, stop and document the
 conflict. Do not silently weaken the rule.
+
+## Current configuration registry
+
+The following deliberate `off` rules are scoped overrides, not general
+permission to weaken enforcement:
+
+- `eslint/func-style`, `eslint/no-magic-numbers`, `eslint/sort-imports`, and
+  `eslint/sort-keys` — canonical style is owned by the broader Oxlint presets.
+- `import/no-relative-parent-imports`, `import/no-named-export`,
+  `import/consistent-type-specifier-style`, `import/no-unassigned-import`, and
+  `import/prefer-default-export` — repository conventions and framework entry
+  points handle these cases.
+- `react/react-in-jsx-scope`, `react/forbid-component-props`,
+  `react/jsx-filename-extension`, `react/jsx-no-literals`,
+  `react/jsx-max-depth`, and `react/jsx-props-no-spreading` — modern JSX or
+  intentional component-library implementation boundaries.
+- `typescript/prefer-readonly-parameter-types`,
+  `typescript/no-confusing-void-expression`, and
+  `typescript/consistent-type-imports` — not universally expressible across
+  all supported project shapes.
+- `vitest/no-importing-vitest-globals`, `vitest/require-test-timeout`, and
+  `vitest/require-hook` — local test configuration owns these choices.
+- `@rikalabs/no-unlisted-external-imports`,
+  `@rikalabs/no-generic-module-names`, and
+  `@rikalabs/no-placeholder-implementation` — reserved for projects that opt
+  into those stricter repository-specific checks.
+- `react-quality/forbid-component-props`,
+  `react-quality/jsx-props-no-spreading`, `react-quality/react-in-jsx-scope`,
+  `react/button-has-type`, `shadcn/no-restyle`, and
+  `jsx-a11y/label-has-associated-control` — design-system implementation
+  scope: `packages/ui/**`.
+- `import/no-default-export` — configuration files only.
+- `eslint/max-depth`, `eslint/max-lines`, `eslint/max-lines-per-function`,
+  `eslint/max-params`, `eslint/max-statements`, `react/no-multi-comp`,
+  `react-quality/no-giant-component`, and
+  `react-quality/no-multi-component-file` — test files only.
+- `eslint/require-await`, `typescript/require-await`, `vitest/no-hooks`, and
+  `vitest/require-top-level-describe` — test setup only.
+- `vitest/prefer-importing-vitest-globals` — end-to-end tests only.
+- `@rikalabs/no-hardcoded-secrets`, `@rikalabs/no-low-signal-variable-names`,
+  `@rikalabs/no-trivial-runtime-guard-helpers`, `eslint/curly`,
+  `eslint/no-continue`, `eslint/no-console`, `eslint/no-undefined`,
+  `eslint/one-var`, `eslint/prefer-destructuring`, `import/no-nodejs-modules`,
+  `typescript/no-unnecessary-condition`, and `unicorn/import-style` — typed
+  Node governance scripts and configuration files only.
+
+The current ignored paths are `dist`, `coverage`, and `node_modules`; they are
+generated or dependency output and must never be used to hide source files.

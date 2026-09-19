@@ -27,12 +27,19 @@ TypeScript, React Doctor, and custom rules enforce the mechanical parts.
 ## Functions and control flow
 
 - Braces are required.
-- Handle every Promise by awaiting, returning, or explicitly using `void` for a
-  deliberate detached operation.
+- Handle every Promise by awaiting, returning, or attaching an explicit
+  rejection path for deliberate detached work, such as
+  `void task.catch(reportFailure)`.
 - Handle errors intentionally; do not silently swallow catches or return errors
   as ordinary success values.
 - Prefer one clear pass over multiple equivalent iterations.
 - Keep functions within the configured complexity and size limits.
+
+Numeric limits are smoke alarms, not a license to fragment cohesive code.
+Locality, cohesion, and semantic clarity outrank satisfying a line, parameter,
+or statement count. If a correct implementation needs to exceed a limit, use
+the governed exception protocol and explain why extracting meaningless helpers
+would make the code worse.
 
 ## React
 
