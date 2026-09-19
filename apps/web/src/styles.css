@@ -2,6 +2,18 @@
 @import "tw-animate-css";
 
 @theme inline {
+  /* Canonical typography and semantic color vocabulary. */
+  --font-sans: ui-sans-serif, system-ui, sans-serif;
+  /* Canonical responsive and radius scales. */
+  --breakpoint-sm: 40rem;
+  --breakpoint-md: 48rem;
+  --breakpoint-lg: 64rem;
+  --breakpoint-xl: 80rem;
+  --breakpoint-2xl: 96rem;
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -25,6 +37,12 @@
 
 :root {
   /* Tailwind Slate + Sky semantic palette, expressed in OKLCH for stable contrast. */
+  /* One base radius drives all supported radius utilities. */
+  --radius: 0.5rem;
+  /* Keep motion values finite and shared; components choose named utilities. */
+  --motion-fast: 150ms;
+  --motion-standard: 200ms;
+  --motion-slow: 300ms;
   --accent: oklch(0.3 0.04 260);
   --accent-foreground: oklch(0.95 0.02 260);
   --background: oklch(0.13 0.03 260);
@@ -46,7 +64,7 @@
   --secondary-foreground: oklch(0.95 0.02 260);
   background: var(--background);
   color: var(--foreground);
-  font-family: ui-sans-serif, system-ui, sans-serif;
+  font-family: var(--font-sans);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
 }
