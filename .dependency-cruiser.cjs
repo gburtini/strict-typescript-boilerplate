@@ -14,6 +14,24 @@ module.exports = {
       from: { path: "^packages/ui/" },
       to: { path: "^apps/" },
     },
+    {
+      name: "domain-does-not-import-outer-layers",
+      severity: "error",
+      from: { path: "(^|/)src/domain/" },
+      to: { path: "(^|/)src/(application|infrastructure|ui)/" },
+    },
+    {
+      name: "application-does-not-import-outer-layers",
+      severity: "error",
+      from: { path: "(^|/)src/application/" },
+      to: { path: "(^|/)src/(infrastructure|ui)/" },
+    },
+    {
+      name: "infrastructure-does-not-import-ui",
+      severity: "error",
+      from: { path: "(^|/)src/infrastructure/" },
+      to: { path: "(^|/)src/ui/" },
+    },
   ],
   options: {
     doNotFollow: { path: "node_modules" },

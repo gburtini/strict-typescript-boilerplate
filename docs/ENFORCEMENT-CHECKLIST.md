@@ -8,6 +8,7 @@ remaining work instead of hiding it in prose.
 
 - [x] pnpm workspace with `apps/*` and `packages/*` boundaries.
 - [x] Node 24+, ESM, pinned pnpm, strict TypeScript, and explicit return types.
+- [x] Runtime preflight rejects unsupported Node versions before other checks.
 - [x] Oxfmt formatting with a zero-diff check.
 - [x] Oxlint correctness, suspicious, pedantic, performance, style, restriction,
       and nursery categories as errors.
@@ -20,28 +21,34 @@ remaining work instead of hiding it in prose.
       assertions, secrets, SQL concatenation, duplicate branches, and helper indirection.
 - [x] Knip strict dead-code/dependency analysis, Sherif package hygiene, and
       dependency-cruiser boundaries.
+- [x] Typed repository-governance scripts validate package manifests at runtime.
+- [x] Exception protocol requires rationale-bearing suppressions and documents
+      ownership, scope, tracking, and expiry requirements.
+- [x] Compatibility, generated-file ownership, dependency, and security
+      lifecycle contracts are documented.
+- [x] CI actions are pinned to commit SHAs and workflow syntax is actionlinted.
 - [x] Test overrides for intentionally softer size/complexity limits.
 
 ## Remaining implementation increments
 
-- [x] Add stronger test rules for placeholder tests, mock-only tests, conditional
-      tests, and explicit test timeouts.
+- [x] Add stronger test rules for placeholder tests, mock-only tests, and
+      conditional tests; use one repository timeout instead of copied timeouts.
 - [x] Add coverage thresholds.
 - [x] Add unit-test network isolation.
-- [x] Add deterministic fake-timer controls for unit tests.
-- [x] Make CI run format, typecheck, lint, dead-code, architecture, package,
-      tests, and production build as separate required checks.
+- [x] Make fake timers opt-in and provide deterministic network isolation for
+      unit tests.
+- [x] Make `pnpm check:all` the singular green-repository command.
 - [x] Add dependency review, OSV vulnerability scanning, CodeQL, and custom
       hardcoded-secret/SQL rules.
 - [x] Add repository-owned Semgrep security patterns.
-- [ ] Enable GitHub-native secret scanning for repositories where Advanced
-      Security is available.
 - [x] Add package public-API export checks and cross-package dependency boundaries.
 - [x] Add Playwright/axe accessibility smoke coverage for the web workspace.
 - [x] Add negative fixtures proving key design-system rules fail for the intended
       reason.
 - [x] Keep framework-specific Next, Vite, Node, and library templates as opt-in
       extensions rather than weakening this shared baseline.
+- [ ] Enable GitHub-native secret scanning when the consuming repository has
+      Advanced Security; this starter cannot enable an account-level feature.
 
 Every unchecked item must either be implemented or explicitly documented as a
 project-level opt-out before this starter is considered complete.
