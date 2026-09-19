@@ -1,0 +1,68 @@
+@import "tailwindcss";
+
+:root {
+  font-family: ui-sans-serif, system-ui, sans-serif;
+  color: #e2e8f0;
+  background: #0f172a;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  min-width: 320px;
+  min-height: 100vh;
+  margin: 0;
+}
+
+button {
+  cursor: pointer;
+}
+
+.app-shell {
+  display: grid;
+  min-height: 100vh;
+  place-items: center;
+  padding: 2rem;
+}
+
+.content-card {
+  width: min(100%, 42rem);
+  padding: 3rem;
+  border: 1px solid #334155;
+  border-radius: 1rem;
+  background: #1e293b;
+  box-shadow: 0 1.5rem 4rem rgb(2 6 23 / 35%);
+}
+
+.eyebrow {
+  margin: 0 0 0.75rem;
+  color: #38bdf8;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+h1 {
+  max-width: 28rem;
+  margin: 0;
+  color: #f8fafc;
+  font-size: clamp(2rem, 6vw, 4rem);
+  line-height: 1;
+}
+
+.body-copy {
+  max-width: 34rem;
+  margin: 1.5rem 0 2rem;
+  color: #cbd5e1;
+  font-size: 1.125rem;
+  line-height: 1.6;
+}
+
+code {
+  padding: 0.15rem 0.35rem;
+  border-radius: 0.25rem;
+  color: #bae6fd;
+  background: #0f172a;
+  font-size: 0.9em;
+}

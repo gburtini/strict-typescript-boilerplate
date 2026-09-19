@@ -1,0 +1,49 @@
+{
+  "name": "typescript-boilerplate",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "vite build",
+    "check": "pnpm format:check && pnpm typecheck && pnpm lint && pnpm deadcode && pnpm deps && pnpm packages && pnpm test",
+    "deadcode": "NODE_OPTIONS=--disable-warning=DEP0205 knip",
+    "deps": "dependency-cruiser --validate .dependency-cruiser.cjs src",
+    "dev": "vite",
+    "format": "oxfmt --write .",
+    "format:check": "oxfmt --check .",
+    "lint": "oxlint --type-aware --type-check --max-warnings 0 src",
+    "lint:fix": "oxlint --fix .",
+    "packages": "sherif --fail-on-warnings --ignore-rule root-package-dependencies",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "react": "19.3.0",
+    "react-dom": "19.3.0"
+  },
+  "devDependencies": {
+    "@shadcn/lint": "0.1.1",
+    "@tailwindcss/vite": "4.1.17",
+    "@testing-library/react": "16.3.3",
+    "@types/node": "25.9.3",
+    "@types/react": "19.2.7",
+    "@types/react-dom": "19.2.3",
+    "@vitejs/plugin-react": "5.1.1",
+    "dependency-cruiser": "18.2.0",
+    "jsdom": "26.1.0",
+    "knip": "6.35.0",
+    "oxfmt": "0.66.0",
+    "oxlint": "1.81.0",
+    "oxlint-tsgolint": "7.0.2001",
+    "sherif": "1.13.0",
+    "tailwindcss": "4.1.17",
+    "typescript": "6.0.3",
+    "vite": "8.2.2",
+    "vitest": "4.1.11"
+  },
+  "engines": {
+    "node": ">=24.0.0"
+  },
+  "packageManager": "pnpm@10.30.3"
+}
