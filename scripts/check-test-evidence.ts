@@ -5,8 +5,9 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 }
 
 const value: unknown = JSON.parse(readFileSync("docs/test-evidence.json", "utf8"));
-if (!isRecord(value) || !Array.isArray(value.records))
+if (!isRecord(value) || !Array.isArray(value.records)) {
   throw new TypeError("test evidence manifest is invalid");
+}
 
 for (const record of value.records) {
   if (

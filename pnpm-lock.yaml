@@ -49,6 +49,9 @@ importers:
       typescript:
         specifier: npm:@typescript/typescript6@6.0.2
         version: '@typescript/typescript6@6.0.2'
+      yaml:
+        specifier: 2.9.1
+        version: 2.9.1
 
   apps/web:
     dependencies:
@@ -128,6 +131,10 @@ importers:
       zod:
         specifier: 4.1.13
         version: 4.1.13
+    devDependencies:
+      vitest:
+        specifier: 4.1.11
+        version: 4.1.11(@opentelemetry/api@1.9.1)(@types/node@25.9.3)(@vitest/coverage-v8@4.1.11)(jsdom@26.1.0)(vite@8.2.2(@types/node@25.9.3)(jiti@2.7.0)(yaml@2.9.1))
 
   packages/ui:
     dependencies:

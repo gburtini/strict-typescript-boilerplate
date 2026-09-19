@@ -20,4 +20,5 @@ jobs:
           node-version-file: .node-version
           cache: pnpm
       - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @template/web exec playwright install --with-deps chromium
       - run: pnpm check:all

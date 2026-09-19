@@ -176,6 +176,7 @@
     {
       "files": ["**/*.test.*", "**/*.spec.*", "test/**", "tests/**"],
       "rules": {
+        "vitest/prefer-strict-boolean-matchers": "off",
         "eslint/max-depth": "off",
         "eslint/max-lines": "off",
         "eslint/max-lines-per-function": "off",

@@ -59,6 +59,8 @@ permission to weaken enforcement:
   all supported project shapes.
 - `vitest/no-importing-vitest-globals`, `vitest/require-test-timeout`, and
   `vitest/require-hook` — local test configuration owns these choices.
+- `vitest/prefer-strict-boolean-matchers` — conflicts with the enabled
+  `prefer-to-be-truthy` and `prefer-to-be-falsy` test canonical forms.
 - `@rikalabs/no-unlisted-external-imports`,
   `@rikalabs/no-generic-module-names`, and
   `@rikalabs/no-placeholder-implementation` — reserved for projects that opt
@@ -97,3 +99,10 @@ The oRPC transport adapter at `packages/core/src/api/router.ts` disables
 runtime boundary where a validated request becomes a transport Promise. The
 Node telemetry layer disables `@rikalabs/effect-no-layer-in-leaf-modules`
 because it is the runtime layer assembly point.
+
+The root `prepare` script runs `effect-tsgo patch --oxlint --typescript` for
+`@effect/tsgo` so the TypeScript 7 and Oxlint integrations use the Effect
+diagnostics layer. This is a reviewed lifecycle exception owned by the
+toolchain maintainers; `pnpm toolchain:check` verifies the active TS7 build and
+that applying the patch twice is idempotent. It must not be expanded to run
+application generators or access credentials.

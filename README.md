@@ -6,7 +6,7 @@ correctness as enforceable contracts.
 ## Runtime
 
 - ESM only
-- Node 24+
+- Node >=24.13.1 <25
 - pnpm 10.30.3
 - React 19
 
@@ -19,7 +19,7 @@ pnpm check:all
 
 `pnpm check:all` runs the complete repository gate: formatting, runtime preflight,
 strict type checking, Oxlint with type-aware
-rules, all 842 rules in the installed React Doctor registry, React and
+rules, the installed React Doctor registry, React and
 accessibility rules, shadcn design-system rules, Knip, dependency-cruiser,
 Sherif, and Vitest. React Doctor keeps its upstream warning severity, while
 `--deny-warnings` makes every warning a required fix.

@@ -8,7 +8,7 @@
     "architecture:fixtures": "node --experimental-strip-types scripts/check-architecture-fixtures.ts",
     "ci:policy": "node --experimental-strip-types scripts/check-ci-policy.ts",
     "build": "pnpm --filter @template/web build",
-    "check": "pnpm check:runtime && pnpm format:check && pnpm api:check && pnpm typecheck && pnpm lint && pnpm exceptions:check && pnpm enforcement:fixtures && pnpm architecture:fixtures && pnpm ci:policy && pnpm generated:check && pnpm test:evidence && pnpm enforcement:manifest:check && pnpm deadcode && pnpm deps && pnpm packages && pnpm test",
+    "check": "pnpm check:runtime && pnpm toolchain:check && pnpm format:check && pnpm api:check && pnpm typecheck && pnpm lint && pnpm exceptions:check && pnpm enforcement:fixtures && pnpm architecture:fixtures && pnpm ci:policy && pnpm generated:check && pnpm test:evidence && pnpm enforcement:manifest:check && pnpm deadcode && pnpm deps && pnpm packages && pnpm test",
     "check:all": "pnpm check && pnpm build && pnpm test:e2e",
     "check:runtime": "node --experimental-strip-types scripts/check-runtime.ts",
     "deadcode": "NODE_OPTIONS=--disable-warning=DEP0205 knip --strict",
@@ -27,9 +27,10 @@
     "prepare": "effect-tsgo patch --oxlint --typescript",
     "preview": "pnpm --filter @template/web preview",
     "coverage:ratchet": "node --experimental-strip-types scripts/check-coverage-ratchet.ts",
-    "test": "pnpm --filter @template/web test && pnpm coverage:ratchet",
+    "test": "pnpm --filter @template/core test && pnpm --filter @template/web test && pnpm coverage:ratchet",
     "test:evidence": "node --experimental-strip-types scripts/check-test-evidence.ts",
     "test:e2e": "pnpm --filter @template/web test:e2e",
+    "toolchain:check": "node --experimental-strip-types scripts/check-toolchain.ts",
     "typecheck": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p scripts/tsconfig.json && tsc --noEmit -p apps/web/tsconfig.json && tsc --noEmit -p packages/ui/tsconfig.json && tsc --noEmit -p packages/core/tsconfig.json"
   },
   "devDependencies": {
@@ -45,10 +46,11 @@
     "oxlint-plugin-react-doctor": "0.9.12",
     "oxlint-tsgolint": "7.0.2001",
     "sherif": "1.13.0",
-    "typescript": "npm:@typescript/typescript6@6.0.2"
+    "typescript": "npm:@typescript/typescript6@6.0.2",
+    "yaml": "2.9.1"
   },
   "engines": {
-    "node": ">=24.0.0"
+    "node": ">=24.13.1 <25"
   },
   "packageManager": "pnpm@10.30.3"
 }

@@ -1,4 +1,5 @@
 const minimumNode = { major: 24, minor: 13, patch: 1 } as const;
+const maximumMajor = 25;
 const versionMatch = /^(?<major>\d+)\.(?<minor>\d+)\.(?<patch>\d+)/u.exec(
   process.versions.node,
 );
@@ -16,10 +17,11 @@ const belowMinimum =
   (major === minimumNode.major &&
     minor === minimumNode.minor &&
     patch < minimumNode.patch);
+const atOrAboveMaximum = major >= maximumMajor;
 
-if (belowMinimum) {
+if (belowMinimum || atOrAboveMaximum) {
   throw new Error(
-    `Node.js ${minimumNode.major}.${minimumNode.minor}.${minimumNode.patch}+ is required; found ${process.versions.node}.`,
+    `Node.js >=${minimumNode.major}.${minimumNode.minor}.${minimumNode.patch} <${maximumMajor} is required; found ${process.versions.node}.`,
   );
 }
 

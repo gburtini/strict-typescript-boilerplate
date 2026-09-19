@@ -59,6 +59,11 @@ must name the package, script, reason, owner, and expiry in the dependency
 policy. Vulnerability exceptions require a documented impact assessment,
 tracking issue, owner, and review date.
 
+The root `prepare` exception for `@effect/tsgo` only patches local compiler and
+Oxlint integrations. It has no network or credential access, is verified for
+idempotence by `pnpm toolchain:check`, and is reviewed whenever the toolchain
+versions change.
+
 ## Incident response
 
 Suspected credential exposure, unauthorized access, data loss, or exploitable

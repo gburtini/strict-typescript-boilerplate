@@ -15,5 +15,11 @@ tracked directly from their upstream release process and requires review.
 - GitHub Actions are pinned to immutable commit SHAs. Update the SHA and its
   version comment together, and review the upstream release before changing it.
 - The repository's CI-policy check verifies SHA pinning and least-privilege
-  workflow permissions; branch protection must require `Check`, `Browser E2E`,
-  `Actionlint`, and the applicable security workflows in the consuming repo.
+  workflow permissions; branch protection must require `Check`, `Actionlint`,
+  and the applicable security workflows in the consuming repo.
+
+The `prepare` lifecycle script is an explicit toolchain exception. It runs
+`effect-tsgo patch --oxlint --typescript` so the installed TypeScript 7 and
+Oxlint binaries use the Effect diagnostics integration. The package, command,
+owner, and verification are recorded in `EXCEPTIONS.md`; the command must be
+idempotent and must not access application secrets.

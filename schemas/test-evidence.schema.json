@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": ["records"],
+  "additionalProperties": false,
+  "properties": {
+    "records": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["change", "test", "redState", "redStateConfirmed"],
+        "additionalProperties": false,
+        "properties": {
+          "change": { "type": "string", "minLength": 1 },
+          "test": { "type": "string", "minLength": 1 },
+          "redState": { "type": "string", "minLength": 1 },
+          "redStateConfirmed": { "const": true }
+        }
+      }
+    }
+  }
+}
