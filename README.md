@@ -13,6 +13,10 @@ correctness as enforceable contracts.
 ## The contract
 
 ```sh
+nvm install
+nvm use
+corepack enable
+corepack install
 pnpm install
 pnpm check:all
 ```
