@@ -24,13 +24,15 @@ remaining work instead of hiding it in prose.
 
 ## Remaining implementation increments
 
-- [ ] Add stronger test rules for placeholder tests, mock-only tests, conditional
-      tests, deterministic time, network isolation, and coverage thresholds.
-- [ ] Make CI run format, typecheck, lint, dead-code, architecture, package,
+- [x] Add stronger test rules for placeholder tests, mock-only tests, conditional
+      tests, and explicit test timeouts.
+- [ ] Add deterministic time, network isolation, and coverage thresholds.
+- [x] Make CI run format, typecheck, lint, dead-code, architecture, package,
       tests, and production build as separate required checks.
 - [ ] Add CODEOWNERS protection for enforcement configuration and workflow files.
-- [ ] Add dependency review, OSV vulnerability scanning, secret scanning, and
-      CodeQL/Semgrep policy checks.
+- [x] Add dependency review, OSV vulnerability scanning, CodeQL, and custom
+      hardcoded-secret/SQL rules.
+- [ ] Add native secret scanning and Semgrep policy checks.
 - [ ] Add package public-API and cross-package import fixture tests.
 - [ ] Add Playwright/axe accessibility smoke coverage for web workspaces.
 - [ ] Add negative fixtures proving each important rule fails for the intended
