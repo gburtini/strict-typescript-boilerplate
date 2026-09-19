@@ -1,0 +1,36 @@
+rules:
+  - id: no-eval-or-dynamic-function
+    languages:
+      - javascript
+      - typescript
+    message: Do not execute dynamically constructed JavaScript.
+    severity: ERROR
+    patterns:
+      - pattern-either:
+          - pattern: eval(...)
+          - pattern: new Function(...)
+
+  - id: no-hardcoded-credential-assignment
+    languages:
+      - javascript
+      - typescript
+    message: Do not hardcode credentials; read them from a validated secret boundary.
+    severity: ERROR
+    patterns:
+      - pattern: $KEY = "$VALUE"
+      - metavariable-regex:
+          metavariable: $KEY
+          regex: (?i).*(password|passwd|secret|token|api[_-]?key).*
+      - metavariable-regex:
+          metavariable: $VALUE
+          regex: .{8,}
+
+  - id: no-dangerous-child-process-shell
+    languages:
+      - javascript
+      - typescript
+    message: Avoid shell interpolation in child-process calls; pass arguments separately.
+    severity: ERROR
+    pattern-either:
+      - pattern: child_process.exec($COMMAND, ...)
+      - pattern: exec($COMMAND, ...)

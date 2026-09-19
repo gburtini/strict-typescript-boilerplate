@@ -1,0 +1,19 @@
+name: Semgrep
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+  security-events: write
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: semgrep/semgrep-action@v1
+        with:
+          config: .semgrep.yml

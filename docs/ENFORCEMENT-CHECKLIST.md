@@ -33,7 +33,9 @@ remaining work instead of hiding it in prose.
       tests, and production build as separate required checks.
 - [x] Add dependency review, OSV vulnerability scanning, CodeQL, and custom
       hardcoded-secret/SQL rules.
-- [ ] Add native secret scanning and Semgrep policy checks.
+- [x] Add repository-owned Semgrep security patterns.
+- [ ] Enable GitHub-native secret scanning for repositories where Advanced
+      Security is available.
 - [ ] Add package public-API and cross-package import fixture tests.
 - [ ] Add Playwright/axe accessibility smoke coverage for web workspaces.
 - [ ] Add negative fixtures proving each important rule fails for the intended
