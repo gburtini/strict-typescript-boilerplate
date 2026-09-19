@@ -26,7 +26,8 @@ remaining work instead of hiding it in prose.
 
 - [x] Add stronger test rules for placeholder tests, mock-only tests, conditional
       tests, and explicit test timeouts.
-- [ ] Add deterministic time, network isolation, and coverage thresholds.
+- [x] Add coverage thresholds.
+- [ ] Add deterministic time and network isolation.
 - [x] Make CI run format, typecheck, lint, dead-code, architecture, package,
       tests, and production build as separate required checks.
 - [ ] Add CODEOWNERS protection for enforcement configuration and workflow files.
