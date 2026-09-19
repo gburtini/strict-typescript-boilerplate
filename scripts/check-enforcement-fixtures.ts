@@ -14,6 +14,9 @@ export function ForbiddenFixture() {
   const [value] = useState(0);
   return <div className="bg-red-500 p-[13px]">{value}</div>;
 }
+
+export const unsafe: any = 1;
+export default ForbiddenFixture;
 `,
 );
 
@@ -33,7 +36,12 @@ const lintResult = spawnSync(
 rmSync(temporaryDirectory, { recursive: true, force: true });
 
 const output = `${lintResult.stdout}\n${lintResult.stderr}`;
-const expectedFindings = ["shadcn(no-raw-colors)", "shadcn(no-arbitrary-values)"];
+const expectedFindings = [
+  "shadcn(no-raw-colors)",
+  "shadcn(no-arbitrary-values)",
+  "typescript(no-explicit-any)",
+  "import(no-default-export)",
+];
 const missingFindings = expectedFindings.filter((finding) => !output.includes(finding));
 
 if (lintResult.status === 0 || missingFindings.length > 0) {

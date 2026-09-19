@@ -12,3 +12,5 @@ tracked directly from their upstream release process and requires review.
 - Vulnerability exceptions require an owner, impact assessment, tracking issue,
   compensating control, and review date.
 - Keep dependency updates routine rather than allowing an unreviewed backlog.
+- GitHub Actions are pinned to immutable commit SHAs. Update the SHA and its
+  version comment together, and review the upstream release before changing it.
