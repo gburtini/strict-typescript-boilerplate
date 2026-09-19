@@ -1,4 +1,10 @@
 {
   "$schema": "./schemas/generated-files.schema.json",
-  "files": []
+  "files": [
+    {
+      "checkCommand": ["pnpm", "db:check"],
+      "output": "packages/db/drizzle",
+      "source": "packages/db/src/schema.ts"
+    }
+  ]
 }

@@ -168,6 +168,15 @@
       }
     },
     {
+      "files": ["packages/db/**"],
+      "rules": {
+        "eslint/no-restricted-imports": "off",
+        "eslint/one-var": "off",
+        "eslint/sort-vars": "off",
+        "import/group-exports": "off"
+      }
+    },
+    {
       "files": ["**/*.config.*"],
       "rules": {
         "import/no-default-export": "off"

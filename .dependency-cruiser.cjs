@@ -32,6 +32,24 @@ module.exports = {
       from: { path: "(^|/)src/infrastructure/" },
       to: { path: "(^|/)src/ui/" },
     },
+    {
+      name: "domain-does-not-import-database-adapter",
+      severity: "error",
+      from: { path: "(^|/)src/domain/" },
+      to: { path: "(^|/)packages/db/" },
+    },
+    {
+      name: "application-does-not-import-database-adapter",
+      severity: "error",
+      from: { path: "(^|/)src/application/" },
+      to: { path: "(^|/)packages/db/" },
+    },
+    {
+      name: "ui-does-not-import-database-adapter",
+      severity: "error",
+      from: { path: "^packages/ui/" },
+      to: { path: "^packages/db/" },
+    },
   ],
   options: {
     doNotFollow: { path: "node_modules" },

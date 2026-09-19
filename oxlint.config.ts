@@ -116,6 +116,19 @@ const config = {
     "@rikalabs/no-cross-layer-imports": "error",
     "@rikalabs/no-placeholder-tests": "error",
     "@rikalabs/no-mock-only-tests": "error",
+    "eslint/no-restricted-imports": [
+      "error",
+      {
+        message:
+          "Database implementation belongs in @template/db adapters; inject a repository or port instead.",
+        patterns: ["drizzle-orm/**"],
+      },
+      {
+        message:
+          "The Postgres driver belongs in @template/db; inject a database port instead.",
+        name: "postgres",
+      },
+    ],
     "vitest/no-conditional-tests": "error",
     "vitest/consistent-test-filename": "error",
     "vitest/prefer-called-once": "error",

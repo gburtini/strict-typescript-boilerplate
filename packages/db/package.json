@@ -1,0 +1,25 @@
+{
+  "name": "@template/db",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./client": "./src/client.ts",
+    "./env": "./src/env.ts",
+    "./schema": "./src/schema.ts"
+  },
+  "scripts": {
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@t3-oss/env-core": "0.13.11",
+    "drizzle-orm": "0.45.2",
+    "drizzle-zod": "0.8.3",
+    "postgres": "3.4.9",
+    "zod": "4.1.13"
+  },
+  "devDependencies": {
+    "vitest": "4.1.11"
+  }
+}

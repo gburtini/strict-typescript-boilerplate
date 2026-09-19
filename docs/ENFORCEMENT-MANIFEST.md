@@ -74,14 +74,18 @@ lint, security workflows, and test evidence.
 | eslint/no-console                                                  | Oxlint override       | off           | scripts/\*\*, \*\*/\*.config.\*                         | .oxlintrc.json   |
 | eslint/no-continue                                                 | Oxlint override       | off           | scripts/\*\*, \*\*/\*.config.\*                         | .oxlintrc.json   |
 | eslint/no-magic-numbers                                            | Oxlint                | off           | apps, packages, scripts                                 | .oxlintrc.json   |
+| eslint/no-restricted-imports                                       | Oxlint override       | off           | packages/db/\*\*                                        | .oxlintrc.json   |
 | eslint/no-undefined                                                | Oxlint override       | off           | scripts/\*\*, \*\*/\*.config.\*                         | .oxlintrc.json   |
 | eslint/one-var                                                     | Oxlint override       | off           | packages/core/src/api/contract.ts                       | .oxlintrc.json   |
+| eslint/one-var                                                     | Oxlint override       | off           | packages/db/\*\*                                        | .oxlintrc.json   |
 | eslint/one-var                                                     | Oxlint override       | off           | scripts/\*\*, \*\*/\*.config.\*                         | .oxlintrc.json   |
 | eslint/prefer-destructuring                                        | Oxlint override       | off           | scripts/\*\*, \*\*/\*.config.\*                         | .oxlintrc.json   |
 | eslint/require-await                                               | Oxlint override       | off           | \*\*/test-setup.\*                                      | .oxlintrc.json   |
 | eslint/sort-imports                                                | Oxlint                | off           | apps, packages, scripts                                 | .oxlintrc.json   |
 | eslint/sort-keys                                                   | Oxlint                | off           | apps, packages, scripts                                 | .oxlintrc.json   |
+| eslint/sort-vars                                                   | Oxlint override       | off           | packages/db/\*\*                                        | .oxlintrc.json   |
 | import/consistent-type-specifier-style                             | Oxlint                | off           | apps, packages, scripts                                 | .oxlintrc.json   |
+| import/group-exports                                               | Oxlint override       | off           | packages/db/\*\*                                        | .oxlintrc.json   |
 | import/no-commonjs                                                 | Oxlint                | error         | apps, packages, scripts                                 | .oxlintrc.json   |
 | import/no-default-export                                           | Oxlint override       | off           | \*\*/\*.config.\*                                       | .oxlintrc.json   |
 | import/no-default-export                                           | Oxlint                | error         | apps, packages, scripts                                 | .oxlintrc.json   |

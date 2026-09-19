@@ -39,6 +39,11 @@ Adapters own side effects. They receive validated inputs, translate external
 failures into typed infrastructure errors while preserving `cause`, and are
 provided to application code through explicit dependency injection.
 
+`@template/db` is the database adapter boundary. It owns Drizzle, the
+PostgreSQL driver, schema definitions, Drizzle-Zod boundary schemas, and
+migrations. Domain and application modules do not import it directly; they
+depend on repository ports supplied by a composition root.
+
 ### Domain
 
 Domain code contains deterministic business rules, domain types, and pure
@@ -102,6 +107,9 @@ module. Public request boundaries use oRPC contracts with runtime schemas.
 Telemetry is an adapter. Domain code may add semantic spans through the core
 Effect helper, but exporters, SDK registration, credentials, and transport
 configuration belong in runtime-specific adapter startup code.
+
+Database conventions, migration safety, query constraints, and adapter
+lifecycle rules are defined in `DATABASE.md`.
 
 ## Architecture changes
 
