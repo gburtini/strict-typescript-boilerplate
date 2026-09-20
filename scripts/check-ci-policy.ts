@@ -25,6 +25,10 @@ const allowedPermissions: Record<
     workflow: { actions: "read", contents: "read" },
     jobs: {},
   },
+  "osv-scheduled.yml": {
+    workflow: { contents: "read" },
+    jobs: {},
+  },
   "semgrep.yml": {
     workflow: { contents: "read", "security-events": "write" },
     jobs: {},
