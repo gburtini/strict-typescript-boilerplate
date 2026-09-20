@@ -178,7 +178,8 @@
         "eslint/no-restricted-imports": "off",
         "eslint/one-var": "off",
         "eslint/sort-vars": "off",
-        "import/group-exports": "off"
+        "import/group-exports": "off",
+        "import/no-namespace": "off"
       }
     },
     {

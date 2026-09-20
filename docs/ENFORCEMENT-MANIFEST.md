@@ -93,6 +93,7 @@ lint, security workflows, and test evidence.
 | import/no-default-export                                           | Oxlint override       | off           | \*\*/\*.config.\*                                                                | .oxlintrc.json   |
 | import/no-default-export                                           | Oxlint                | error         | apps, packages, scripts                                                          | .oxlintrc.json   |
 | import/no-named-export                                             | Oxlint                | off           | apps, packages, scripts                                                          | .oxlintrc.json   |
+| import/no-namespace                                                | Oxlint override       | off           | packages/db/\*\*                                                                 | .oxlintrc.json   |
 | import/no-nodejs-modules                                           | Oxlint override       | off           | scripts/\*\*, \*\*/\*.config.\*                                                  | .oxlintrc.json   |
 | import/no-relative-parent-imports                                  | Oxlint                | off           | apps, packages, scripts                                                          | .oxlintrc.json   |
 | import/no-unassigned-import                                        | Oxlint                | off           | apps, packages, scripts                                                          | .oxlintrc.json   |

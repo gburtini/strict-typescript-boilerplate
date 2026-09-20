@@ -1,37 +1,43 @@
+import { is } from "drizzle-orm";
+import { getTableConfig, PgTable } from "drizzle-orm/pg-core";
 import { describe, expect, it } from "vitest";
-import { insertUserSchema, selectUserSchema, users } from "./schema";
+import * as schema from "./schema";
 
-describe("database schemas", () => {
-  it("accepts a valid user insert at the persistence boundary", () => {
+const snakeCaseName = /^[a-z][a-z0-9]*(?:_[a-z0-9]+)*$/u;
+type SchemaValue = (typeof schema)[keyof typeof schema];
+type SchemaTable = Extract<SchemaValue, PgTable>;
+const tables = Object.values(schema)
+  .filter((value): value is SchemaTable => is(value, PgTable))
+  .map((table) => getTableConfig(table));
+
+describe("database schema policy", () => {
+  it.each(tables)("$name has a primary key", (table) => {
     expect.hasAssertions();
 
-    const result = insertUserSchema.safeParse({
-      email: "person@example.com",
-    });
+    const inlinePrimaryKeyCount = table.columns.filter(
+      (column) => column.primary,
+    ).length;
 
-    expect(result.success).toBeTruthy();
+    expect(inlinePrimaryKeyCount + table.primaryKeys.length).toBeGreaterThan(0);
   });
 
-  it("rejects invalid persisted user data", () => {
+  it.each(tables)("$name uses snake_case identifiers", (table) => {
     expect.hasAssertions();
 
-    const result = selectUserSchema.safeParse({
-      createdAt: "not-a-date",
-      email: "not-an-email",
-      id: "not-a-uuid",
-      updatedAt: "not-a-date",
-    });
-
-    expect(result.success).toBeFalsy();
+    expect(snakeCaseName.test(table.name)).toBeTruthy();
+    expect(
+      table.columns.every((column) => snakeCaseName.test(column.name)),
+    ).toBeTruthy();
   });
 
-  it("declares the identity and nullability invariants in the schema", () => {
+  it.each(tables)("$name gives foreign keys explicit actions", (table) => {
     expect.hasAssertions();
 
-    expect(users.id.primary).toBeTruthy();
-    expect(users.id.notNull).toBeTruthy();
-    expect(users.email.notNull).toBeTruthy();
-    expect(users.createdAt.notNull).toBeTruthy();
-    expect(users.updatedAt.notNull).toBeTruthy();
+    expect(
+      table.foreignKeys.every((foreignKey) => Boolean(foreignKey.onDelete)),
+    ).toBeTruthy();
+    expect(
+      table.foreignKeys.every((foreignKey) => Boolean(foreignKey.onUpdate)),
+    ).toBeTruthy();
   });
 });

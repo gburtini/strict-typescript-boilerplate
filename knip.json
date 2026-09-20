@@ -11,6 +11,7 @@
         "scripts/check-generated.ts",
         "scripts/check-test-evidence.ts",
         "scripts/check-coverage-ratchet.ts",
+        "scripts/check-db-migrations.ts",
         "scripts/generate-enforcement-manifest.ts"
       ],
       "ignoreDependencies": ["@effect/tsgo"],

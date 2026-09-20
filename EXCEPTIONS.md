@@ -84,8 +84,9 @@ permission to weaken enforcement:
   `eslint/one-var`, `eslint/prefer-destructuring`, `import/no-nodejs-modules`,
   `typescript/no-unnecessary-condition`, and `unicorn/import-style` — typed
   Node governance scripts and configuration files only.
-- `eslint/no-restricted-imports`, `eslint/one-var`, `eslint/sort-vars`, and
-  `import/group-exports` — database schema and client implementation only:
+- `eslint/no-restricted-imports`, `eslint/one-var`, `eslint/sort-vars`,
+  `import/group-exports`, and `import/no-namespace` — database schema and
+  client implementation only:
   Drizzle schema declarations have dependency order, and the adapter is the
   explicitly permitted owner of the restricted database imports.
 - `eslint/no-restricted-properties` — generated migrations and explicitly

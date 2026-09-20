@@ -2,7 +2,7 @@
   "$schema": "./schemas/generated-files.schema.json",
   "files": [
     {
-      "checkCommand": ["pnpm", "db:check"],
+      "checkCommand": ["pnpm", "db:migrations:check"],
       "output": "packages/db/drizzle",
       "source": "packages/db/src/schema.ts"
     }

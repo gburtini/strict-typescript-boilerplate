@@ -64,7 +64,11 @@ atomic, so those requirements remain mandatory review and test invariants.
   an explicit rollout and rollback plan.
 - Production index creation must use the concurrently-safe approach supported
   by the database and migration tooling.
-- `pnpm db:check` and `pnpm generated:check` are required gates.
+- `pnpm db:migrations:check` runs both Drizzle metadata validation and a
+  disposable regeneration comparison. It fails when the committed migration
+  tree is stale, incomplete, or inconsistent with the schema.
+- `pnpm generated:check` remains required for the repository-wide generated-file
+  contract.
 
 ## Lifecycle
 
