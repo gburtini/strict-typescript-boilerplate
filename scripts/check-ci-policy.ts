@@ -33,6 +33,10 @@ const permissionSetSchema = z.record(z.string(), z.enum(["read", "write", "none"
       workflow: { actions: "read", contents: "read", "security-events": "write" },
       jobs: {},
     },
+    "osv-scheduled.yml": {
+      workflow: { contents: "read" },
+      jobs: {},
+    },
     "query-plans.yml": {
       workflow: { contents: "read", "pull-requests": "write" },
       jobs: {},

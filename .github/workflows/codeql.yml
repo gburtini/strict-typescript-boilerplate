@@ -12,6 +12,11 @@ permissions:
 jobs:
   analyze:
     name: Analyze JavaScript and TypeScript
+    # CodeQL result uploads are unavailable while this repository is private
+    # without GitHub Code Security enabled. Keep the workflow ready for when
+    # the repository becomes eligible rather than turning upload failures into
+    # a passing check.
+    if: github.repository_visibility == 'public'
     runs-on: ubuntu-latest
     permissions:
       contents: read

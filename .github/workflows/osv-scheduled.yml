@@ -1,0 +1,51 @@
+name: OSV-Scanner Scheduled
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: "12 12 * * 1"
+
+permissions:
+  contents: read
+
+jobs:
+  scan:
+    name: Scan dependencies
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.0.0
+
+      - name: Download OSV-Scanner
+        shell: bash
+        run: |
+          set -euo pipefail
+          scanner_path="$RUNNER_TEMP/osv-scanner"
+          curl --fail --silent --show-error --location \
+            --output "$scanner_path" \
+            https://github.com/google/osv-scanner/releases/download/v2.6.0/osv-scanner_linux_amd64
+          echo "ca69b3d3cd08f889a49dc0a383122f71cc528b83803671df5fd874d97485b108  $scanner_path" | sha256sum --check
+          chmod 0755 "$scanner_path"
+
+      - name: Scan with OSV-Scanner
+        shell: bash
+        run: |
+          set +e
+          "$RUNNER_TEMP/osv-scanner" scan \
+            --format=json \
+            --output-file="$RUNNER_TEMP/osv-report.json" \
+            --lockfile=pnpm-lock.yaml
+          scan_exit=$?
+          if [ "$scan_exit" -ne 0 ]; then
+            echo "OSV-Scanner found vulnerabilities or could not complete (exit $scan_exit)."
+          fi
+          exit "$scan_exit"
+
+      - name: Upload OSV report
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: osv-scheduled-report
+          path: ${{ runner.temp }}/osv-report.json
+          if-no-files-found: warn
+          retention-days: 14
