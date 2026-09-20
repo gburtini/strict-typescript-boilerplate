@@ -1,7 +1,8 @@
-import { trace } from "@opentelemetry/api";
+import { SpanStatusCode, trace } from "@opentelemetry/api";
 import { Effect } from "effect";
 
-const recordFailure = (cause: unknown): void => {
+const instrumentationName = "@template/core",
+  recordFailure = (cause: unknown): void => {
     const span = trace.getActiveSpan();
     if (!span) {
       return;
@@ -11,11 +12,11 @@ const recordFailure = (cause: unknown): void => {
       error = cause;
     }
     span.recordException(error);
-    span.setStatus({ code: 2, message: "operation failed" });
+    span.setStatus({ code: SpanStatusCode.ERROR, message: "operation failed" });
   },
   withSpan = <Value, Failure, Requirements>(
     name: string,
     effect: Effect.Effect<Value, Failure, Requirements>,
   ): Effect.Effect<Value, Failure, Requirements> => Effect.withSpan(effect, name);
 
-export { recordFailure, withSpan };
+export { instrumentationName, recordFailure, withSpan };

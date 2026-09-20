@@ -8,9 +8,11 @@ specific collector.
 ## Effect integration
 
 `@template/core` exposes `TelemetryLive` for Node runtimes and `withSpan` for
-Effect computations. The runtime entrypoint owns exporter registration and
-resource configuration. A browser application should provide its own browser
-adapter rather than importing the Node layer.
+Effect computations. `TelemetryLive` is configured by the runtime entrypoint,
+which must provide the deployed service name from its own package metadata or
+typed runtime configuration. The runtime entrypoint owns exporter registration
+and resource configuration. A browser application should provide its own
+browser adapter rather than importing the Node layer.
 
 Every failed operation must preserve its original cause. Wrapped errors use
 the standard `cause` property, and telemetry records the underlying `Error`
