@@ -56,6 +56,9 @@ importers:
       oxlint-tsgolint:
         specifier: 7.0.2001
         version: 7.0.2001
+      postgres:
+        specifier: 3.4.9
+        version: 3.4.9
       sherif:
         specifier: 1.13.0
         version: 1.13.0
