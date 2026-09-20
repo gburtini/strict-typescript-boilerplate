@@ -2,7 +2,9 @@ name: CodeQL
 
 on:
   push:
+    branches: [main]
   pull_request:
+    branches: [main]
   schedule:
     - cron: "23 4 * * 1"
 
@@ -42,6 +44,28 @@ jobs:
             --output="${results}/javascript.sarif" \
             --threads=2 \
             javascript-security-and-quality.qls
+      - name: Summarize CodeQL results
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          sarif="${RUNNER_TEMP}/codeql-results/javascript.sarif"
+          if [[ ! -s "${sarif}" ]]; then
+            echo "## CodeQL results" >> "${GITHUB_STEP_SUMMARY}"
+            echo "CodeQL did not produce a SARIF report." >> "${GITHUB_STEP_SUMMARY}"
+            exit 0
+          fi
+          findings="$(jq '[.runs[]?.results[]?] | length' "${sarif}")"
+          {
+            echo "## CodeQL results"
+            echo "Findings: ${findings}"
+            if [[ "${findings}" -gt 0 ]]; then
+              echo
+              echo '| Rule | Message | Location |'
+              echo '| --- | --- | --- |'
+              jq -r '.runs[]?.results[]? | [(.ruleId // "unknown"), (.message.text // "" | gsub("\\n"; " ")), ((.locations[0].physicalLocation.artifactLocation.uri // "unknown") + ":" + ((.locations[0].physicalLocation.region.startLine // 0) | tostring))] | "| " + join(" | ") + " |"' "${sarif}"
+            fi
+          } >> "${GITHUB_STEP_SUMMARY}"
       - name: Upload CodeQL results
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
