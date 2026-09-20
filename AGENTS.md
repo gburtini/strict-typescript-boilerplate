@@ -58,6 +58,17 @@ maintainability limits such as maximum lines, statements, parameters, and
 function depth, but correctness, accessibility, React, React Doctor, and
 focused-test rules remain enforced.
 
+## Telemetry
+
+- Configure `TelemetryLive` from the runtime composition root with the deployed
+  service name sourced from package metadata or typed runtime configuration.
+- Keep `@template/core` as the instrumentation scope; do not hard-code an
+  application or repository name in reusable telemetry helpers.
+- Run oRPC procedures inside the request span and preserve the active context
+  through application and Postgres/Drizzle work.
+- Do not export database query parameters; the telemetry exporter must redact
+  them while retaining query operation spans and failure status.
+
 ## Database
 
 - Use Drizzle through the `@template/db` adapter and its repository ports.
