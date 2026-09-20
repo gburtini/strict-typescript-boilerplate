@@ -259,6 +259,21 @@
       }
     },
     {
+      "files": ["packages/db/src/query-capture.ts"],
+      "rules": {
+        "@rikalabs/no-trivial-runtime-guard-helpers": "off",
+        "import/no-nodejs-modules": "off",
+        "unicorn/no-null": "off"
+      }
+    },
+    {
+      "files": ["scripts/report-query-corpus.ts"],
+      "rules": {
+        "@rikalabs/no-relative-cross-package-imports": "off",
+        "unicorn/no-null": "off"
+      }
+    },
+    {
       "files": ["packages/core/src/telemetry-node.ts"],
       "rules": {
         "@rikalabs/effect-no-layer-in-leaf-modules": "off"

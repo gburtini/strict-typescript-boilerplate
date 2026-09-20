@@ -6,6 +6,7 @@
   "exports": {
     ".": "./src/index.ts",
     "./client": "./src/client.ts",
+    "./devtools/query-plans": "./src/devtools/query-plans.ts",
     "./env": "./src/env.ts",
     "./schema": "./src/schema.ts"
   },

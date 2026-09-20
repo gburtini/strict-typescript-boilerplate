@@ -76,3 +76,6 @@ atomic, so those requirements remain mandatory review and test invariants.
 closeable client. Runtime startup owns the client lifetime. Tests should inject
 an in-memory repository or a disposable database adapter; they must not mock
 Drizzle query chains.
+
+Query-plan capture is documented in `QUERY-PLANS.md`. Prefer automatic capture
+from integration tests over hand-authored query registries.

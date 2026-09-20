@@ -1,8 +1,10 @@
 import { drizzle } from "drizzle-orm/postgres-js";
+import type { Logger } from "drizzle-orm";
 import postgres from "postgres";
 import { users } from "./schema";
 
 interface DatabaseOptions {
+  readonly logger?: Logger;
   readonly maxConnections?: number;
   readonly url: string;
 }
@@ -19,7 +21,11 @@ export function createDatabase(options: DatabaseOptions): DatabaseClient {
     max: options.maxConnections ?? 10,
     prepare: false,
   });
-  const db = drizzle(sql, { schema: databaseSchema });
+  const config = { schema: databaseSchema };
+  if (options.logger) {
+    Object.assign(config, { logger: options.logger });
+  }
+  const db = drizzle(sql, config);
 
   return {
     close: async () => {

@@ -115,3 +115,12 @@ diagnostics layer. This is a reviewed lifecycle exception owned by the
 toolchain maintainers; `pnpm toolchain:check` verifies the active TS7 build and
 that applying the patch twice is idempotent. It must not be expanded to run
 application generators or access credentials.
+
+The query-plan devtool keeps `unicorn/no-null` enabled everywhere else because
+SQL `NULL` is a meaningful captured parameter value; it is disabled only in
+`packages/db/src/query-capture.ts`, owned by database tooling maintainers.
+
+The query-corpus report imports the database devtool source directly because
+the root governance scripts execute from the workspace before package builds;
+`@rikalabs/no-relative-cross-package-imports` is disabled only for
+`scripts/report-query-corpus.ts`, owned by database tooling maintainers.

@@ -51,6 +51,7 @@ lint, security workflows, and test evidence.
 | @rikalabs/no-placeholder-tests                                     | Oxlint dynamic config | error         | apps, packages, scripts                                                          | oxlint.config.ts |
 | @rikalabs/no-redundant-const-assertion                             | Oxlint dynamic config | error         | apps, packages, scripts                                                          | oxlint.config.ts |
 | @rikalabs/no-relative-cross-package-imports                        | Oxlint dynamic config | error         | apps, packages, scripts                                                          | oxlint.config.ts |
+| @rikalabs/no-relative-cross-package-imports                        | Oxlint override       | off           | scripts/report-query-corpus.ts                                                   | .oxlintrc.json   |
 | @rikalabs/no-runtime-compat-fallbacks                              | Oxlint dynamic config | error         | apps, packages, scripts                                                          | oxlint.config.ts |
 | @rikalabs/no-silent-catch-fallback                                 | Oxlint dynamic config | error         | apps, packages, scripts                                                          | oxlint.config.ts |
 | @rikalabs/no-sql-string-concat                                     | Oxlint dynamic config | error         | apps, packages, scripts                                                          | oxlint.config.ts |
@@ -58,6 +59,7 @@ lint, security workflows, and test evidence.
 | @rikalabs/no-todo-without-issue                                    | Oxlint dynamic config | error         | apps, packages, scripts                                                          | oxlint.config.ts |
 | @rikalabs/no-trivial-property-helpers                              | Oxlint dynamic config | error         | apps, packages, scripts                                                          | oxlint.config.ts |
 | @rikalabs/no-trivial-runtime-guard-helpers                         | Oxlint dynamic config | error         | apps, packages, scripts                                                          | oxlint.config.ts |
+| @rikalabs/no-trivial-runtime-guard-helpers                         | Oxlint override       | off           | packages/db/src/query-capture.ts                                                 | .oxlintrc.json   |
 | @rikalabs/no-trivial-runtime-guard-helpers                         | Oxlint override       | off           | scripts/\*\*, \*\*/\*.config.\*                                                  | .oxlintrc.json   |
 | @rikalabs/no-tutorial-comments                                     | Oxlint dynamic config | error         | apps, packages, scripts                                                          | oxlint.config.ts |
 | @rikalabs/no-unlisted-external-imports                             | Oxlint                | off           | apps, packages, scripts                                                          | .oxlintrc.json   |
@@ -94,6 +96,7 @@ lint, security workflows, and test evidence.
 | import/no-default-export                                           | Oxlint                | error         | apps, packages, scripts                                                          | .oxlintrc.json   |
 | import/no-named-export                                             | Oxlint                | off           | apps, packages, scripts                                                          | .oxlintrc.json   |
 | import/no-namespace                                                | Oxlint override       | off           | packages/db/\*\*                                                                 | .oxlintrc.json   |
+| import/no-nodejs-modules                                           | Oxlint override       | off           | packages/db/src/query-capture.ts                                                 | .oxlintrc.json   |
 | import/no-nodejs-modules                                           | Oxlint override       | off           | scripts/\*\*, \*\*/\*.config.\*                                                  | .oxlintrc.json   |
 | import/no-relative-parent-imports                                  | Oxlint                | off           | apps, packages, scripts                                                          | .oxlintrc.json   |
 | import/no-unassigned-import                                        | Oxlint                | off           | apps, packages, scripts                                                          | .oxlintrc.json   |
@@ -215,6 +218,8 @@ lint, security workflows, and test evidence.
 | unicorn/filename-case                                              | Oxlint                | error         | apps, packages, scripts                                                          | .oxlintrc.json   |
 | unicorn/import-style                                               | Oxlint override       | off           | scripts/\*\*, \*\*/\*.config.\*                                                  | .oxlintrc.json   |
 | unicorn/max-nested-calls                                           | Oxlint override       | off           | packages/core/src/api/contract.ts                                                | .oxlintrc.json   |
+| unicorn/no-null                                                    | Oxlint override       | off           | packages/db/src/query-capture.ts                                                 | .oxlintrc.json   |
+| unicorn/no-null                                                    | Oxlint override       | off           | scripts/report-query-corpus.ts                                                   | .oxlintrc.json   |
 | vitest/consistent-test-filename                                    | Oxlint dynamic config | error         | apps, packages, scripts                                                          | oxlint.config.ts |
 | vitest/no-conditional-tests                                        | Oxlint dynamic config | error         | apps, packages, scripts                                                          | oxlint.config.ts |
 | vitest/no-focused-tests                                            | Oxlint                | error         | apps, packages, scripts                                                          | .oxlintrc.json   |

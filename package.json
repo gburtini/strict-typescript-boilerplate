@@ -16,6 +16,7 @@
     "db:migrate": "drizzle-kit migrate --config packages/db/drizzle.config.ts",
     "db:migrations:check": "node --experimental-strip-types scripts/check-db-migrations.ts",
     "db:studio": "drizzle-kit studio --config packages/db/drizzle.config.ts",
+    "db:query-corpus:report": "node --experimental-strip-types scripts/report-query-corpus.ts",
     "deadcode": "NODE_OPTIONS=--disable-warning=DEP0205 knip --strict",
     "deps": "dependency-cruiser --validate .dependency-cruiser.cjs apps packages",
     "dev": "pnpm --filter @template/web dev",
