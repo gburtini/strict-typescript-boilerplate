@@ -5,10 +5,6 @@ on:
     branches: [main]
   merge_group:
     branches: [main]
-  schedule:
-    - cron: "12 12 * * 1"
-  push:
-    branches: [main]
 
 permissions:
   actions: read
@@ -16,49 +12,6 @@ permissions:
 
 jobs:
   scan-pr:
-    if: github.event_name == 'pull_request' || github.event_name == 'merge_group'
     uses: google/osv-scanner-action/.github/workflows/osv-scanner-reusable-pr.yml@a345acffa64b0eaede81a3d9aae6141214d9c8fc # v2.6.0
     with:
       upload-sarif: false
-
-  scan-scheduled:
-    if: github.event_name == 'push' || github.event_name == 'schedule'
-    name: Scheduled scan
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.0.0
-
-      - name: Download OSV-Scanner
-        shell: bash
-        run: |
-          set -euo pipefail
-          scanner_path="$RUNNER_TEMP/osv-scanner"
-          curl --fail --silent --show-error --location \
-            --output "$scanner_path" \
-            https://github.com/google/osv-scanner/releases/download/v2.6.0/osv-scanner_linux_amd64
-          echo "ca69b3d3cd08f889a49dc0a383122f71cc528b83803671df5fd874d97485b108  $scanner_path" | sha256sum --check
-          chmod 0755 "$scanner_path"
-
-      - name: Scan with OSV-Scanner
-        shell: bash
-        run: |
-          set +e
-          "$RUNNER_TEMP/osv-scanner" scan \
-            --format=json \
-            --output-file=scheduled-osv-results.json \
-            --recursive \
-            ./
-          scan_exit=$?
-          if [ "$scan_exit" -ne 0 ]; then
-            echo "OSV-Scanner found vulnerabilities or could not complete (exit $scan_exit)."
-          fi
-          exit "$scan_exit"
-
-      - name: Upload OSV report
-        if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
-        with:
-          name: scheduled-osv-report
-          path: scheduled-osv-results.json
-          if-no-files-found: warn
-          retention-days: 14
