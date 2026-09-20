@@ -23,6 +23,25 @@ jobs:
 
   scan-scheduled:
     if: github.event_name == 'push' || github.event_name == 'schedule'
-    uses: google/osv-scanner-action/.github/workflows/osv-scanner-reusable.yml@a345acffa64b0eaede81a3d9aae6141214d9c8fc # v2.6.0
-    with:
-      upload-sarif: false
+    name: Scheduled scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.0.0
+
+      - name: Scan with OSV-Scanner
+        uses: google/osv-scanner-action/osv-scanner-action@7f58dd6750d78fc29a900ba64b1a0f946f62fba4 # v2.6.0
+        with:
+          scan-args: |-
+            --format=json
+            --output=scheduled-osv-results.json
+            --recursive
+            ./
+
+      - name: Upload OSV report
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: scheduled-osv-report
+          path: scheduled-osv-results.json
+          if-no-files-found: warn
+          retention-days: 14
