@@ -42,9 +42,10 @@ rules:
     message: Catch blocks must report, translate, or rethrow the failure.
     severity: ERROR
     pattern: |
-      try:
+      try {
         ...
-      catch ($ERROR) { }
+      } catch ($ERROR) {
+      }
 
   - id: throw-error-values
     languages:
@@ -65,9 +66,9 @@ rules:
     severity: ERROR
     patterns:
       - pattern-inside: |
-          try:
+          try {
             ...
-          catch ($ERROR) {
+          } catch ($ERROR) {
             ...
           }
       - pattern: throw new $WRAPPER(...)

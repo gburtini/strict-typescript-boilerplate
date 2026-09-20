@@ -17,3 +17,4 @@ jobs:
       - uses: semgrep/semgrep-action@713efdd345f3035192eaa63f56867b88e63e4e5d # v1.0.0
         with:
           config: .semgrep.yml
+          args: --no-suppress-errors
