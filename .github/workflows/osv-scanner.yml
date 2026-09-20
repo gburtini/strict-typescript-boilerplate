@@ -28,14 +28,31 @@ jobs:
     steps:
       - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.0.0
 
+      - name: Download OSV-Scanner
+        shell: bash
+        run: |
+          set -euo pipefail
+          scanner_path="$RUNNER_TEMP/osv-scanner"
+          curl --fail --silent --show-error --location \
+            --output "$scanner_path" \
+            https://github.com/google/osv-scanner/releases/download/v2.6.0/osv-scanner_linux_amd64
+          echo "ca69b3d3cd08f889a49dc0a383122f71cc528b83803671df5fd874d97485b108  $scanner_path" | sha256sum --check
+          chmod 0755 "$scanner_path"
+
       - name: Scan with OSV-Scanner
-        uses: google/osv-scanner-action/osv-scanner-action@7f58dd6750d78fc29a900ba64b1a0f946f62fba4 # v2.6.0
-        with:
-          scan-args: |-
-            --format=json
-            --output=scheduled-osv-results.json
-            --recursive
+        shell: bash
+        run: |
+          set +e
+          "$RUNNER_TEMP/osv-scanner" scan \
+            --format=json \
+            --output-file=scheduled-osv-results.json \
+            --recursive \
             ./
+          scan_exit=$?
+          if [ "$scan_exit" -ne 0 ]; then
+            echo "OSV-Scanner found vulnerabilities or could not complete (exit $scan_exit)."
+          fi
+          exit "$scan_exit"
 
       - name: Upload OSV report
         if: always()
