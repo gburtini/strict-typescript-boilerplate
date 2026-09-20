@@ -22,7 +22,7 @@ const allowedPermissions: Record<
     jobs: {},
   },
   "osv-scanner.yml": {
-    workflow: { actions: "read", contents: "read", "security-events": "write" },
+    workflow: { actions: "read", contents: "read" },
     jobs: {},
   },
   "semgrep.yml": {

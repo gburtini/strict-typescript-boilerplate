@@ -1,16 +1,48 @@
-name: Dependency Review
+name: Dependency Audit
 
 on:
   pull_request:
+    branches: [main]
+  merge_group:
+    branches: [main]
+  schedule:
+    - cron: "12 12 * * 1"
 
 permissions:
   contents: read
 
 jobs:
-  dependency-review:
+  audit:
+    name: Audit dependencies
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.0.0
-      - uses: actions/dependency-review-action@a1d282b36b6f3519aa1f3fc636f609c47dddb294 # v5.0.0
+
+      - uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4.0.0
         with:
-          fail-on-severity: high
+          version: 10.30.3
+
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
+        with:
+          node-version-file: .node-version
+          cache: pnpm
+
+      - name: Audit dependencies
+        shell: bash
+        run: |
+          set +e
+          pnpm audit --json --audit-level=high > "$RUNNER_TEMP/pnpm-audit.json"
+          audit_exit=$?
+          if [ "$audit_exit" -ne 0 ]; then
+            echo "pnpm audit found high or critical vulnerabilities, or could not complete (exit $audit_exit)."
+          fi
+          exit "$audit_exit"
+
+      - name: Upload audit report
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: pnpm-audit-report
+          path: ${{ runner.temp }}/pnpm-audit.json
+          if-no-files-found: warn
+          retention-days: 14
