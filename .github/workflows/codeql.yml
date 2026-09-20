@@ -12,21 +12,41 @@ permissions:
 jobs:
   analyze:
     name: Analyze JavaScript and TypeScript
-    # CodeQL result uploads are unavailable while this repository is private
-    # without GitHub Code Security enabled. Keep the workflow ready for when
-    # the repository becomes eligible rather than turning upload failures into
-    # a passing check.
-    if: github.repository_visibility == 'public'
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      security-events: write
     steps:
       - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.0.0
-      - uses: github/codeql-action/init@1c5b675653bb5c22dbe9b12b556ec555138e09fd # v4.0.0
+      - id: init
+        uses: github/codeql-action/init@1c5b675653bb5c22dbe9b12b556ec555138e09fd # v4.0.0
         with:
           languages: javascript-typescript
           build-mode: none
-      - uses: github/codeql-action/analyze@1c5b675653bb5c22dbe9b12b556ec555138e09fd # v4.0.0
+      - name: Run CodeQL queries
+        shell: bash
+        run: |
+          set -euo pipefail
+          codeql="${{ steps.init.outputs.codeql-path }}"
+          database="${RUNNER_TEMP}/codeql_databases/javascript"
+          results="${RUNNER_TEMP}/codeql-results"
+          mkdir -p "${results}"
+          "${codeql}" database trace-command \
+            --use-build-mode \
+            --working-dir="${GITHUB_WORKSPACE}" \
+            "${database}" \
+            "${codeql%/codeql}/javascript/tools/autobuild.sh"
+          "${codeql}" database finalize "${database}"
+          "${codeql}" database analyze "${database}" \
+            --download \
+            --format=sarif-latest \
+            --output="${results}/javascript.sarif" \
+            --threads=2 \
+            javascript-security-and-quality.qls
+      - name: Upload CodeQL results
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
-          category: /language:javascript-typescript
+          name: codeql-results
+          path: ${{ runner.temp }}/codeql-results
+          if-no-files-found: warn
+          retention-days: 14
