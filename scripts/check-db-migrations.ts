@@ -7,22 +7,24 @@ import {
   writeFileSync,
   rmSync,
 } from "node:fs";
-import { join, relative } from "node:path";
+import nodePath from "node:path";
 import { spawnSync } from "node:child_process";
 
-const migrationDirectory = "packages/db/drizzle";
-const temporaryDirectory = mkdtempSync(
-  join(process.cwd(), ".tmp-typescript-boilerplate-db-"),
-);
-const temporaryMigrationDirectory = join(temporaryDirectory, "drizzle");
-const temporaryConfig = join(temporaryDirectory, "drizzle.config.ts");
-const temporaryDirectoryName = relative(process.cwd(), temporaryDirectory);
+const migrationDirectory = "packages/db/drizzle",
+  temporaryDirectory = mkdtempSync(
+    nodePath.join(process.cwd(), ".tmp-typescript-boilerplate-db-"),
+  ),
+  temporaryDirectoryName = nodePath.relative(process.cwd(), temporaryDirectory),
+  temporaryMigrationDirectory = nodePath.join(temporaryDirectory, "drizzle"),
+  temporaryConfig = nodePath.join(temporaryDirectory, "drizzle.config.ts");
 
 function collectFiles(directory: string, root = directory): string[] {
   return readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
-    const path = join(directory, entry.name);
-    if (entry.isDirectory()) return collectFiles(path, root);
-    return [relative(root, path)];
+    const path = nodePath.join(directory, entry.name);
+    if (entry.isDirectory()) {
+      return collectFiles(path, root);
+    }
+    return [nodePath.relative(root, path)];
   });
 }
 
@@ -30,7 +32,7 @@ function readTree(directory: string): Map<string, string> {
   return new Map(
     collectFiles(directory).map((path) => [
       path,
-      readFileSync(join(directory, path), "utf8"),
+      readFileSync(nodePath.join(directory, path), "utf8"),
     ]),
   );
 }
@@ -54,13 +56,13 @@ export default defineConfig({
 });
 `,
   );
-  const before = readTree(temporaryMigrationDirectory);
-  const result = spawnSync(
-    "pnpm",
-    ["exec", "drizzle-kit", "check", "--config", "packages/db/drizzle.config.ts"],
-    { encoding: "utf8", stdio: "inherit" },
-  );
-  if (result.error !== undefined || result.status !== 0) {
+  const before = readTree(temporaryMigrationDirectory),
+    result = spawnSync(
+      "pnpm",
+      ["exec", "drizzle-kit", "check", "--config", "packages/db/drizzle.config.ts"],
+      { encoding: "utf8", stdio: "inherit" },
+    );
+  if (result.error || result.status !== 0) {
     throw new Error("Drizzle migration metadata is inconsistent");
   }
 
@@ -69,15 +71,15 @@ export default defineConfig({
     ["exec", "drizzle-kit", "generate", "--config", temporaryConfig],
     { encoding: "utf8", stdio: "inherit" },
   );
-  if (generateResult.error !== undefined || generateResult.status !== 0) {
+  if (generateResult.error || generateResult.status !== 0) {
     throw new Error("Drizzle migration generation failed");
   }
 
-  const after = readTree(temporaryMigrationDirectory);
-  const changedFiles = new Set([...before.keys(), ...after.keys()]);
-  const differences = [...changedFiles].filter(
-    (path) => before.get(path) !== after.get(path),
-  );
+  const after = readTree(temporaryMigrationDirectory),
+    changedFiles = new Set([...before.keys(), ...after.keys()]),
+    differences = [...changedFiles].filter(
+      (path) => before.get(path) !== after.get(path),
+    );
   if (differences.length > 0) {
     throw new Error(
       `Committed Drizzle migrations are stale; run pnpm db:generate: ${differences.join(", ")}`,

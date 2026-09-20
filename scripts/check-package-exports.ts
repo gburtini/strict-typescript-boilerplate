@@ -1,64 +1,52 @@
 import { existsSync, readFileSync, readdirSync } from "node:fs";
-import { dirname, join, resolve } from "node:path";
+import nodePath from "node:path";
+import { z } from "zod";
 
 interface PackageManifest {
-  exports?: Record<string, string>;
+  exports?: Record<string, string> | undefined;
 }
 
-const packageRoots = ["packages", "apps"];
-const failures: string[] = [];
-
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === "object" && value !== null && !Array.isArray(value);
-}
+const packageRoots = ["apps", "packages"],
+  failures: string[] = [];
 
 function readJson(path: string): PackageManifest {
-  const value: unknown = JSON.parse(readFileSync(path, "utf8"));
-  if (!isRecord(value)) {
-    throw new TypeError(`${path}: package manifest must be an object`);
+  const manifestSchema = z.object({
+    exports: z.record(z.string(), z.string()).optional(),
+  });
+  try {
+    return manifestSchema.parse(JSON.parse(readFileSync(path, "utf8")));
+  } catch (error) {
+    throw new TypeError(`${path}: invalid package manifest`, { cause: error });
   }
-  const { exports } = value;
-  if (exports === undefined) {
-    return {};
+}
+
+function missingExports(packagePath: string): string[] {
+  const packageJson = readJson(packagePath);
+  if (!packageJson.exports) {
+    return [];
   }
-  if (!isRecord(exports)) {
-    throw new TypeError(`${path}: package exports must be an object`);
-  }
-  const exportTargets: Record<string, string> = {};
-  for (const [specifier, target] of Object.entries(exports)) {
-    if (typeof target !== "string") {
-      throw new TypeError(
-        `${path}: package export '${specifier}' target must be a string`,
-      );
+  return Object.entries(packageJson.exports).flatMap(([specifier, target]) => {
+    const targetPath = nodePath.resolve(nodePath.dirname(packagePath), target);
+    if (existsSync(targetPath)) {
+      return [];
     }
-    exportTargets[specifier] = target;
-  }
-  return { exports: exportTargets };
+    return [`${packagePath}: export '${specifier}' points to missing '${target}'`];
+  });
 }
 
 for (const root of packageRoots) {
   for (const entry of readdirSync(root, { withFileTypes: true })) {
-    if (!entry.isDirectory()) continue;
-    const packageDirectory = resolve(root, entry.name);
-    const packagePath = join(packageDirectory, "package.json");
-    if (!existsSync(packagePath)) continue;
-
-    const packageJson = readJson(packagePath);
-    const exports = packageJson.exports;
-    if (exports === undefined) continue;
-
-    for (const [specifier, target] of Object.entries(exports)) {
-      const targetPath = resolve(dirname(packagePath), target);
-      if (!existsSync(targetPath)) {
-        failures.push(
-          `${packagePath}: export '${specifier}' points to missing '${target}'`,
-        );
+    if (entry.isDirectory()) {
+      const packageDirectory = nodePath.resolve(root, entry.name),
+        packagePath = nodePath.join(packageDirectory, "package.json");
+      if (existsSync(packagePath)) {
+        failures.push(...missingExports(packagePath));
       }
     }
   }
 }
 
 if (failures.length > 0) {
-  console.error(failures.join("\n"));
+  process.stderr.write(`${failures.join("\n")}\n`);
   process.exitCode = 1;
 }

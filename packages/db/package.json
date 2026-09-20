@@ -13,6 +13,8 @@
   "scripts": {
     "query-plans": "node --experimental-strip-types scripts/run-query-plans.ts",
     "query-plans:prepare": "node --experimental-strip-types scripts/prepare-query-plans.ts",
+    "query-corpus:merge": "node --experimental-strip-types scripts/merge-query-corpus.ts",
+    "query-plan-stats:export": "node --experimental-strip-types scripts/export-query-plan-stats.ts",
     "test": "vitest run"
   },
   "dependencies": {

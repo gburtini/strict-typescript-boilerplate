@@ -43,8 +43,13 @@ conflict. Do not silently weaken the rule.
 The following deliberate `off` rules are scoped overrides, not general
 permission to weaken enforcement:
 
-- `eslint/func-style`, `eslint/no-magic-numbers`, `eslint/sort-imports`, and
-  `eslint/sort-keys` — canonical style is owned by the broader Oxlint presets.
+- `eslint/func-style`, `eslint/no-magic-numbers`, `eslint/one-var`,
+  `eslint/sort-imports`, `eslint/sort-keys`, and `eslint/sort-vars` — these
+  low-signal declaration-order rules are not part of the repository's
+  correctness or canonical-form contract.
+- `unicorn/max-nested-calls` — schema and configuration construction often
+  nests declarative builders; correctness is enforced by the resulting Zod
+  schema and the typed value it produces, not by flattening the declaration.
 - `import/no-relative-parent-imports`, `import/no-named-export`,
   `import/consistent-type-specifier-style`, `import/no-unassigned-import`, and
   `import/prefer-default-export` — repository conventions and framework entry
@@ -78,14 +83,8 @@ permission to weaken enforcement:
 - `eslint/require-await`, `typescript/require-await`, `vitest/no-hooks`, and
   `vitest/require-top-level-describe` — test setup only.
 - `vitest/prefer-importing-vitest-globals` — end-to-end tests only.
-- `@rikalabs/no-hardcoded-secrets`, `@rikalabs/no-low-signal-variable-names`,
-  `@rikalabs/no-trivial-runtime-guard-helpers`, `eslint/curly`,
-  `eslint/no-continue`, `eslint/no-console`, `eslint/no-undefined`,
-  `eslint/one-var`, `eslint/prefer-destructuring`, `import/no-nodejs-modules`,
-  `typescript/no-unnecessary-condition`, and `unicorn/import-style` — typed
-  Node governance scripts and configuration files only.
-- `eslint/no-restricted-imports`, `eslint/one-var`, `eslint/sort-vars`,
-  `import/group-exports`, and `import/no-namespace` — database schema and
+- `eslint/no-restricted-imports`, `import/group-exports`, and
+  `import/no-namespace` — database schema and
   client implementation only:
   Drizzle schema declarations have dependency order, and the adapter is the
   explicitly permitted owner of the restricted database imports.
@@ -97,17 +96,18 @@ permission to weaken enforcement:
 The current ignored paths are `dist`, `coverage`, and `node_modules`; they are
 generated or dependency output and must never be used to hide source files.
 
-The oRPC/Zod contract builder at `packages/core/src/api/contract.ts` disables
-`eslint/one-var` and `unicorn/max-nested-calls` only because staged schema
-construction is clearer and safer than flattening a contract into unrelated
-helpers. Its input/output schemas and route remain runtime-validated.
-
 The oRPC transport adapter at `packages/core/src/api/router.ts` disables
 `@rikalabs/effect-no-async-await` and
-`@rikalabs/effect-no-terminal-runners` because this is the explicit Effect
-runtime boundary where a validated request becomes a transport Promise. The
-Node telemetry layer disables `@rikalabs/effect-no-layer-in-leaf-modules`
-because it is the runtime layer assembly point.
+`@rikalabs/effect-no-terminal-runners` because it is visibly an adapter from
+oRPC's Promise-based handler API into an Effect program. The terminal runner
+belongs exactly at this transport boundary: it converts the validated Effect
+result back into the Promise required by oRPC. It must not move inward into
+application or domain modules.
+
+The Node telemetry layer at `packages/core/src/telemetry-node.ts` disables
+`@rikalabs/effect-no-layer-in-leaf-modules` because the file is literally the
+Node runtime telemetry-layer assembly point. The exception is limited to that
+adapter and does not permit Effect layers in application or domain leaves.
 
 The root `prepare` script runs `effect-tsgo patch --oxlint --typescript` for
 `@effect/tsgo` so the TypeScript 7 and Oxlint integrations use the Effect
@@ -120,19 +120,7 @@ The query-plan devtool keeps `unicorn/no-null` enabled everywhere else because
 SQL `NULL` is a meaningful captured parameter value; it is disabled only in
 `packages/db/src/query-capture.ts`, owned by database tooling maintainers.
 
-The query-corpus report imports the database devtool source directly because
-the root governance scripts execute from the workspace before package builds;
-`@rikalabs/no-relative-cross-package-imports` is disabled only for
-`scripts/report-query-corpus.ts`, owned by database tooling maintainers.
-
-The query-plan runner is a deliberate database-tooling boundary. It owns the
-single `postgres` connection used to execute read-only `EXPLAIN` statements,
-serializes planner work to avoid load spikes, and uses conditional object
-decoding for PostgreSQL's JSON plan shape. Its scoped exceptions cover the
-driver import, sequential awaits, conditional decoding, and SQL-tooling
-ternaries in `packages/db/scripts/run-query-plans.ts` and
-`packages/db/scripts/prepare-query-plans.ts`.
-
-The same query-plan runner scope disables `@rikalabs/no-trivial-property-helpers`,
-`eslint/no-await-in-loop`, and `eslint/no-ternary`: planner requests are
-intentionally decoded and serialized in explicit sequential tooling code.
+Database tooling and governance scripts receive the same lint policy as
+application code. They must use the public package entry points, satisfy the
+same control-flow rules, and fix their types rather than adding a scoped
+exception.

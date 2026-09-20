@@ -3,7 +3,9 @@ import {
   createQueryCapture,
   diffQueryCorpus,
   fingerprintSql,
+  mergeQueryCorpora,
   normalizeSql,
+  parseQueryCorpus,
   renderQueryCorpusDiff,
   serializeQueryCorpus,
 } from "./devtools/query-plans";
@@ -48,6 +50,28 @@ describe("query capture", () => {
 
     expect(report).toContain("Added: 1");
     expect(report).toContain("SELECT 2");
+  });
+
+  it("merges process corpus shards without retaining sensitive values", () => {
+    expect.hasAssertions();
+    const first = createQueryCapture({
+      getSource: () => "first.test.ts",
+    });
+    first.logger.logQuery("SELECT 1", ["secret"]);
+    const second = createQueryCapture({
+      getSource: () => "second.test.ts",
+    });
+    second.logger.logQuery("SELECT 1", ["another-secret"]);
+
+    const merged = mergeQueryCorpora(
+      [first.getCorpus(), second.getCorpus()].map((corpus) => parseQueryCorpus(corpus)),
+    );
+
+    expect(merged.queries[0]).toMatchObject({
+      executions: 2,
+      parameterSamples: [["<string:6>"], ["<string:14>"]],
+      testSources: ["first.test.ts", "second.test.ts"],
+    });
   });
 
   it("deduplicates queries and redacts parameter values", () => {

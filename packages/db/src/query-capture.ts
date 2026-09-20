@@ -1,6 +1,12 @@
 import { createHash } from "node:crypto";
-import { writeFile } from "node:fs/promises";
+import { mkdirSync, writeFileSync } from "node:fs";
+import { writeFile as writeFileAsync } from "node:fs/promises";
 import type { Logger } from "drizzle-orm";
+import nodePath from "node:path";
+import { z } from "zod";
+
+// Tests generate the query corpus automatically. Keeping capture here means
+// Agents cannot silently omit a newly exercised query from plan analysis.
 
 const maximumParameterSamples = 3;
 
@@ -33,6 +39,28 @@ interface QueryCorpusDiff {
   readonly unchanged: readonly QueryCorpusEntry[];
 }
 
+interface QueryCorpusAccumulator {
+  executions: number;
+  parameterSamples: unknown[][];
+  sql: string;
+  testSources: Set<string>;
+}
+
+let processCapture: QueryCapture | null = null;
+
+const parameterSamplesSchema = z.array(z.unknown());
+const queryCorpusEntrySchema = z.object({
+  executions: z.number().int().nonnegative(),
+  fingerprint: z.string(),
+  parameterSamples: z.array(parameterSamplesSchema),
+  sql: z.string(),
+  testSources: z.array(z.string()),
+});
+const queryCorpusSchema = z.object({
+  queries: z.array(queryCorpusEntrySchema),
+  version: z.literal(1),
+});
+
 function jsonIdentity(_key: string, jsonValue: unknown): unknown {
   return jsonValue;
 }
@@ -42,11 +70,54 @@ function serializeQueryCorpus(corpus: QueryCorpus): string {
 }
 
 async function writeQueryCorpus(path: string, corpus: QueryCorpus): Promise<void> {
-  await writeFile(path, serializeQueryCorpus(corpus), "utf8");
+  await writeFileAsync(path, serializeQueryCorpus(corpus), "utf8");
 }
 
 function normalizeSql(sql: string): string {
   return sql.replaceAll(/\s+/gu, " ").trim();
+}
+
+function parseQueryCorpus(document: unknown): QueryCorpus {
+  try {
+    return queryCorpusSchema.parse(document);
+  } catch (error) {
+    throw new TypeError("Query corpus has an invalid shape", { cause: error });
+  }
+}
+
+function mergeQueryCorpora(corpora: readonly QueryCorpus[]): QueryCorpus {
+  const entries = new Map<string, QueryCorpusAccumulator>();
+  for (const corpus of corpora) {
+    for (const query of corpus.queries) {
+      const entry = entries.get(query.fingerprint) ?? {
+        executions: 0,
+        parameterSamples: [],
+        sql: query.sql,
+        testSources: new Set<string>(),
+      };
+      entry.executions += query.executions;
+      entry.parameterSamples.push(
+        ...query.parameterSamples.map((sample) => [...sample]),
+      );
+      entry.parameterSamples = entry.parameterSamples.slice(0, maximumParameterSamples);
+      for (const source of query.testSources) {
+        entry.testSources.add(source);
+      }
+      entries.set(query.fingerprint, entry);
+    }
+  }
+  return {
+    queries: [...entries.entries()]
+      .toSorted(([left], [right]) => left.localeCompare(right))
+      .map(([fingerprint, entry]) => ({
+        executions: entry.executions,
+        fingerprint,
+        parameterSamples: entry.parameterSamples,
+        sql: entry.sql,
+        testSources: [...entry.testSources].toSorted(),
+      })),
+    version: 1,
+  };
 }
 
 function summarizeParameter(parameterValue: unknown): unknown {
@@ -168,14 +239,39 @@ function createQueryCapture(options: QueryCaptureOptions = {}): QueryCapture {
   };
 }
 
+function getProcessQueryCapture(): QueryCapture {
+  if (processCapture !== null) {
+    return processCapture;
+  }
+
+  const outputDirectory = process.env.QUERY_PLAN_CORPUS_DIR ?? ".artifacts";
+  const outputPath = nodePath.join(outputDirectory, `query-corpus-${process.pid}.json`);
+  mkdirSync(outputDirectory, { recursive: true });
+  processCapture = createQueryCapture();
+  process.once("exit", () => {
+    if (processCapture !== null) {
+      writeFileSync(
+        outputPath,
+        serializeQueryCorpus(processCapture.getCorpus()),
+        "utf8",
+      );
+    }
+  });
+  return processCapture;
+}
+
 export {
   createQueryCapture,
   diffQueryCorpus,
   fingerprintSql,
+  getProcessQueryCapture,
+  mergeQueryCorpora,
   normalizeSql,
+  parseQueryCorpus,
   renderQueryCorpusDiff,
   serializeQueryCorpus,
   writeQueryCorpus,
+  queryCorpusSchema,
 };
 export type {
   QueryCapture,

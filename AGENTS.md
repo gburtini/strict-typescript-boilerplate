@@ -39,6 +39,15 @@ Fix failures at their cause. Do not:
 ## Code quality
 
 - Keep TypeScript strict and use `unknown` at untrusted boundaries.
+- Repository scripts are enforcement code, not a lower-standard exception.
+  `scripts/**` and package tooling scripts receive the same lint policy as
+  application code. Do not add script-only disables, warning downgrades, or
+  suppression comments to make a checker pass.
+- Decode unknown data immediately with a Zod 4 schema. Do not add generic
+  `isRecord`, `isJsonObject`, `isObject`, or `is*Record` helpers, and do not
+  replace them with repeated inline `typeof value === "object"` checks. A
+  boundary should have one named domain schema, parse once, and pass the
+  inferred type inward.
 - Handle every Promise explicitly: await it, return it, or attach an explicit
   rejection path for intentional detached work, such as
   `void task.catch(reportFailure)`.
@@ -84,6 +93,8 @@ focused-test rules remain enforced.
 - Treat a sequential scan over a large relation, a doubled estimated cost, or
   a changed plan shape as a design problem to investigate—not as noise to
   baseline away.
+- CI captures query shapes from the test suite automatically. Do not bypass
+  that capture or hand-edit the generated corpus to hide a query.
 
 ## Workspace boundaries
 

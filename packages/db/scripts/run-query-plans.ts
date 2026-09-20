@@ -1,7 +1,14 @@
 import { createHash } from "node:crypto";
+import { existsSync } from "node:fs";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import nodePath from "node:path";
 import postgres from "postgres";
+import { z } from "zod";
+import { queryCorpusSchema } from "../src/devtools/query-plans.js";
+
+// This is an AI-facing design guard: every captured query is explained against
+// A real PostgreSQL planner, then reported with a visible risk marker so query
+// Shape and scale are part of the implementation feedback loop.
 
 const repositoryRoot = nodePath.resolve(import.meta.dirname, "../../..");
 
@@ -9,25 +16,25 @@ function repositoryPath(relativePath: string): string {
   return nodePath.resolve(repositoryRoot, relativePath);
 }
 
-interface QueryCorpusEntry {
-  readonly fingerprint: string;
-  readonly sql: string;
-  readonly testSources: readonly string[];
-}
-
-interface QueryCorpus {
-  readonly queries: readonly QueryCorpusEntry[];
-  readonly version: 1;
-}
-
 interface PlanNode {
+  readonly "Index Name": string;
   readonly "Node Type": string;
-  readonly "Plan Rows"?: number;
-  readonly "Total Cost"?: number;
-  readonly "Relation Name"?: string;
-  readonly "Index Name"?: string;
-  readonly Plans?: readonly PlanNode[];
+  readonly "Plan Rows": number;
+  readonly Plans: readonly PlanNode[];
+  readonly "Relation Name": string;
+  readonly "Total Cost": number;
 }
+
+const planNodeSchema: z.ZodType<PlanNode> = z.lazy(() =>
+  z.looseObject({
+    "Index Name": z.string().default(""),
+    "Node Type": z.string(),
+    "Plan Rows": z.number().default(0),
+    Plans: z.array(planNodeSchema).default([]),
+    "Relation Name": z.string().default(""),
+    "Total Cost": z.number().default(0),
+  }),
+);
 
 interface PlanEntry {
   readonly fingerprint: string;
@@ -53,62 +60,8 @@ interface PlanComparison {
   readonly unchanged: readonly PlanEntry[];
 }
 
-function jsonIdentity(_key: string, value: unknown): unknown {
-  return value;
-}
-
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === "object" && value !== null && !Array.isArray(value);
-}
-
-function readString(value: unknown, name: string): string {
-  if (typeof value !== "string") throw new TypeError(`${name} must be a string`);
-  return value;
-}
-
-function readQueryCorpus(value: unknown): QueryCorpus {
-  if (!isRecord(value) || value.version !== 1 || !Array.isArray(value.queries)) {
-    throw new TypeError("Query corpus has an invalid shape");
-  }
-  const queries: QueryCorpusEntry[] = [];
-  for (const valueEntry of value.queries) {
-    if (!isRecord(valueEntry)) throw new TypeError("Query corpus entry is invalid");
-    queries.push({
-      fingerprint: readString(valueEntry.fingerprint, "fingerprint"),
-      sql: readString(valueEntry.sql, "sql"),
-      testSources: Array.isArray(valueEntry.testSources)
-        ? valueEntry.testSources.filter(
-            (source): source is string => typeof source === "string",
-          )
-        : [],
-    });
-  }
-  return { queries, version: 1 };
-}
-
-function readPlanNode(value: unknown): PlanNode {
-  if (!isRecord(value) || typeof value["Node Type"] !== "string") {
-    throw new TypeError("PostgreSQL returned an invalid plan node");
-  }
-  const childPlans = value.Plans;
-  return {
-    "Node Type": value["Node Type"],
-    ...(typeof value["Plan Rows"] === "number"
-      ? { "Plan Rows": value["Plan Rows"] }
-      : {}),
-    ...(typeof value["Total Cost"] === "number"
-      ? { "Total Cost": value["Total Cost"] }
-      : {}),
-    ...(typeof value["Relation Name"] === "string"
-      ? { "Relation Name": value["Relation Name"] }
-      : {}),
-    ...(typeof value["Index Name"] === "string"
-      ? { "Index Name": value["Index Name"] }
-      : {}),
-    ...(Array.isArray(childPlans)
-      ? { Plans: childPlans.map((childPlan) => readPlanNode(childPlan)) }
-      : {}),
-  };
+function jsonIdentity(_key: string, replacementValue: unknown): unknown {
+  return replacementValue;
 }
 
 function planFingerprint(node: PlanNode): string {
@@ -116,42 +69,44 @@ function planFingerprint(node: PlanNode): string {
     index: node["Index Name"],
     node: node["Node Type"],
     relation: node["Relation Name"],
-    plans: node.Plans?.map((childPlan) => planFingerprint(childPlan)),
+    plans: node.Plans.map((childPlan) => planFingerprint(childPlan)),
   });
   return createHash("sha256").update(shape).digest("hex");
 }
 
 function maxPlanRows(node: PlanNode): number {
   return Math.max(
-    node["Plan Rows"] ?? 0,
-    ...(node.Plans?.map((childPlan) => maxPlanRows(childPlan)) ?? []),
+    node["Plan Rows"],
+    ...node.Plans.map((childPlan) => maxPlanRows(childPlan)),
   );
 }
 
 function hasLargeSequentialScan(node: PlanNode): boolean {
-  if (node["Node Type"] === "Seq Scan" && (node["Plan Rows"] ?? 0) > 10_000) {
+  if (node["Node Type"] === "Seq Scan" && node["Plan Rows"] > 10_000) {
     return true;
   }
-  return node.Plans?.some((childPlan) => hasLargeSequentialScan(childPlan)) ?? false;
+  return node.Plans.some((childPlan) => hasLargeSequentialScan(childPlan));
 }
 
 function hasSequentialScan(node: PlanNode): boolean {
-  if (node["Node Type"] === "Seq Scan") return true;
-  return node.Plans?.some((childPlan) => hasSequentialScan(childPlan)) ?? false;
+  if (node["Node Type"] === "Seq Scan") {
+    return true;
+  }
+  return node.Plans.some((childPlan) => hasSequentialScan(childPlan));
 }
 
-function riskForPlan(entry: PlanEntry, previous: PlanEntry | undefined): string {
+function riskForPlan(entry: PlanEntry, previous?: PlanEntry): string {
   if (
     hasLargeSequentialScan(entry.plan) ||
     entry.totalCost > 100_000 ||
-    (previous !== undefined && entry.totalCost > previous.totalCost * 2 + 100)
+    (previous && entry.totalCost > previous.totalCost * 2 + 100)
   ) {
     return "🔴 high";
   }
   if (
     hasSequentialScan(entry.plan) ||
     entry.totalCost > 10_000 ||
-    (previous !== undefined && previous.planFingerprint !== entry.planFingerprint)
+    (previous && previous.planFingerprint !== entry.planFingerprint)
   ) {
     return "🟠 review";
   }
@@ -160,52 +115,48 @@ function riskForPlan(entry: PlanEntry, previous: PlanEntry | undefined): string 
 
 function explainStatement(sql: string): string {
   const statement = sql.trim().replace(/;$/u, "");
-  if (statement.includes(";"))
+  if (statement.includes(";")) {
     throw new TypeError("Query corpus SQL cannot contain multiple statements");
+  }
   return `EXPLAIN (FORMAT JSON, GENERIC_PLAN TRUE) ${statement}`;
 }
 
 function readPlanResult(rows: readonly unknown[]): PlanNode {
-  const row = rows[0];
-  if (!isRecord(row) || !Array.isArray(row["QUERY PLAN"])) {
+  const [row] = rows;
+  const explainRow = z
+    .object({ "QUERY PLAN": z.array(z.object({ Plan: planNodeSchema })) })
+    .safeParse(row);
+  if (!explainRow.success) {
     throw new TypeError("PostgreSQL returned no JSON query plan");
   }
-  const document: unknown = row["QUERY PLAN"].at(0);
-  if (!isRecord(document))
-    throw new TypeError("PostgreSQL returned an invalid JSON query plan");
-  return readPlanNode(document.Plan);
+  const [document] = explainRow.data["QUERY PLAN"];
+  if (!document) {
+    throw new TypeError("PostgreSQL returned no JSON query plan");
+  }
+  return document.Plan;
 }
 
 async function readArtifact(path: string): Promise<PlanArtifact> {
-  const value: unknown = JSON.parse(await readFile(path, "utf8"));
-  if (
-    !isRecord(value) ||
-    value.version !== 1 ||
-    typeof value.databaseVersion !== "string" ||
-    !Array.isArray(value.queries)
-  ) {
-    throw new TypeError(`Plan artifact is invalid: ${path}`);
+  const planEntrySchema = z.object({
+    fingerprint: z.string(),
+    maxPlanRows: z.number(),
+    plan: planNodeSchema,
+    planFingerprint: z.string(),
+    sql: z.string(),
+    testSources: z.array(z.string()),
+    totalCost: z.number(),
+  });
+  const planArtifactSchema = z.object({
+    databaseVersion: z.string(),
+    queries: z.array(planEntrySchema),
+    version: z.literal(1),
+  });
+  try {
+    const document: unknown = JSON.parse(await readFile(path, "utf8"));
+    return planArtifactSchema.parse(document);
+  } catch (error) {
+    throw new TypeError(`Plan artifact is invalid: ${path}`, { cause: error });
   }
-  const queries: PlanEntry[] = [];
-  for (const query of value.queries) {
-    if (!isRecord(query)) {
-      throw new TypeError(`Plan artifact entry is invalid: ${path}`);
-    }
-    queries.push({
-      fingerprint: readString(query.fingerprint, "plan fingerprint"),
-      maxPlanRows: typeof query.maxPlanRows === "number" ? query.maxPlanRows : 0,
-      plan: readPlanNode(query.plan),
-      planFingerprint: readString(query.planFingerprint, "plan shape fingerprint"),
-      sql: readString(query.sql, "plan SQL"),
-      testSources: Array.isArray(query.testSources)
-        ? query.testSources.filter(
-            (source): source is string => typeof source === "string",
-          )
-        : [],
-      totalCost: typeof query.totalCost === "number" ? query.totalCost : 0,
-    });
-  }
-  return { databaseVersion: value.databaseVersion, queries, version: 1 };
 }
 
 function comparePlans(current: PlanArtifact, baseline: PlanArtifact): PlanComparison {
@@ -219,16 +170,20 @@ function comparePlans(current: PlanArtifact, baseline: PlanArtifact): PlanCompar
   const violations: string[] = [];
   for (const entry of current.queries) {
     const previous = baselineByFingerprint.get(entry.fingerprint);
-    if (previous === undefined) added.push(entry);
-    else if (previous.planFingerprint === entry.planFingerprint) unchanged.push(entry);
-    else changed.push(entry);
+    if (!previous) {
+      added.push(entry);
+    } else if (previous.planFingerprint === entry.planFingerprint) {
+      unchanged.push(entry);
+    } else {
+      changed.push(entry);
+    }
     riskByFingerprint.set(entry.fingerprint, riskForPlan(entry, previous));
     if (hasLargeSequentialScan(entry.plan)) {
       violations.push(
         `${entry.fingerprint}: sequential scan exceeds 10,000 estimated rows`,
       );
     }
-    if (previous !== undefined && entry.totalCost > previous.totalCost * 2 + 100) {
+    if (previous && entry.totalCost > previous.totalCost * 2 + 100) {
       violations.push(
         `${entry.fingerprint}: total cost more than doubled (${previous.totalCost} -> ${entry.totalCost})`,
       );
@@ -276,19 +231,29 @@ function renderComparison(comparison: PlanComparison): string {
 }
 
 const databaseUrl = process.env.QUERY_PLAN_DATABASE_URL;
-const corpusPath = repositoryPath(
-  process.env.QUERY_PLAN_CORPUS ?? "query-plans/corpus.json",
-);
+const generatedCorpusPath = repositoryPath(".artifacts/query-corpus.json");
+let corpusPath = "query-plans/corpus.json";
+if (existsSync(generatedCorpusPath)) {
+  corpusPath = ".artifacts/query-corpus.json";
+}
+if (
+  typeof process.env.QUERY_PLAN_CORPUS === "string" &&
+  process.env.QUERY_PLAN_CORPUS.length > 0
+) {
+  corpusPath = process.env.QUERY_PLAN_CORPUS;
+}
+corpusPath = repositoryPath(corpusPath);
 const baselinePath = repositoryPath(
   process.env.QUERY_PLAN_BASELINE ?? "query-plans/baseline.json",
 );
 const outputPath = repositoryPath(
   process.env.QUERY_PLAN_OUTPUT ?? ".artifacts/query-plans.md",
 );
-if (typeof databaseUrl !== "string" || databaseUrl.length === 0)
+if (typeof databaseUrl !== "string" || databaseUrl.length === 0) {
   throw new TypeError("QUERY_PLAN_DATABASE_URL is required");
+}
 
-const corpus = readQueryCorpus(JSON.parse(await readFile(corpusPath, "utf8")));
+const corpus = queryCorpusSchema.parse(JSON.parse(await readFile(corpusPath, "utf8")));
 const sql = postgres(databaseUrl, { max: 1, prepare: false });
 const planEntries: PlanEntry[] = [];
 let databaseVersion = "unknown";
@@ -296,23 +261,27 @@ try {
   const versionRows: readonly unknown[] = await sql.unsafe(
     "SELECT current_setting('server_version') AS version",
   );
-  const versionRow = versionRows[0];
-  databaseVersion = isRecord(versionRow)
-    ? readString(versionRow.version, "database version")
-    : "unknown";
-  for (const query of corpus.queries) {
-    const rows: readonly unknown[] = await sql.unsafe(explainStatement(query.sql));
-    const plan = readPlanResult(rows);
-    planEntries.push({
-      fingerprint: query.fingerprint,
-      maxPlanRows: maxPlanRows(plan),
-      plan,
-      planFingerprint: planFingerprint(plan),
-      sql: query.sql,
-      testSources: query.testSources,
-      totalCost: plan["Total Cost"] ?? 0,
-    });
+  const [versionRow] = versionRows;
+  const databaseVersionRow = z.object({ version: z.string() }).safeParse(versionRow);
+  if (databaseVersionRow.success) {
+    databaseVersion = databaseVersionRow.data.version;
   }
+  const explainedEntries = await Promise.all(
+    corpus.queries.map(async (query): Promise<PlanEntry> => {
+      const rows: readonly unknown[] = await sql.unsafe(explainStatement(query.sql));
+      const plan = readPlanResult(rows);
+      return {
+        fingerprint: query.fingerprint,
+        maxPlanRows: maxPlanRows(plan),
+        plan,
+        planFingerprint: planFingerprint(plan),
+        sql: query.sql,
+        testSources: query.testSources,
+        totalCost: plan["Total Cost"],
+      };
+    }),
+  );
+  planEntries.push(...explainedEntries);
 } finally {
   await sql.end({ timeout: 5 });
 }
@@ -332,5 +301,7 @@ if (process.env.QUERY_PLAN_WRITE_BASELINE === "1") {
   const baseline = await readArtifact(baselinePath);
   const comparison = comparePlans(current, baseline);
   await writeFile(outputPath, renderComparison(comparison), "utf8");
-  if (comparison.violations.length > 0) process.exitCode = 1;
+  if (comparison.violations.length > 0) {
+    process.exitCode = 1;
+  }
 }

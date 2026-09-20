@@ -39,6 +39,12 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm db:migrate
       - run: pnpm db:plans:prepare
+      - name: Capture query corpus from tests
+        run: pnpm test
+        env:
+          QUERY_PLAN_CAPTURE: "1"
+          QUERY_PLAN_CORPUS_DIR: .artifacts
+      - run: pnpm db:query-corpus:merge
       - run: pnpm db:plans
       - name: Publish planner report
         if: always()

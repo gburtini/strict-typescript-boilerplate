@@ -25,6 +25,13 @@ TypeScript, React Doctor, and custom rules enforce the mechanical parts.
 - Keep exported types named and small.
 - Use Zod 4 schemas at runtime boundaries and infer types from the schemas;
   never treat a TypeScript annotation as input validation.
+- Parse at the boundary. Generic object/type-guard helpers such as `isRecord`
+  are prohibited; they hide weak shapes and create duplicated validation.
+  Prefer a named domain schema with `schema.parse(...)` and use its inferred
+  type throughout the module.
+- The same rule applies to scripts and configuration readers. A checker must
+  parse the actual manifest it owns—coverage, workflow policy, package export,
+  generated-file, or query-corpus schema—not a generic object shape.
 - Use Effect for application/domain computations that can fail, retry, be
   cancelled, or need a span. Keep adapter effects at the boundary.
 

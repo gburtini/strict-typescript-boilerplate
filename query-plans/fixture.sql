@@ -6,6 +6,6 @@ SELECT
   format('query-plan-user-%s@example.test', series),
   now() - (series * interval '1 minute'),
   now() - (series * interval '1 minute')
-FROM generate_series(1, 10000) AS series;
+FROM generate_series(1, __USERS_ESTIMATED_ROWS__) AS series;
 
 ANALYZE users;

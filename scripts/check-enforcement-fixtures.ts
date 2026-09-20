@@ -1,13 +1,18 @@
 import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
-import { join } from "node:path";
 import { tmpdir } from "node:os";
+import nodePath from "node:path";
 import { spawnSync } from "node:child_process";
 
-const temporaryDirectory = mkdtempSync(join(tmpdir(), "typescript-boilerplate-"));
-const fixturePath = join(temporaryDirectory, "forbidden.browser.tsx");
-const testFixturePath = join(temporaryDirectory, "forbidden.test.ts");
-const suppressionFixturePath = join(temporaryDirectory, "forbidden-suppression.ts");
-const databaseFixturePath = join(temporaryDirectory, "forbidden-database.ts");
+const temporaryDirectory = mkdtempSync(
+  nodePath.join(tmpdir(), "typescript-boilerplate-"),
+);
+const databaseFixturePath = nodePath.join(temporaryDirectory, "forbidden-database.ts"),
+  fixturePath = nodePath.join(temporaryDirectory, "forbidden.browser.tsx"),
+  suppressionFixturePath = nodePath.join(
+    temporaryDirectory,
+    "forbidden-suppression.ts",
+  ),
+  testFixturePath = nodePath.join(temporaryDirectory, "forbidden.test.ts");
 
 writeFileSync(
   fixturePath,
@@ -52,57 +57,60 @@ sql.raw("untrusted");
 );
 
 const lintResult = spawnSync(
-  "pnpm",
-  [
-    "exec",
-    "oxlint",
-    "-c",
-    join(process.cwd(), "oxlint.config.ts"),
-    "--deny-warnings",
-    fixturePath,
-    testFixturePath,
-    databaseFixturePath,
-    "--type-aware",
-    "--type-check",
+    "pnpm",
+    [
+      "exec",
+      "oxlint",
+      "-c",
+      nodePath.join(process.cwd(), "oxlint.config.ts"),
+      "--deny-warnings",
+      fixturePath,
+      testFixturePath,
+      databaseFixturePath,
+      "--type-aware",
+      "--type-check",
+    ],
+    { encoding: "utf8" },
+  ),
+  output = `${lintResult.stdout}\n${lintResult.stderr}`,
+  expectedFindings = [
+    "shadcn(no-raw-colors)",
+    "shadcn(no-arbitrary-values)",
+    "typescript(no-explicit-any)",
+    "import(no-default-export)",
+    "typescript(no-floating-promises)",
+    "eslint(no-eval)",
+    "vitest(no-focused-tests)",
+    "@rikalabs(no-hardcoded-secrets)",
+    "drizzle(enforce-delete-with-where)",
+    "drizzle(enforce-update-with-where)",
+    "eslint(no-restricted-imports)",
+    "eslint(no-restricted-properties)",
   ],
-  { encoding: "utf8" },
-);
-
-const output = `${lintResult.stdout}\n${lintResult.stderr}`;
-const expectedFindings = [
-  "shadcn(no-raw-colors)",
-  "shadcn(no-arbitrary-values)",
-  "typescript(no-explicit-any)",
-  "import(no-default-export)",
-  "typescript(no-floating-promises)",
-  "eslint(no-eval)",
-  "vitest(no-focused-tests)",
-  "@rikalabs(no-hardcoded-secrets)",
-  "drizzle(enforce-delete-with-where)",
-  "drizzle(enforce-update-with-where)",
-  "eslint(no-restricted-imports)",
-  "eslint(no-restricted-properties)",
-];
-const missingFindings = expectedFindings.filter((finding) => !output.includes(finding));
+  missingFindings = expectedFindings.filter((finding) => !output.includes(finding));
 
 if (lintResult.status === 0 || missingFindings.length > 0) {
-  console.error(output);
-  console.error(`Missing enforcement findings: ${missingFindings.join(", ")}`);
+  process.stderr.write(`${output}\n`);
+  process.stderr.write(`Missing enforcement findings: ${missingFindings.join(", ")}\n`);
   process.exitCode = 1;
 }
 
 const suppressionResult = spawnSync(
-  "node",
-  ["--experimental-strip-types", "scripts/check-exceptions.ts", suppressionFixturePath],
-  { encoding: "utf8" },
-);
-const suppressionOutput = `${suppressionResult.stdout}\n${suppressionResult.stderr}`;
+    "node",
+    [
+      "--experimental-strip-types",
+      "scripts/check-exceptions.ts",
+      suppressionFixturePath,
+    ],
+    { encoding: "utf8" },
+  ),
+  suppressionOutput = `${suppressionResult.stdout}\n${suppressionResult.stderr}`;
 if (
   suppressionResult.status === 0 ||
   !suppressionOutput.includes("suppression requires a rationale")
 ) {
-  console.error(suppressionOutput);
-  console.error("Exception fixture did not reject an anonymous suppression.");
+  process.stderr.write(`${suppressionOutput}\n`);
+  process.stderr.write("Exception fixture did not reject an anonymous suppression.\n");
   process.exitCode = 1;
 }
 

@@ -83,9 +83,12 @@ added or changed query gets a visible risk marker:
 - 🟠 review — plan shape or a moderate scan/cost deserves investigation;
 - 🔴 high — large sequential scan or material cost regression; the gate fails.
 
-For a test harness that emits a fresh corpus, set
-`QUERY_PLAN_CORPUS=.artifacts/query-corpus.json`; otherwise the committed
-`query-plans/corpus.json` provides the small bootstrap corpus.
+When `QUERY_PLAN_CAPTURE=1`, `@template/db` automatically attaches a process
+capture logger to `createDatabase()`. Each test process writes a redacted
+`.artifacts/query-corpus-<pid>.json` shard. CI merges those shards with
+`pnpm db:query-corpus:merge` and `pnpm db:plans` automatically prefers the
+merged `.artifacts/query-corpus.json`. The committed
+`query-plans/corpus.json` is only a bootstrap fallback for this empty template.
 
 To intentionally establish a reviewed baseline:
 

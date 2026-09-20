@@ -7,11 +7,9 @@ packages:
 minimumReleaseAge: 10080
 minimumReleaseAgeExclude:
   - "@shadcn/lint"
+  - "dependency-cruiser"
+  - "enhanced-resolve"
 
-# dependency-cruiser 18.2 still consumes the TypeScript 6 compiler API. The
-# repository's `tsc` remains the TypeScript 7 binary exposed by @typescript/native;
-# this package extension supplies only the legacy API to dependency-cruiser.
-packageExtensions:
-  dependency-cruiser@18.2.0:
-    dependencies:
-      typescript: "npm:@typescript/typescript6@6.0.2"
+# Keep the architecture checker on the TypeScript 7-compatible release. The
+# explicit freshness exception is deliberate: this is a compiler/toolchain
+# compatibility update, not a general dependency-age bypass.

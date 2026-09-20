@@ -1,25 +1,39 @@
 import { readdirSync, readFileSync, statSync } from "node:fs";
-import { join } from "node:path";
+import nodePath from "node:path";
+import { z } from "zod";
 
-const roots = process.argv.slice(2);
-if (roots.length === 0) roots.push("apps", "packages", "scripts");
-const sourceExtensions = new Set([".js", ".jsx", ".ts", ".tsx"]);
-const suppressionPattern = /(?:eslint|oxlint|ts)-disable(?:-next-line)?/u;
-const rationalePattern = /(?:--|:)\s*\S+/u;
-const violations: string[] = [];
-
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === "object" && value !== null && !Array.isArray(value);
+const configObjectSchema = z.object({
+  ignorePatterns: z.array(z.string()).optional(),
+  rules: z.json().optional(),
+});
+const rationalePattern = /(?:--|:)\s*\S+/u,
+  roots = process.argv.slice(2),
+  sourceExtensions = new Set([".js", ".jsx", ".ts", ".tsx"]),
+  suppressionPattern = /(?:eslint|oxlint|ts)-disable(?:-next-line)?/u,
+  violations: string[] = [];
+if (roots.length === 0) {
+  roots.push("apps", "packages", "scripts");
 }
 
-function collectDisabledRules(value: unknown, disabledRules: Set<string>): void {
-  if (Array.isArray(value)) {
-    for (const entry of value) collectDisabledRules(entry, disabledRules);
+function collectDisabledRules(domainValue: unknown, disabledRules: Set<string>): void {
+  const parsedValue = z.json().safeParse(domainValue);
+  if (!parsedValue.success || typeof parsedValue.data === "string") {
     return;
   }
-  if (!isRecord(value)) return;
-  for (const [key, entry] of Object.entries(value)) {
-    if (entry === "off") disabledRules.add(key);
+  const arrayValue = z.array(z.json()).safeParse(parsedValue.data);
+  if (arrayValue.success) {
+    for (const entry of arrayValue.data) {
+      collectDisabledRules(entry, disabledRules);
+    }
+    return;
+  }
+  if (typeof parsedValue.data !== "object" || parsedValue.data === null) {
+    return;
+  }
+  for (const [key, entry] of Object.entries(parsedValue.data)) {
+    if (entry === "off") {
+      disabledRules.add(key);
+    }
     collectDisabledRules(entry, disabledRules);
   }
 }
@@ -28,41 +42,56 @@ function collectSourceFiles(directory: string): string[] {
   const directoryStat = statSync(directory, { throwIfNoEntry: false });
   if (directoryStat?.isFile() === true) {
     const extension = directory.slice(directory.lastIndexOf("."));
-    if (sourceExtensions.has(extension)) return [directory];
+    if (sourceExtensions.has(extension)) {
+      return [directory];
+    }
     return [];
   }
   return readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
-    if (["coverage", "dist", "node_modules"].includes(entry.name)) return [];
-    const path = join(directory, entry.name);
+    if (["coverage", "dist", "node_modules"].includes(entry.name)) {
+      return [];
+    }
+    const path = nodePath.join(directory, entry.name);
     if (entry.isDirectory()) {
       return collectSourceFiles(path);
     }
     const extension = path.slice(path.lastIndexOf("."));
-    if (!sourceExtensions.has(extension)) return [];
+    if (!sourceExtensions.has(extension)) {
+      return [];
+    }
     return [path];
   });
 }
 
-for (const root of roots) {
-  if (!statSync(root, { throwIfNoEntry: false })) continue;
-  for (const path of collectSourceFiles(root)) {
-    const lines = readFileSync(path, "utf8").split("\n");
-    for (const [index, line] of lines.entries()) {
-      if (suppressionPattern.test(line) && !rationalePattern.test(line)) {
-        violations.push(`${path}:${index + 1}: suppression requires a rationale`);
-      }
+function findSuppressionViolations(path: string): string[] {
+  const fileViolations: string[] = [];
+  for (const [index, line] of readFileSync(path, "utf8").split("\n").entries()) {
+    if (suppressionPattern.test(line) && !rationalePattern.test(line)) {
+      fileViolations.push(`${path}:${index + 1}: suppression requires a rationale`);
     }
+  }
+  return fileViolations;
+}
+
+for (const root of roots) {
+  if (statSync(root, { throwIfNoEntry: false })) {
+    violations.push(
+      ...collectSourceFiles(root).flatMap((sourcePath) =>
+        findSuppressionViolations(sourcePath),
+      ),
+    );
   }
 }
 
 if (violations.length > 0) {
-  console.error(violations.join("\n"));
+  process.stderr.write(`${violations.join("\n")}\n`);
   process.exitCode = 1;
 }
 
-const config: unknown = JSON.parse(readFileSync(".oxlintrc.json", "utf8"));
-if (!isRecord(config)) throw new TypeError(".oxlintrc.json must be an object");
-const disabledRules = new Set<string>();
+const config = configObjectSchema.parse(
+    JSON.parse(readFileSync(".oxlintrc.json", "utf8")),
+  ),
+  disabledRules = new Set<string>();
 collectDisabledRules(config, disabledRules);
 const exceptionPolicy = readFileSync("EXCEPTIONS.md", "utf8");
 for (const rule of disabledRules) {
@@ -71,8 +100,8 @@ for (const rule of disabledRules) {
   }
 }
 
-const ignorePatterns = config.ignorePatterns;
-if (Array.isArray(ignorePatterns)) {
+const { ignorePatterns } = config;
+if (ignorePatterns) {
   for (const pattern of ignorePatterns) {
     if (typeof pattern === "string" && !exceptionPolicy.includes(`\`${pattern}\``)) {
       violations.push(
@@ -83,6 +112,6 @@ if (Array.isArray(ignorePatterns)) {
 }
 
 if (violations.length > 0) {
-  console.error(violations.join("\n"));
+  process.stderr.write(`${violations.join("\n")}\n`);
   process.exitCode = 1;
 }
