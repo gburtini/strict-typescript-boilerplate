@@ -274,6 +274,33 @@
       }
     },
     {
+      "files": ["packages/db/scripts/run-query-plans.ts"],
+      "rules": {
+        "@rikalabs/no-trivial-property-helpers": "off",
+        "@rikalabs/no-low-signal-variable-names": "off",
+        "@rikalabs/no-trivial-runtime-guard-helpers": "off",
+        "eslint/no-await-in-loop": "off",
+        "eslint/curly": "off",
+        "eslint/no-restricted-imports": "off",
+        "eslint/no-ternary": "off",
+        "eslint/no-undefined": "off",
+        "eslint/prefer-destructuring": "off",
+        "import/no-nodejs-modules": "off",
+        "unicorn/import-style": "off",
+        "unicorn/no-null": "off"
+      }
+    },
+    {
+      "files": ["packages/db/scripts/prepare-query-plans.ts"],
+      "rules": {
+        "eslint/curly": "off",
+        "eslint/no-restricted-imports": "off",
+        "import/no-nodejs-modules": "off",
+        "unicorn/import-style": "off",
+        "unicorn/no-null": "off"
+      }
+    },
+    {
       "files": ["packages/core/src/telemetry-node.ts"],
       "rules": {
         "@rikalabs/effect-no-layer-in-leaf-modules": "off"

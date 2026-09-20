@@ -1,0 +1,52 @@
+name: Query Plans
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  query-plans:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:18.3-alpine
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: typescript_boilerplate
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d typescript_boilerplate"
+          --health-interval 2s
+          --health-timeout 5s
+          --health-retries 20
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/typescript_boilerplate
+      QUERY_PLAN_DATABASE_URL: postgresql://postgres:postgres@localhost:5432/typescript_boilerplate
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.0.0
+      - uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4.0.0
+        with:
+          version: 10.30.3
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
+        with:
+          node-version-file: .node-version
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm db:migrate
+      - run: pnpm db:plans:prepare
+      - run: pnpm db:plans
+      - name: Publish planner report
+        if: always()
+        run: cat .artifacts/query-plans.md >> "$GITHUB_STEP_SUMMARY"
+      - name: Comment planner report on pull request
+        if: >-
+          always() && github.event_name == 'pull_request' &&
+          github.event.pull_request.head.repo.full_name == github.repository
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh pr comment "${{ github.event.pull_request.number }}" --body-file .artifacts/query-plans.md

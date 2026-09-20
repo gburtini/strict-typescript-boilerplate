@@ -1,0 +1,49 @@
+{
+  "databaseVersion": "18.3",
+  "queries": [
+    {
+      "fingerprint": "ad2314a5e6da46090e894e31d233d267b27b58b3c503b8c049879ba0309e466b",
+      "maxPlanRows": 1,
+      "plan": {
+        "Node Type": "Index Scan",
+        "Plan Rows": 1,
+        "Total Cost": 8.3,
+        "Relation Name": "users",
+        "Index Name": "users_email_unique"
+      },
+      "planFingerprint": "ae4eee7afdb39e647eb64636f37d35aec1877bd3112f589eb6479d35091cbc4a",
+      "sql": "SELECT \"id\", \"email\", \"created_at\", \"updated_at\" FROM \"users\" WHERE \"email\" = $1",
+      "testSources": ["query-plans/fixture"],
+      "totalCost": 8.3
+    },
+    {
+      "fingerprint": "c786d9ef1cea4664d2c14e5913eaacb0886fb0ba98aa4163a003922eb3f792f0",
+      "maxPlanRows": 10000,
+      "plan": {
+        "Node Type": "Limit",
+        "Plan Rows": 1000,
+        "Total Cost": 890.89,
+        "Plans": [
+          {
+            "Node Type": "Sort",
+            "Plan Rows": 10000,
+            "Total Cost": 913.39,
+            "Plans": [
+              {
+                "Node Type": "Seq Scan",
+                "Plan Rows": 10000,
+                "Total Cost": 224,
+                "Relation Name": "users"
+              }
+            ]
+          }
+        ]
+      },
+      "planFingerprint": "06c56d0bacb88f2aed612850881a85fca72f6f016da5c4239cd534f4a36b7d47",
+      "sql": "SELECT \"id\", \"email\", \"created_at\", \"updated_at\" FROM \"users\" ORDER BY \"created_at\" DESC LIMIT $1",
+      "testSources": ["query-plans/fixture"],
+      "totalCost": 890.89
+    }
+  ],
+  "version": 1
+}

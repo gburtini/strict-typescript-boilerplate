@@ -25,6 +25,10 @@ const allowedPermissions: Record<
     workflow: { actions: "read", contents: "read", "security-events": "write" },
     jobs: {},
   },
+  "query-plans.yml": {
+    workflow: { contents: "read", "pull-requests": "write" },
+    jobs: {},
+  },
   "semgrep.yml": {
     workflow: { contents: "read", "security-events": "write" },
     jobs: {},

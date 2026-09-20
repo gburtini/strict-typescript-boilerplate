@@ -124,3 +124,15 @@ The query-corpus report imports the database devtool source directly because
 the root governance scripts execute from the workspace before package builds;
 `@rikalabs/no-relative-cross-package-imports` is disabled only for
 `scripts/report-query-corpus.ts`, owned by database tooling maintainers.
+
+The query-plan runner is a deliberate database-tooling boundary. It owns the
+single `postgres` connection used to execute read-only `EXPLAIN` statements,
+serializes planner work to avoid load spikes, and uses conditional object
+decoding for PostgreSQL's JSON plan shape. Its scoped exceptions cover the
+driver import, sequential awaits, conditional decoding, and SQL-tooling
+ternaries in `packages/db/scripts/run-query-plans.ts` and
+`packages/db/scripts/prepare-query-plans.ts`.
+
+The same query-plan runner scope disables `@rikalabs/no-trivial-property-helpers`,
+`eslint/no-await-in-loop`, and `eslint/no-ternary`: planner requests are
+intentionally decoded and serialized in explicit sequential tooling code.

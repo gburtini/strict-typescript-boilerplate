@@ -76,6 +76,14 @@ focused-test rules remain enforced.
 - Prefer existing query/repository functions over creating another access path.
 - Run `pnpm db:check` after schema changes and include migration metadata in
   the same change.
+- For every query, index, or migration change, run `pnpm db:plans` against the
+  pinned planner fixture. Read added and changed plans before deciding that a
+  query or index is correct.
+- Do not add an index, remove an index, or rewrite a query to silence a plan
+  warning without recording the plan evidence and the reason in the change.
+- Treat a sequential scan over a large relation, a doubled estimated cost, or
+  a changed plan shape as a design problem to investigate—not as noise to
+  baseline away.
 
 ## Workspace boundaries
 

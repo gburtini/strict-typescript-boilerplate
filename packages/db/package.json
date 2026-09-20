@@ -11,6 +11,8 @@
     "./schema": "./src/schema.ts"
   },
   "scripts": {
+    "query-plans": "node --experimental-strip-types scripts/run-query-plans.ts",
+    "query-plans:prepare": "node --experimental-strip-types scripts/prepare-query-plans.ts",
     "test": "vitest run"
   },
   "dependencies": {
