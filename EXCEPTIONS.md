@@ -43,49 +43,47 @@ conflict. Do not silently weaken the rule.
 The following deliberate `off` rules are scoped overrides, not general
 permission to weaken enforcement:
 
-- `eslint/func-style`, `eslint/no-magic-numbers`, `eslint/sort-imports`, and
-  `eslint/sort-keys` — canonical style is owned by the broader Oxlint presets.
-- `import/no-relative-parent-imports`, `import/no-named-export`,
-  `import/consistent-type-specifier-style`, `import/no-unassigned-import`, and
+- `eslint/func-style`, `eslint/no-magic-numbers`, `eslint/one-var`,
+  `eslint/sort-imports`, `eslint/sort-keys`, and `eslint/sort-vars` — these
+  low-signal declaration-order rules are not part of the repository's
+  correctness or canonical-form contract.
+- `unicorn/max-nested-calls` — schema and configuration construction often
+  nests declarative builders; correctness is enforced by the resulting Zod
+  schema and the typed value it produces, not by flattening the declaration.
+- `import/no-relative-parent-imports`, `import/no-named-export`, and
   `import/prefer-default-export` — repository conventions and framework entry
   points handle these cases.
 - `react/react-in-jsx-scope`, `react/forbid-component-props`,
   `react/jsx-filename-extension`, `react/jsx-no-literals`,
   `react/jsx-max-depth`, and `react/jsx-props-no-spreading` — modern JSX or
   intentional component-library implementation boundaries.
-- `typescript/prefer-readonly-parameter-types`,
-  `typescript/no-confusing-void-expression`, and
-  `typescript/consistent-type-imports` — not universally expressible across
-  all supported project shapes.
-- `vitest/no-importing-vitest-globals`, `vitest/require-test-timeout`, and
-  `vitest/require-hook` — local test configuration owns these choices.
-- `vitest/prefer-strict-boolean-matchers` — conflicts with the enabled
-  `prefer-to-be-truthy` and `prefer-to-be-falsy` test canonical forms.
+- `typescript/prefer-readonly-parameter-types` — not universally expressible
+  across all supported project shapes.
+- `vitest/no-importing-vitest-globals`, `vitest/require-test-timeout` — local
+  test configuration owns these choices.
+- `vitest/require-hook` — enabled only for test-file globs because Oxlint
+  otherwise applies this test-isolation rule to application and script entrypoints.
+- `vitest/prefer-to-be-falsy`, `vitest/prefer-to-be-truthy` — strict boolean
+  matchers are the canonical test assertion form.
 - `@rikalabs/no-unlisted-external-imports`,
   `@rikalabs/no-generic-module-names`, and
   `@rikalabs/no-placeholder-implementation` — reserved for projects that opt
   into those stricter repository-specific checks.
 - `react-quality/forbid-component-props`,
   `react-quality/jsx-props-no-spreading`, `react-quality/react-in-jsx-scope`,
-  `react/button-has-type`, `shadcn/no-restyle`, and
-  `jsx-a11y/label-has-associated-control` — design-system implementation
-  scope: `packages/ui/**`.
+  and `shadcn/no-restyle` — design-system implementation scope:
+  `packages/ui/**`.
+- `jsx-a11y/label-has-associated-control` — the shared label primitive owns
+  its association behavior: `packages/ui/src/components/ui/label.tsx`.
 - `import/no-default-export` — configuration files only.
-- `eslint/max-depth`, `eslint/max-lines`, `eslint/max-lines-per-function`,
-  `eslint/max-params`, `eslint/max-statements`, `react/no-multi-comp`,
+- `react/no-multi-comp`,
   `react-quality/no-giant-component`, and
   `react-quality/no-multi-component-file` — test files only.
 - `eslint/require-await`, `typescript/require-await`, `vitest/no-hooks`, and
   `vitest/require-top-level-describe` — test setup only.
 - `vitest/prefer-importing-vitest-globals` — end-to-end tests only.
-- `@rikalabs/no-hardcoded-secrets`, `@rikalabs/no-low-signal-variable-names`,
-  `@rikalabs/no-trivial-runtime-guard-helpers`, `eslint/curly`,
-  `eslint/no-continue`, `eslint/no-console`, `eslint/no-undefined`,
-  `eslint/one-var`, `eslint/prefer-destructuring`, `import/no-nodejs-modules`,
-  `typescript/no-unnecessary-condition`, and `unicorn/import-style` — typed
-  Node governance scripts and configuration files only.
-- `eslint/no-restricted-imports`, `eslint/one-var`, `eslint/sort-vars`,
-  `import/group-exports`, and `import/no-namespace` — database schema and
+- `eslint/no-restricted-imports`, `import/group-exports`, and
+  `import/no-namespace` — database schema and
   client implementation only:
   Drizzle schema declarations have dependency order, and the adapter is the
   explicitly permitted owner of the restricted database imports.
@@ -97,17 +95,18 @@ permission to weaken enforcement:
 The current ignored paths are `dist`, `coverage`, and `node_modules`; they are
 generated or dependency output and must never be used to hide source files.
 
-The oRPC/Zod contract builder at `packages/core/src/api/contract.ts` disables
-`eslint/one-var` and `unicorn/max-nested-calls` only because staged schema
-construction is clearer and safer than flattening a contract into unrelated
-helpers. Its input/output schemas and route remain runtime-validated.
-
 The oRPC transport adapter at `packages/core/src/api/router.ts` disables
 `@rikalabs/effect-no-async-await` and
-`@rikalabs/effect-no-terminal-runners` because this is the explicit Effect
-runtime boundary where a validated request becomes a transport Promise. The
-Node telemetry layer disables `@rikalabs/effect-no-layer-in-leaf-modules`
-because it is the runtime layer assembly point.
+`@rikalabs/effect-no-terminal-runners` because it is visibly an adapter from
+oRPC's Promise-based handler API into an Effect program. The terminal runner
+belongs exactly at this transport boundary: it converts the validated Effect
+result back into the Promise required by oRPC. It must not move inward into
+application or domain modules.
+
+The Node telemetry layer at `packages/core/src/telemetry-node.ts` disables
+`@rikalabs/effect-no-layer-in-leaf-modules` because the file is literally the
+Node runtime telemetry-layer assembly point. The exception is limited to that
+adapter and does not permit Effect layers in application or domain leaves.
 
 The root `prepare` script runs `effect-tsgo patch --oxlint --typescript` for
 `@effect/tsgo` so the TypeScript 7 and Oxlint integrations use the Effect
@@ -120,7 +119,7 @@ The query-plan devtool keeps `unicorn/no-null` enabled everywhere else because
 SQL `NULL` is a meaningful captured parameter value; it is disabled only in
 `packages/db/src/query-capture.ts`, owned by database tooling maintainers.
 
-The query-corpus report imports the database devtool source directly because
-the root governance scripts execute from the workspace before package builds;
-`@rikalabs/no-relative-cross-package-imports` is disabled only for
-`scripts/report-query-corpus.ts`, owned by database tooling maintainers.
+Database tooling and governance scripts receive the same lint policy as
+application code. They must use the public package entry points, satisfy the
+same control-flow rules, and fix their types rather than adding a scoped
+exception.

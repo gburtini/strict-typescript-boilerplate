@@ -20,13 +20,13 @@ describe("health contract", () => {
     expect.hasAssertions();
     const { inputSchema, outputSchema } = getHealthSchemas();
 
-    expect(inputSchema.safeParse({}).success).toBeTruthy();
+    expect(inputSchema.safeParse({}).success).toBe(true);
     expect(
       outputSchema.safeParse({
         service: "typescript-boilerplate",
         status: "ok",
       }).success,
-    ).toBeTruthy();
+    ).toBe(true);
   });
 
   it("rejects responses outside the runtime contract", () => {
@@ -38,6 +38,6 @@ describe("health contract", () => {
         service: "typescript-boilerplate",
         status: "degraded",
       }).success,
-    ).toBeFalsy();
+    ).toBe(false);
   });
 });

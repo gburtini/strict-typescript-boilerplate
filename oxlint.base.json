@@ -42,14 +42,32 @@
   "rules": {
     "eslint/func-style": "off",
     "eslint/no-magic-numbers": "off",
+    "eslint/one-var": "off",
     "eslint/sort-imports": "off",
+    "eslint/sort-vars": "off",
     "eslint/sort-keys": "off",
     "import/no-relative-parent-imports": "off",
     "import/no-named-export": "off",
     "import/no-commonjs": "error",
     "import/no-default-export": "error",
-    "import/consistent-type-specifier-style": "off",
-    "import/no-unassigned-import": "off",
+    "import/no-nodejs-modules": [
+      "error",
+      {
+        "allow": [
+          "node:child_process",
+          "node:crypto",
+          "node:fs",
+          "node:fs/promises",
+          "node:os",
+          "node:path"
+        ]
+      }
+    ],
+    "import/consistent-type-specifier-style": [
+      "error",
+      "prefer-top-level-if-only-type-imports"
+    ],
+    "import/no-unassigned-import": ["error", { "allow": ["**/*.css"] }],
     "import/prefer-default-export": "off",
     "no-console": "error",
     "no-eval": "error",
@@ -147,7 +165,14 @@
     "typescript/switch-exhaustiveness-check": "error",
     "typescript/unbound-method": "error",
     "typescript/use-unknown-in-catch-callback-variable": "error",
-    "typescript/no-confusing-void-expression": "off",
+    "typescript/no-confusing-void-expression": [
+      "error",
+      {
+        "ignoreArrowShorthand": true,
+        "ignoreVoidOperator": true,
+        "ignoreVoidReturningFunctions": true
+      }
+    ],
     "unicorn/filename-case": ["error", { "case": "kebabCase" }],
     "unicorn/import-style": "error",
     "unicorn/no-abusive-eslint-disable": "error",
@@ -200,16 +225,19 @@
         "react-quality/jsx-props-no-spreading": "off",
         "react-quality/react-in-jsx-scope": "off",
         "react/button-has-type": "off",
-        "shadcn/no-restyle": "off",
+        "shadcn/no-restyle": "off"
+      }
+    },
+    {
+      "files": ["packages/ui/src/components/ui/label.tsx"],
+      "rules": {
         "jsx-a11y/label-has-associated-control": "off"
       }
     },
     {
-      "files": ["packages/db/**"],
+      "files": ["packages/db/src/**"],
       "rules": {
         "eslint/no-restricted-imports": "off",
-        "eslint/one-var": "off",
-        "eslint/sort-vars": "off",
         "import/group-exports": "off",
         "import/no-namespace": "off"
       }
@@ -233,12 +261,19 @@
     {
       "files": ["**/*.test.*", "**/*.spec.*", "test/**", "tests/**"],
       "rules": {
-        "vitest/prefer-strict-boolean-matchers": "off",
-        "eslint/max-depth": "off",
-        "eslint/max-lines": "off",
-        "eslint/max-lines-per-function": "off",
-        "eslint/max-params": "off",
-        "eslint/max-statements": "off",
+        "vitest/prefer-strict-boolean-matchers": "error",
+        "vitest/prefer-to-be-falsy": "off",
+        "vitest/prefer-to-be-truthy": "off",
+        "vitest/require-hook": "error",
+        "eslint/max-lines": [
+          "error",
+          { "max": 1000, "skipBlankLines": true, "skipComments": true }
+        ],
+        "eslint/max-lines-per-function": [
+          "error",
+          { "max": 120, "skipBlankLines": true, "skipComments": true }
+        ],
+        "eslint/max-statements": ["error", 80],
         "react/no-multi-comp": "off",
         "react-quality/no-giant-component": "off",
         "react-quality/no-multi-component-file": "off"
@@ -260,30 +295,6 @@
       }
     },
     {
-      "files": ["scripts/**", "**/*.config.*"],
-      "rules": {
-        "@rikalabs/no-hardcoded-secrets": "off",
-        "@rikalabs/no-low-signal-variable-names": "off",
-        "@rikalabs/no-trivial-runtime-guard-helpers": "off",
-        "eslint/curly": "off",
-        "eslint/no-continue": "off",
-        "eslint/no-console": "off",
-        "eslint/no-undefined": "off",
-        "eslint/one-var": "off",
-        "eslint/prefer-destructuring": "off",
-        "import/no-nodejs-modules": "off",
-        "typescript/no-unnecessary-condition": "off",
-        "unicorn/import-style": "off"
-      }
-    },
-    {
-      "files": ["packages/core/src/api/contract.ts"],
-      "rules": {
-        "eslint/one-var": "off",
-        "unicorn/max-nested-calls": "off"
-      }
-    },
-    {
       "files": ["packages/core/src/api/router.ts"],
       "rules": {
         "@rikalabs/effect-no-async-await": "off",
@@ -295,30 +306,6 @@
       "rules": {
         "@rikalabs/no-trivial-runtime-guard-helpers": "off",
         "import/no-nodejs-modules": "off",
-        "unicorn/no-null": "off"
-      }
-    },
-    {
-      "files": ["scripts/report-query-corpus.ts"],
-      "rules": {
-        "@rikalabs/no-relative-cross-package-imports": "off",
-        "unicorn/no-null": "off"
-      }
-    },
-    {
-      "files": ["scripts/run-query-plans.ts"],
-      "rules": {
-        "@rikalabs/no-trivial-property-helpers": "off",
-        "eslint/no-await-in-loop": "off",
-        "eslint/no-restricted-imports": "off",
-        "eslint/no-ternary": "off",
-        "unicorn/no-null": "off"
-      }
-    },
-    {
-      "files": ["scripts/prepare-query-plans.ts"],
-      "rules": {
-        "eslint/no-restricted-imports": "off",
         "unicorn/no-null": "off"
       }
     },

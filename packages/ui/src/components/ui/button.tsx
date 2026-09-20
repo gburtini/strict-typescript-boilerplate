@@ -47,5 +47,19 @@ export function Button({
     return <Slot className={buttonClassName} {...props} />;
   }
 
-  return <button className={buttonClassName} {...props} type={type} />;
+  const buttonProps = { className: buttonClassName, ...props };
+  switch (type) {
+    case "reset": {
+      return <button {...buttonProps} type="reset" />;
+    }
+    case "submit": {
+      return <button {...buttonProps} type="submit" />;
+    }
+    case "button": {
+      return <button {...buttonProps} type="button" />;
+    }
+    default: {
+      throw new TypeError("Unsupported button type");
+    }
+  }
 }

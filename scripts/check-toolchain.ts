@@ -4,7 +4,7 @@ function run(command: string, arguments_: string[]): string {
   const result = spawnSync(command, arguments_, {
     encoding: "utf8",
   });
-  if (result.error !== undefined || result.status !== 0) {
+  if (result.error || result.status !== 0) {
     throw new Error(`toolchain command failed: ${command}`);
   }
   return `${result.stdout}${result.stderr}`;
@@ -16,19 +16,19 @@ if (!/^Version 7\./mu.test(compilerVersion)) {
 }
 
 const firstPatch = run("pnpm", [
-  "exec",
-  "effect-tsgo",
-  "patch",
-  "--oxlint",
-  "--typescript",
-]);
-const secondPatch = run("pnpm", [
-  "exec",
-  "effect-tsgo",
-  "patch",
-  "--oxlint",
-  "--typescript",
-]);
+    "exec",
+    "effect-tsgo",
+    "patch",
+    "--oxlint",
+    "--typescript",
+  ]),
+  secondPatch = run("pnpm", [
+    "exec",
+    "effect-tsgo",
+    "patch",
+    "--oxlint",
+    "--typescript",
+  ]);
 if (
   !firstPatch.includes("Patched") &&
   !firstPatch.includes("skipped because its hash matches the replacement")

@@ -1,88 +1,121 @@
 import { readFileSync, writeFileSync } from "node:fs";
+import { z } from "zod";
 
 interface RuleRow {
   invariant: string;
   owner: string;
-  severity: string;
   scope: string;
+  severity: string;
   source: string;
 }
 
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === "object" && value !== null && !Array.isArray(value);
+const configSchema = z.object({
+  overrides: z
+    .array(
+      z.object({
+        files: z.array(z.string()).optional(),
+        rules: z.record(z.string(), z.union([z.string(), z.array(z.unknown())])),
+      }),
+    )
+    .optional(),
+  rules: z.record(z.string(), z.union([z.string(), z.array(z.unknown())])),
+});
+const columns = ["Invariant", "Owner", "Severity", "Scope", "Source"];
+const dynamicRulePattern =
+  /["'](?<rule>[^"']+)["']:\s*["'](?<configuredSeverity>error|warn|off)["']/gu;
+
+function readBaseConfig(): z.infer<typeof configSchema> {
+  return configSchema.parse(JSON.parse(readFileSync("oxlint.base.json", "utf8")));
 }
 
-function severity(value: unknown): string {
-  if (typeof value === "string") return value;
-  if (Array.isArray(value) && typeof value[0] === "string") return value[0];
+function severity(ruleValue: string | readonly unknown[]): string {
+  if (typeof ruleValue === "string") {
+    return ruleValue;
+  }
+  const [severityValue] = ruleValue;
+  if (typeof severityValue === "string") {
+    return severityValue;
+  }
   return "configured";
 }
 
-const baseConfigPath = "oxlint.base.json";
-const baseValue: unknown = JSON.parse(readFileSync(baseConfigPath, "utf8"));
-if (!isRecord(baseValue) || !isRecord(baseValue.rules)) {
-  throw new TypeError(`${baseConfigPath} has no rules object`);
-}
-
-const rows: RuleRow[] = Object.entries(baseValue.rules).map(([rule, value]) => ({
-  invariant: rule,
-  owner: "Oxlint",
-  severity: severity(value),
-  scope: "apps, packages, scripts",
-  source: baseConfigPath,
-}));
-
-if (Array.isArray(baseValue.overrides)) {
-  for (const override of baseValue.overrides) {
-    if (!isRecord(override) || !isRecord(override.rules)) continue;
-    const files: string[] = [];
-    if (Array.isArray(override.files)) {
-      files.push(
-        ...override.files.filter((file): file is string => typeof file === "string"),
-      );
-    }
-    const scope = files.join(", ");
-    for (const [rule, value] of Object.entries(override.rules)) {
-      rows.push({
-        invariant: rule,
-        owner: "Oxlint override",
-        severity: severity(value),
-        scope: scope || "scoped override",
-        source: baseConfigPath,
-      });
-    }
+function addRowsForRules(
+  rows: RuleRow[],
+  rules: Readonly<Record<string, string | readonly unknown[]>>,
+  owner: string,
+  scope: string,
+  source: string,
+): void {
+  for (const [rule, ruleValue] of Object.entries(rules)) {
+    rows.push({
+      invariant: rule,
+      owner,
+      scope,
+      severity: severity(ruleValue),
+      source,
+    });
   }
 }
 
-const dynamicConfig = readFileSync("oxlint.config.ts", "utf8");
-const dynamicRules =
-  /["'](?<rule>[^"']+)["']:\s*["'](?<configuredSeverity>error|warn|off)["']/gu;
-for (const match of dynamicConfig.matchAll(dynamicRules)) {
-  const rule = match.groups?.rule;
-  const configuredSeverity = match.groups?.configuredSeverity;
-  if (rule === undefined || configuredSeverity === undefined) continue;
-  rows.push({
-    invariant: rule,
-    owner: "Oxlint dynamic config",
-    severity: configuredSeverity,
-    scope: "apps, packages, scripts",
-    source: "oxlint.config.ts",
-  });
+function escapeMarkdown(cell: string): string {
+  return cell.replaceAll("*", String.raw`\*`);
 }
 
+function formatRow(row: readonly string[], widths: readonly number[]): string {
+  return `| ${row
+    .map((cell, index) => cell.padEnd(widths[index] ?? cell.length))
+    .join(" | ")} |`;
+}
+
+const baseConfig = readBaseConfig();
+const rows: RuleRow[] = [];
+addRowsForRules(
+  rows,
+  baseConfig.rules,
+  "Oxlint",
+  "apps, packages, scripts",
+  "oxlint.base.json",
+);
+for (const override of baseConfig.overrides ?? []) {
+  addRowsForRules(
+    rows,
+    override.rules,
+    "Oxlint override",
+    override.files?.join(", ") ?? "scoped override",
+    "oxlint.base.json",
+  );
+}
+
+const dynamicConfig = readFileSync("oxlint.config.ts", "utf8");
+for (const match of dynamicConfig.matchAll(dynamicRulePattern)) {
+  const configuredSeverity = match.groups?.configuredSeverity;
+  const rule = match.groups?.rule;
+  if (
+    typeof configuredSeverity === "string" &&
+    configuredSeverity.length > 0 &&
+    typeof rule === "string" &&
+    rule.length > 0
+  ) {
+    rows.push({
+      invariant: rule,
+      owner: "Oxlint dynamic config",
+      scope: "apps, packages, scripts",
+      severity: configuredSeverity,
+      source: "oxlint.config.ts",
+    });
+  }
+}
 if (dynamicConfig.includes("ALL_REACT_DOCTOR_RULES")) {
   rows.push({
     invariant: "react-quality/*",
     owner: "React Doctor registry",
-    severity: "warn (denied)",
     scope: "all linted files; explicit overrides recorded above",
+    severity: "warn (denied)",
     source: "oxlint.config.ts",
   });
 }
 
-const columns = ["Invariant", "Owner", "Severity", "Scope", "Source"];
-const escapeMarkdown = (value: string): string => value.replaceAll("*", String.raw`\*`);
-const data = rows
+const markdownRows = rows
   .toSorted((left, right) =>
     `${left.invariant}:${left.scope}`.localeCompare(
       `${right.invariant}:${right.scope}`,
@@ -94,16 +127,15 @@ const data = rows
     ),
   );
 const widths = columns.map((column, index) =>
-  Math.max(column.length, ...data.map((row) => row[index]?.length ?? 0)),
+  Math.max(column.length, ...markdownRows.map((row) => row[index]?.length ?? 0)),
 );
-const formatRow = (row: string[]): string =>
-  `| ${row
-    .map((cell, index) => cell.padEnd(widths[index] ?? cell.length))
-    .join(" | ")} |`;
 const rowsForMarkdown = [
-  formatRow(columns),
-  formatRow(widths.map((width) => "-".repeat(width))),
-  ...data.map((row) => formatRow(row)),
+  formatRow(columns, widths),
+  formatRow(
+    widths.map((width) => "-".repeat(width)),
+    widths,
+  ),
+  ...markdownRows.map((row) => formatRow(row, widths)),
 ];
 const generated = `<!-- Generated by scripts/generate-enforcement-manifest.ts. Do not edit directly. -->
 
@@ -116,11 +148,10 @@ lint, security workflows, and test evidence.
 
 ${rowsForMarkdown.join("\n")}
 `;
-
 const outputPath = "docs/ENFORCEMENT-MANIFEST.md";
 if (process.argv.includes("--write")) {
   writeFileSync(outputPath, generated);
 } else if (readFileSync(outputPath, "utf8") !== generated) {
-  console.error(`${outputPath} is stale; run pnpm enforcement:manifest:write`);
+  process.stderr.write(`${outputPath} is stale; run pnpm enforcement:manifest:write\n`);
   process.exitCode = 1;
 }

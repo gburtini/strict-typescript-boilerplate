@@ -1,0 +1,12 @@
+{
+  "databaseVersion": "18",
+  "source": "bootstrap fixture; replace with a reviewed production export",
+  "tables": [
+    {
+      "estimatedPages": 0,
+      "estimatedRows": 10000,
+      "name": "users"
+    }
+  ],
+  "version": 1
+}

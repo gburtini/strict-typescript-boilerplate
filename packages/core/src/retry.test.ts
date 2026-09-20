@@ -60,7 +60,7 @@ describe("retry behavior", () => {
     expect.hasAssertions();
     const { attempts, result } = await runFailureTest();
 
-    expect(Exit.isFailure(result)).toBeTruthy();
+    expect(Exit.isFailure(result)).toBe(true);
     expect(attempts).toBe(1);
   });
 });

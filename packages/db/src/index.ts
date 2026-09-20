@@ -4,6 +4,9 @@ export { env } from "./env";
 export {
   createQueryCapture,
   fingerprintSql,
+  getProcessQueryCapture,
+  mergeQueryCorpora,
+  parseQueryCorpus,
   normalizeSql,
   serializeQueryCorpus,
   writeQueryCorpus,

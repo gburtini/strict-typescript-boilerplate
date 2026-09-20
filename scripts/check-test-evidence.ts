@@ -1,23 +1,21 @@
 import { existsSync, readFileSync } from "node:fs";
+import { z } from "zod";
 
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === "object" && value !== null && !Array.isArray(value);
-}
+const evidenceRecordSchema = z.object({
+    change: z.string(),
+    redState: z.string(),
+    redStateConfirmed: z.literal(true),
+    test: z.string(),
+  }),
+  evidenceSchema = z.object({
+    records: z.array(evidenceRecordSchema),
+  }),
+  evidence = evidenceSchema.parse(
+    JSON.parse(readFileSync("docs/test-evidence.json", "utf8")),
+  );
 
-const value: unknown = JSON.parse(readFileSync("docs/test-evidence.json", "utf8"));
-if (!isRecord(value) || !Array.isArray(value.records)) {
-  throw new TypeError("test evidence manifest is invalid");
-}
-
-for (const record of value.records) {
-  if (
-    !isRecord(record) ||
-    typeof record.change !== "string" ||
-    typeof record.test !== "string" ||
-    typeof record.redState !== "string" ||
-    record.redStateConfirmed !== true ||
-    !existsSync(record.test)
-  ) {
+for (const record of evidence.records) {
+  if (!existsSync(record.test)) {
     throw new TypeError(
       "every test evidence record requires a real test and confirmed red-state evidence",
     );

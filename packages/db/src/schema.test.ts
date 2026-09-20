@@ -24,20 +24,18 @@ describe("database schema policy", () => {
   it.each(tables)("$name uses snake_case identifiers", (table) => {
     expect.hasAssertions();
 
-    expect(snakeCaseName.test(table.name)).toBeTruthy();
-    expect(
-      table.columns.every((column) => snakeCaseName.test(column.name)),
-    ).toBeTruthy();
+    expect(snakeCaseName.test(table.name)).toBe(true);
+    expect(table.columns.every((column) => snakeCaseName.test(column.name))).toBe(true);
   });
 
   it.each(tables)("$name gives foreign keys explicit actions", (table) => {
     expect.hasAssertions();
 
-    expect(
-      table.foreignKeys.every((foreignKey) => Boolean(foreignKey.onDelete)),
-    ).toBeTruthy();
-    expect(
-      table.foreignKeys.every((foreignKey) => Boolean(foreignKey.onUpdate)),
-    ).toBeTruthy();
+    expect(table.foreignKeys.every((foreignKey) => Boolean(foreignKey.onDelete))).toBe(
+      true,
+    );
+    expect(table.foreignKeys.every((foreignKey) => Boolean(foreignKey.onUpdate))).toBe(
+      true,
+    );
   });
 });

@@ -13,6 +13,10 @@ interface TelemetryOptions {
   readonly serviceVersion?: string;
 }
 
+/*
+ * This module is the Node runtime assembly point for telemetry. The Effect
+ * layer is intentionally constructed here rather than in application leaves.
+ */
 function createTelemetryLive(options: TelemetryOptions): Layer.Layer<OtelTracer> {
   const configuration = {
       endpoint: options.endpoint ?? "http://localhost:4318/v1/traces",

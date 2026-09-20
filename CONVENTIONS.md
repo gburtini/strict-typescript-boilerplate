@@ -9,7 +9,8 @@ TypeScript, React Doctor, and custom rules enforce the mechanical parts.
 - Use named exports. Default exports are reserved for framework configuration
   files where the framework requires them.
 - Import React APIs by their named form: `useState`, never `React.useState`.
-- Use inline type specifiers when a statement mixes runtime and type imports.
+- Use top-level type-only imports when a statement contains only type imports;
+  use inline type specifiers when it also contains runtime imports.
 - Keep imports at module scope and use public package entrypoints.
 - Use kebab-case filenames.
 
@@ -25,6 +26,13 @@ TypeScript, React Doctor, and custom rules enforce the mechanical parts.
 - Keep exported types named and small.
 - Use Zod 4 schemas at runtime boundaries and infer types from the schemas;
   never treat a TypeScript annotation as input validation.
+- Parse at the boundary. Generic object/type-guard helpers such as `isRecord`
+  are prohibited; they hide weak shapes and create duplicated validation.
+  Prefer a named domain schema with `schema.parse(...)` and use its inferred
+  type throughout the module.
+- The same rule applies to scripts and configuration readers. A checker must
+  parse the actual manifest it owns—coverage, workflow policy, package export,
+  generated-file, or query-corpus schema—not a generic object shape.
 - Use Effect for application/domain computations that can fail, retry, be
   cancelled, or need a span. Keep adapter effects at the boundary.
 

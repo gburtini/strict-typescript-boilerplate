@@ -47,12 +47,58 @@ tool evaluates what actually ran. It does not require query registration.
 Uncovered dynamic branches remain a test-coverage gap and must not be treated
 as proven safe.
 
+The repository includes `query-plans/fixture.sql`, a sanitized, deterministic
+planner fixture. It is deliberately data-shaped rather than a raw
+`pg_statistic` dump: PostgreSQL's internal statistics catalogs are
+version-sensitive and difficult to restore safely. The fixture is loaded and
+`ANALYZE`d on a pinned PostgreSQL 18.3 server, which reconstructs planner
+statistics reproducibly.
+
+The committed `query-plans/baseline.json` contains normalized plans produced
+from that fixture. It is evidence, not permission to ignore a new plan. When a
+schema or query intentionally changes a plan, regenerate the baseline only
+after reviewing the new plan and recording why the change is safe.
+
 ## Policy boundary
 
 Plan checks should distinguish generic-plan regressions from parameter-skew
 cases and should compare normalized plan structure rather than exact costs.
 Cost and row thresholds belong in a production-like PostgreSQL environment
 with representative statistics, not in unit tests or source lint.
+
+The executable gate is:
+
+```sh
+pnpm db:plans:prepare
+pnpm db:plans
+```
+
+The runner executes `EXPLAIN (FORMAT JSON, GENERIC_PLAN TRUE)` for every
+captured query, stores the current plans in `.artifacts/query-plans.json`, and
+emits `.artifacts/query-plans.md`. It reports added, changed, and unchanged
+plans, originating test sources, plan shape, estimated rows, and cost. Every
+added or changed query gets a visible risk marker:
+
+- ✅ low — no material plan concern detected;
+- 🟠 review — plan shape or a moderate scan/cost deserves investigation;
+- 🔴 high — large sequential scan or material cost regression; the gate fails.
+
+When `QUERY_PLAN_CAPTURE=1`, `@template/db` automatically attaches a process
+capture logger to `createDatabase()`. Each test process writes a redacted
+`.artifacts/query-corpus-<pid>.json` shard. CI merges those shards with
+`pnpm db:query-corpus:merge` and `pnpm db:plans` automatically prefers the
+merged `.artifacts/query-corpus.json`. The committed
+`query-plans/corpus.json` is only a bootstrap fallback for this empty template.
+
+To intentionally establish a reviewed baseline:
+
+```sh
+QUERY_PLAN_WRITE_BASELINE=1 pnpm db:plans
+```
+
+That command is never part of the normal CI gate. Agents must not use it to
+make a failing plan disappear; the resulting baseline change must accompany
+the query/schema rationale.
 
 ## Pull-request reports
 
@@ -62,7 +108,7 @@ The report command compares two captured corpus artifacts and emits Markdown:
 pnpm db:query-corpus:report baseline.json current.json
 ```
 
-CI can append that output to `GITHUB_STEP_SUMMARY` or a PR comment. This first
-report identifies added, removed, and unchanged query shapes. A later
-production-like PostgreSQL job can extend the same report with normalized
-`EXPLAIN` plan changes and fail only on policy violations.
+The required `Query Plans` CI job runs the real PostgreSQL planner against the
+fixture, appends the report to `GITHUB_STEP_SUMMARY`, and comments on same-
+repository pull requests when the token can write comments. Forks still get
+the required check and workflow summary without granting write permissions.
