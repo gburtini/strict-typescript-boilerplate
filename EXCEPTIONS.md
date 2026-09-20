@@ -61,8 +61,8 @@ permission to weaken enforcement:
   across all supported project shapes.
 - `vitest/no-importing-vitest-globals`, `vitest/require-test-timeout` — local
   test configuration owns these choices.
-- `vitest/require-hook` — enabled only for test-file globs because Oxlint
-  otherwise applies this test-isolation rule to application and script entrypoints.
+- `vitest/require-hook` — disabled globally to neutralize the Vitest plugin
+  default, then enabled for all repository test-file globs.
 - `vitest/prefer-to-be-falsy`, `vitest/prefer-to-be-truthy` — strict boolean
   matchers are the canonical test assertion form.
 - `@rikalabs/no-unlisted-external-imports`,
