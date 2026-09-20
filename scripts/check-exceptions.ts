@@ -60,8 +60,9 @@ if (violations.length > 0) {
   process.exitCode = 1;
 }
 
-const config: unknown = JSON.parse(readFileSync(".oxlintrc.json", "utf8"));
-if (!isRecord(config)) throw new TypeError(".oxlintrc.json must be an object");
+const configPath = "oxlint.base.json";
+const config: unknown = JSON.parse(readFileSync(configPath, "utf8"));
+if (!isRecord(config)) throw new TypeError(`${configPath} must be an object`);
 const disabledRules = new Set<string>();
 collectDisabledRules(config, disabledRules);
 const exceptionPolicy = readFileSync("EXCEPTIONS.md", "utf8");

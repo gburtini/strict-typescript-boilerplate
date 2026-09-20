@@ -18,9 +18,10 @@ function severity(value: unknown): string {
   return "configured";
 }
 
-const baseValue: unknown = JSON.parse(readFileSync(".oxlintrc.json", "utf8"));
+const baseConfigPath = "oxlint.base.json";
+const baseValue: unknown = JSON.parse(readFileSync(baseConfigPath, "utf8"));
 if (!isRecord(baseValue) || !isRecord(baseValue.rules)) {
-  throw new TypeError(".oxlintrc.json has no rules object");
+  throw new TypeError(`${baseConfigPath} has no rules object`);
 }
 
 const rows: RuleRow[] = Object.entries(baseValue.rules).map(([rule, value]) => ({
@@ -28,7 +29,7 @@ const rows: RuleRow[] = Object.entries(baseValue.rules).map(([rule, value]) => (
   owner: "Oxlint",
   severity: severity(value),
   scope: "apps, packages, scripts",
-  source: ".oxlintrc.json",
+  source: baseConfigPath,
 }));
 
 if (Array.isArray(baseValue.overrides)) {
@@ -47,7 +48,7 @@ if (Array.isArray(baseValue.overrides)) {
         owner: "Oxlint override",
         severity: severity(value),
         scope: scope || "scoped override",
-        source: ".oxlintrc.json",
+        source: baseConfigPath,
       });
     }
   }

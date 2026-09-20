@@ -51,6 +51,21 @@ sql.raw("untrusted");
 `,
 );
 
+const directConfigResult = spawnSync(
+  "pnpm",
+  ["exec", "oxlint", "--print-config", fixturePath],
+  { encoding: "utf8" },
+);
+const directConfigOutput = `${directConfigResult.stdout}\n${directConfigResult.stderr}`;
+if (
+  directConfigResult.status !== 0 ||
+  !directConfigOutput.includes('"typescript/no-unsafe-type-assertion"')
+) {
+  console.error(directConfigOutput);
+  console.error("Oxlint direct config discovery did not load the repository config.");
+  process.exitCode = 1;
+}
+
 const lintResult = spawnSync(
   "pnpm",
   [

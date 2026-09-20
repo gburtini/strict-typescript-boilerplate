@@ -37,7 +37,8 @@ the implementation needs to change.
 - `packages/ui/` contains shared design-system primitives.
 - `packages/ui/src/lib/utils.ts` contains the canonical `cn` class-merging helper.
 - `AGENTS.md` is the short policy for human and coding-agent contributors.
-- `.oxlintrc.json` and `.dependency-cruiser.cjs` are repository law.
+- `oxlint.config.ts`, `oxlint.base.json`, and `.dependency-cruiser.cjs` are
+  repository law.
 
 The starter is deliberately small. Add new applications under `apps/` and
 shared libraries under `packages/`; encode every repeated architectural
