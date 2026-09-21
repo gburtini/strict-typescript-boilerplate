@@ -126,7 +126,8 @@ currently required AI SDK transitive versions are individually listed in
 exempted. Owner: repository maintainers. Tracking task: branch
 `codex/jev-semantic-lint`. Expiry: 2026-09-30; remove the exact-version
 exclusions after review and once the releases have aged past the seven-day
-gate. Jev runs only on an explicit local command and findings are advisory.
+gate. Jev evaluates pull-request diffs and may also be run locally; inability
+to evaluate a pull-request diff is a failed check.
 
 Database tooling and governance scripts receive the same lint policy as
 application code. They must use the public package entry points, satisfy the
