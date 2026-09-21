@@ -2,7 +2,7 @@ import { mkdir, writeFile } from "node:fs/promises";
 import nodePath from "node:path";
 import postgres from "postgres";
 import { z } from "zod";
-import { productionStatsSchema } from "../src/devtools/query-plan-stats.js";
+import { productionStatsSchema } from "../src/devtools/query-plan-stats.ts";
 
 // The planner must model production-sized relations without connecting CI to
 // Production. Export only table-size estimates, review the result, and commit

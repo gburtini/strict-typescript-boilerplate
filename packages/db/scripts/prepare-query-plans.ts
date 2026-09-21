@@ -1,7 +1,7 @@
 import { readFile } from "node:fs/promises";
 import nodePath from "node:path";
 import postgres from "postgres";
-import { productionStatsSchema } from "../src/devtools/query-plan-stats.js";
+import { productionStatsSchema } from "../src/devtools/query-plan-stats.ts";
 
 const repositoryRoot = nodePath.resolve(import.meta.dirname, "../../..");
 
