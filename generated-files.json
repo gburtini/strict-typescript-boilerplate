@@ -1,5 +1,5 @@
 {
-  "$schema": "./schemas/generated-files.schema.json",
+  "$schema": "./devtools/schemas/generated-files.schema.json",
   "files": [
     {
       "checkCommand": ["pnpm", "db:migrations:check"],

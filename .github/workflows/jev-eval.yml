@@ -6,9 +6,13 @@ on:
     paths:
       - ".github/workflows/jev-eval.yml"
       - "quality/semantic/**"
-      - "scripts/check-semantic-lint.ts"
-      - "scripts/semantic-lint-core.ts"
-      - "scripts/check-ci-policy.ts"
+      - "devtools/scripts/repository/check-semantic-lint.ts"
+      - "devtools/scripts/repository/semantic-lint-core.ts"
+      - "devtools/scripts/repository/check-ci-policy.ts"
+      - "docs/policies/ARCHITECTURE.md"
+      - "docs/policies/CONVENTIONS.md"
+      - "docs/policies/TESTING.md"
+      - "AGENTS.md"
       - "package.json"
       - "pnpm-lock.yaml"
   workflow_dispatch:
@@ -29,7 +33,7 @@ jobs:
           version: 10.30.3
       - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
         with:
-          node-version-file: .node-version
+          node-version-file: .nvmrc
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - name: Run advisory Jev fixture evaluation

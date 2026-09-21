@@ -22,3 +22,6 @@ export type {
   QueryCorpusDiff,
   QueryCorpusEntry,
 } from "../query-capture.ts";
+export { mapWithConcurrency } from "./map-with-concurrency.ts";
+export { productionStatsSchema } from "./query-plan-stats.ts";
+export type { ProductionStats } from "./query-plan-stats.ts";

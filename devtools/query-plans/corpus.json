@@ -5,14 +5,14 @@
       "fingerprint": "ad2314a5e6da46090e894e31d233d267b27b58b3c503b8c049879ba0309e466b",
       "parameterSamples": [["<string:34>"]],
       "sql": "SELECT \"id\", \"email\", \"created_at\", \"updated_at\" FROM \"users\" WHERE \"email\" = $1",
-      "testSources": ["query-plans/fixture"]
+      "testSources": ["devtools/query-plans/fixture"]
     },
     {
       "executions": 1,
       "fingerprint": "c786d9ef1cea4664d2c14e5913eaacb0886fb0ba98aa4163a003922eb3f792f0",
       "parameterSamples": [[50]],
       "sql": "SELECT \"id\", \"email\", \"created_at\", \"updated_at\" FROM \"users\" ORDER BY \"created_at\" DESC LIMIT $1",
-      "testSources": ["query-plans/fixture"]
+      "testSources": ["devtools/query-plans/fixture"]
     }
   ],
   "version": 1

@@ -3,7 +3,7 @@
 This repository is intentionally strict. `pnpm check:all` is the definition of
 a valid repository state. `pnpm check` is the fast static/unit subset.
 
-Read the policy document relevant to the change:
+Read the relevant policy in `docs/policies/`:
 
 - `ARCHITECTURE.md` — workspace boundaries and dependency direction
 - `CONVENTIONS.md` — canonical code forms
@@ -51,7 +51,7 @@ Fix failures at their cause. Do not:
 
 - Keep TypeScript strict and use `unknown` at untrusted boundaries.
 - Repository scripts are enforcement code, not a lower-standard exception.
-  `scripts/**` and package tooling scripts receive the same lint policy as
+  `devtools/scripts/**` and package tooling scripts receive the same lint policy as
   application code. Do not add script-only disables, warning downgrades, or
   suppression comments to make a checker pass.
 - Decode unknown data immediately with a Zod 4 schema. Do not add generic

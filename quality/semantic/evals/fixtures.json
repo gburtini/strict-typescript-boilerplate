@@ -109,7 +109,7 @@
       "id": "raw-database-access-duplicates-repository",
       "state": {
         "change": "Adds a route that imports the database client and queries project membership directly to decide whether to show a project.",
-        "relatedContext": "The repository's projectAccess repository function performs this membership check and returns the typed access result used by other routes. ARCHITECTURE.md explicitly assigns Drizzle to @template/db; application and API code use repository ports.",
+        "relatedContext": "The repository's projectAccess repository function performs this membership check and returns the typed access result used by other routes. docs/policies/ARCHITECTURE.md explicitly assigns Drizzle to @template/db; application and API code use repository ports.",
         "testContext": "A route test covers both accessible and inaccessible projects."
       },
       "expected": {
@@ -317,7 +317,7 @@
       "id": "domain-parses-provider-json",
       "state": {
         "change": "Adds JSON.parse and field extraction inside a domain operation to decode an upstream provider response.",
-        "relatedContext": "ARCHITECTURE.md assigns external integrations and their response parsing to infrastructure adapters; adapters translate external concepts into application types. Domain code has no HTTP or external-system APIs.",
+        "relatedContext": "docs/policies/ARCHITECTURE.md assigns external integrations and their response parsing to infrastructure adapters; adapters translate external concepts into application types. Domain code has no HTTP or external-system APIs.",
         "testContext": "A domain unit test supplies a provider-shaped JSON string and checks the extracted status."
       },
       "expected": {
@@ -330,7 +330,7 @@
       "id": "database-package-owns-api-contract-type",
       "state": {
         "change": "Defines and exports the HTTP response contract for the project listing endpoint from packages/db alongside its Drizzle table schema.",
-        "relatedContext": "ARCHITECTURE.md assigns Drizzle and database schemas to @template/db, and assigns request and response schemas plus public API contracts to oRPC transport. The endpoint is consumed by the web application.",
+        "relatedContext": "docs/policies/ARCHITECTURE.md assigns Drizzle and database schemas to @template/db, and assigns request and response schemas plus public API contracts to oRPC transport. The endpoint is consumed by the web application.",
         "testContext": "A package test checks the response object includes each database column."
       },
       "expected": {
@@ -343,7 +343,7 @@
       "id": "rpc-parses-request-and-delegates",
       "state": {
         "change": "Defines a Zod request schema in the oRPC contract, parses incoming data at the procedure boundary, and passes the validated value to an application use case.",
-        "relatedContext": "ARCHITECTURE.md assigns transport schemas and public API contracts to oRPC. The application use case receives typed input and does not parse HTTP data.",
+        "relatedContext": "docs/policies/ARCHITECTURE.md assigns transport schemas and public API contracts to oRPC. The application use case receives typed input and does not parse HTTP data.",
         "testContext": "Procedure tests verify accepted input reaches the use case result and invalid input receives a validation response."
       },
       "expected": {
@@ -356,7 +356,7 @@
       "id": "repository-maps-row-to-api-contract",
       "state": {
         "change": "Implements a repository query in @template/db and maps its row into an application record; the oRPC contract separately defines the HTTP response shape.",
-        "relatedContext": "ARCHITECTURE.md assigns SQL access to the database adapter and request and response schemas to oRPC transport. The application coordinates the repository port and transport maps the returned application record.",
+        "relatedContext": "docs/policies/ARCHITECTURE.md assigns SQL access to the database adapter and request and response schemas to oRPC transport. The application coordinates the repository port and transport maps the returned application record.",
         "testContext": "A repository test checks the application record and an API contract test checks the response schema."
       },
       "expected": {

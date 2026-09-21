@@ -1,21 +1,17 @@
 import { createHash } from "node:crypto";
 import { existsSync } from "node:fs";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
-import nodePath from "node:path";
 import postgres from "postgres";
 import { z } from "zod";
-import { queryCorpusSchema } from "../src/devtools/query-plans.ts";
-import { mapWithConcurrency } from "./map-with-concurrency.ts";
+import {
+  mapWithConcurrency,
+  queryCorpusSchema,
+} from "@template/db/devtools/query-plans";
+import { resolveRepositoryPath } from "../shared/repository-paths.ts";
 
 // This is an AI-facing design guard: every captured query is explained against
 // A real PostgreSQL planner, then reported with a visible risk marker so query
 // Shape and scale are part of the implementation feedback loop.
-
-const repositoryRoot = nodePath.resolve(import.meta.dirname, "../../..");
-
-function repositoryPath(relativePath: string): string {
-  return nodePath.resolve(repositoryRoot, relativePath);
-}
 
 interface PlanNode {
   readonly "Index Name": string;
@@ -94,6 +90,28 @@ function hasSequentialScan(node: PlanNode): boolean {
     return true;
   }
   return node.Plans.some((childPlan) => hasSequentialScan(childPlan));
+}
+
+function hasNodeType(node: PlanNode, nodeType: string): boolean {
+  return (
+    node["Node Type"] === nodeType ||
+    node.Plans.some((childPlan) => hasNodeType(childPlan, nodeType))
+  );
+}
+
+function warningsForPlan(node: PlanNode): readonly string[] {
+  const warnings: string[] = [];
+  if (hasNodeType(node, "Nested Loop")) {
+    warnings.push(
+      "Nested Loop can repeat inner work for each outer row; check that the outer row count is bounded and the inner side has an efficient access path.",
+    );
+  }
+  if (hasSequentialScan(node)) {
+    warnings.push(
+      "Sequential scan present; confirm the scanned relation is small or the scan is intentional.",
+    );
+  }
+  return warnings;
 }
 
 function riskForPlan(entry: PlanEntry, previous?: PlanEntry): string {
@@ -193,6 +211,44 @@ function comparePlans(current: PlanArtifact, baseline: PlanArtifact): PlanCompar
   return { added, changed, riskByFingerprint, unchanged, violations };
 }
 
+function renderEntry(entry: PlanEntry, risk: string): readonly string[] {
+  const warnings = warningsForPlan(entry.plan);
+  let warningLabel = "warnings";
+  if (warnings.length === 1) {
+    warningLabel = "warning";
+  }
+  const lines = [
+    `- ${risk} \`${entry.fingerprint.slice(0, 12)}\` · cost ${entry.totalCost} · max rows ${entry.maxPlanRows} · shape \`${entry.planFingerprint.slice(0, 12)}\` · sources: ${entry.testSources.join(", ") || "unknown"}`,
+    "",
+    "  <details>",
+    `  <summary>SQL, plan, and ${warnings.length} planner ${warningLabel}</summary>`,
+    "",
+    "  **SQL**",
+    "  ```sql",
+    ...entry.sql.split("\n").map((line) => `  ${line}`),
+    "  ```",
+  ];
+  if (warnings.length > 0) {
+    lines.push(
+      "",
+      "  **Planner warnings**",
+      "",
+      ...warnings.map((warning) => `  - ${warning}`),
+    );
+  }
+  lines.push(
+    "",
+    "  **Current plan**",
+    "  ```json",
+    ...JSON.stringify(entry.plan, jsonIdentity, 2)
+      .split("\n")
+      .map((line) => `  ${line}`),
+    "  ```",
+    "  </details>",
+  );
+  return lines;
+}
+
 function renderComparison(comparison: PlanComparison): string {
   const lines = [
     "## Database query-plan changes",
@@ -208,7 +264,10 @@ function renderComparison(comparison: PlanComparison): string {
     lines.push("", "### Added query plans", "");
     for (const entry of comparison.added) {
       lines.push(
-        `- ${comparison.riskByFingerprint.get(entry.fingerprint)} \`${entry.fingerprint.slice(0, 12)}\`: ${entry.sql} (cost ${entry.totalCost}, max rows ${entry.maxPlanRows}, sources: ${entry.testSources.join(", ") || "unknown"})`,
+        ...renderEntry(
+          entry,
+          comparison.riskByFingerprint.get(entry.fingerprint) ?? "🟠 review",
+        ),
       );
     }
   }
@@ -216,7 +275,10 @@ function renderComparison(comparison: PlanComparison): string {
     lines.push("", "### Changed query plans", "");
     for (const entry of comparison.changed) {
       lines.push(
-        `- ${comparison.riskByFingerprint.get(entry.fingerprint)} \`${entry.fingerprint.slice(0, 12)}\`: ${entry.sql} (cost ${entry.totalCost}, max rows ${entry.maxPlanRows}, shape ${entry.planFingerprint.slice(0, 12)}, sources: ${entry.testSources.join(", ") || "unknown"})`,
+        ...renderEntry(
+          entry,
+          comparison.riskByFingerprint.get(entry.fingerprint) ?? "🟠 review",
+        ),
       );
     }
   }
@@ -232,8 +294,8 @@ function renderComparison(comparison: PlanComparison): string {
 }
 
 const databaseUrl = process.env.QUERY_PLAN_DATABASE_URL;
-const generatedCorpusPath = repositoryPath(".artifacts/query-corpus.json");
-let corpusPath = "query-plans/corpus.json";
+const generatedCorpusPath = resolveRepositoryPath(".artifacts/query-corpus.json");
+let corpusPath = "devtools/query-plans/corpus.json";
 if (existsSync(generatedCorpusPath)) {
   corpusPath = ".artifacts/query-corpus.json";
 }
@@ -243,11 +305,11 @@ if (
 ) {
   corpusPath = process.env.QUERY_PLAN_CORPUS;
 }
-corpusPath = repositoryPath(corpusPath);
-const baselinePath = repositoryPath(
-  process.env.QUERY_PLAN_BASELINE ?? "query-plans/baseline.json",
+corpusPath = resolveRepositoryPath(corpusPath);
+const baselinePath = resolveRepositoryPath(
+  process.env.QUERY_PLAN_BASELINE ?? "devtools/query-plans/baseline.json",
 );
-const outputPath = repositoryPath(
+const outputPath = resolveRepositoryPath(
   process.env.QUERY_PLAN_OUTPUT ?? ".artifacts/query-plans.md",
 );
 if (typeof databaseUrl !== "string" || databaseUrl.length === 0) {
@@ -290,9 +352,13 @@ try {
 }
 
 const current: PlanArtifact = { databaseVersion, queries: planEntries, version: 1 };
-await mkdir(repositoryPath(".artifacts"), { recursive: true });
+await mkdir(resolveRepositoryPath(".artifacts"), { recursive: true });
 const currentJson = `${JSON.stringify(current, jsonIdentity, 2)}\n`;
-await writeFile(repositoryPath(".artifacts/query-plans.json"), currentJson, "utf8");
+await writeFile(
+  resolveRepositoryPath(".artifacts/query-plans.json"),
+  currentJson,
+  "utf8",
+);
 if (process.env.QUERY_PLAN_WRITE_BASELINE === "1") {
   await writeFile(baselinePath, currentJson, "utf8");
   await writeFile(

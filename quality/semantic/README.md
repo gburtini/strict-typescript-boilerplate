@@ -43,8 +43,9 @@ evaluation sends only the synthetic fixture corpus. Jev receives source code
 as untrusted evidence; rule policy is defined in the trusted JSON
 configuration, and source comments do not define policy.
 
-The context collector currently includes `AGENTS.md`, `ARCHITECTURE.md`,
-`CONVENTIONS.md`, `TESTING.md`, changed code paths, and neighboring test files.
+The context collector currently includes `AGENTS.md`,
+`docs/policies/ARCHITECTURE.md`, `docs/policies/CONVENTIONS.md`,
+`docs/policies/TESTING.md`, changed code paths, and neighboring test files.
 It does not yet perform repository-wide symbol search or import-graph
 retrieval. The 28 synthetic fixtures produce 84 Boolean judgments per pass.
 Each rule has at least eight positive and eight negative examples as required

@@ -5,12 +5,15 @@ import {
   parseQueryCorpus,
   serializeQueryCorpus,
   type QueryCorpus,
-} from "../src/devtools/query-plans.ts";
-import { mapWithConcurrency } from "./map-with-concurrency.ts";
+  mapWithConcurrency,
+} from "@template/db/devtools/query-plans";
+import { repositoryRoot } from "../shared/repository-paths.ts";
 
-const repositoryRoot = nodePath.resolve(import.meta.dirname, "../../..");
 const artifactDirectory = nodePath.resolve(repositoryRoot, ".artifacts");
-const bootstrapPath = nodePath.resolve(repositoryRoot, "query-plans/corpus.json");
+const bootstrapPath = nodePath.resolve(
+  repositoryRoot,
+  "devtools/query-plans/corpus.json",
+);
 const outputPath = nodePath.resolve(artifactDirectory, "query-corpus.json");
 
 // The test runner can fork workers. Each worker writes a shard so corpus

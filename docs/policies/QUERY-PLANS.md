@@ -47,14 +47,14 @@ tool evaluates what actually ran. It does not require query registration.
 Uncovered dynamic branches remain a test-coverage gap and must not be treated
 as proven safe.
 
-The repository includes `query-plans/fixture.sql`, a sanitized, deterministic
+The repository includes `devtools/query-plans/fixture.sql`, a sanitized, deterministic
 planner fixture. It is deliberately data-shaped rather than a raw
 `pg_statistic` dump: PostgreSQL's internal statistics catalogs are
 version-sensitive and difficult to restore safely. The fixture is loaded and
 `ANALYZE`d on a pinned PostgreSQL 18.3 server, which reconstructs planner
 statistics reproducibly.
 
-The committed `query-plans/baseline.json` contains normalized plans produced
+The committed `devtools/query-plans/baseline.json` contains normalized plans produced
 from that fixture. It is evidence, not permission to ignore a new plan. When a
 schema or query intentionally changes a plan, regenerate the baseline only
 after reviewing the new plan and recording why the change is safe.
@@ -64,7 +64,10 @@ after reviewing the new plan and recording why the change is safe.
 Plan checks should distinguish generic-plan regressions from parameter-skew
 cases and should compare normalized plan structure rather than exact costs.
 Cost and row thresholds belong in a production-like PostgreSQL environment
-with representative statistics, not in unit tests or source lint.
+with representative statistics, not in unit tests or source lint. The PR report
+adds informational warnings for nested loops and sequential scans to prompt
+review; these are not failures by themselves because both can be appropriate
+for bounded or small relations.
 
 The executable gate is:
 
@@ -76,8 +79,9 @@ pnpm db:plans
 The runner executes `EXPLAIN (FORMAT JSON, GENERIC_PLAN TRUE)` for every
 captured query, stores the current plans in `.artifacts/query-plans.json`, and
 emits `.artifacts/query-plans.md`. It reports added, changed, and unchanged
-plans, originating test sources, plan shape, estimated rows, and cost. Every
-added or changed query gets a visible risk marker:
+plans, originating test sources, plan shape, estimated rows, and cost. Added
+and changed entries keep SQL and the full JSON plan in a collapsed section.
+Every added or changed query gets a visible risk marker:
 
 - ✅ low — no material plan concern detected;
 - 🟠 review — plan shape or a moderate scan/cost deserves investigation;
@@ -88,7 +92,7 @@ capture logger to `createDatabase()`. Each test process writes a redacted
 `.artifacts/query-corpus-<pid>.json` shard. CI merges those shards with
 `pnpm db:query-corpus:merge` and `pnpm db:plans` automatically prefers the
 merged `.artifacts/query-corpus.json`. The committed
-`query-plans/corpus.json` is only a bootstrap fallback for this empty template.
+`devtools/query-plans/corpus.json` is only a bootstrap fallback for this empty template.
 
 To intentionally establish a reviewed baseline:
 

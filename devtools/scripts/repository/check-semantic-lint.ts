@@ -22,7 +22,8 @@ const changedPathsSchema = z.array(z.string().min(1).max(4096)),
     "--",
     "apps",
     "packages",
-    "scripts",
+    "devtools",
+    "docs/policies",
     "quality",
     "package.json",
     "pnpm-workspace.yaml",
@@ -101,7 +102,12 @@ function readSourceContext(paths: readonly string[], root: string): string {
 }
 
 function readRepositoryPolicy(root: string): string {
-  return ["AGENTS.md", "ARCHITECTURE.md", "CONVENTIONS.md", "TESTING.md"]
+  return [
+    "AGENTS.md",
+    "docs/policies/ARCHITECTURE.md",
+    "docs/policies/CONVENTIONS.md",
+    "docs/policies/TESTING.md",
+  ]
     .filter((path) => isSafeRepositoryFile(path, root))
     .map(
       (path) =>

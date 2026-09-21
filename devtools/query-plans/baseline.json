@@ -11,9 +11,9 @@
         "Relation Name": "users",
         "Index Name": "users_email_unique"
       },
-      "planFingerprint": "ae4eee7afdb39e647eb64636f37d35aec1877bd3112f589eb6479d35091cbc4a",
+      "planFingerprint": "909e5b20b68878d415a22878c90a8d22c677678fe84aa3f39062b8ed3528c7dc",
       "sql": "SELECT \"id\", \"email\", \"created_at\", \"updated_at\" FROM \"users\" WHERE \"email\" = $1",
-      "testSources": ["query-plans/fixture"],
+      "testSources": ["devtools/query-plans/fixture"],
       "totalCost": 8.3
     },
     {
@@ -39,9 +39,9 @@
           }
         ]
       },
-      "planFingerprint": "06c56d0bacb88f2aed612850881a85fca72f6f016da5c4239cd534f4a36b7d47",
+      "planFingerprint": "109ea5305b9b37e45db08bd9bef8ac23f313118951565295eaa06bc75d256cfc",
       "sql": "SELECT \"id\", \"email\", \"created_at\", \"updated_at\" FROM \"users\" ORDER BY \"created_at\" DESC LIMIT $1",
-      "testSources": ["query-plans/fixture"],
+      "testSources": ["devtools/query-plans/fixture"],
       "totalCost": 890.89
     }
   ],

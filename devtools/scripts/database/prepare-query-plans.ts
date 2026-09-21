@@ -1,9 +1,8 @@
 import { readFile } from "node:fs/promises";
 import nodePath from "node:path";
 import postgres from "postgres";
-import { productionStatsSchema } from "../src/devtools/query-plan-stats.ts";
-
-const repositoryRoot = nodePath.resolve(import.meta.dirname, "../../..");
+import { productionStatsSchema } from "@template/db/devtools/query-plans";
+import { repositoryRoot } from "../shared/repository-paths.ts";
 
 const databaseUrl = process.env.QUERY_PLAN_DATABASE_URL;
 if (typeof databaseUrl !== "string" || databaseUrl.length === 0) {
@@ -11,14 +10,14 @@ if (typeof databaseUrl !== "string" || databaseUrl.length === 0) {
 }
 
 const fixture = await readFile(
-  nodePath.resolve(repositoryRoot, "query-plans/fixture.sql"),
+  nodePath.resolve(repositoryRoot, "devtools/query-plans/fixture.sql"),
   "utf8",
 );
 // The fixture is deliberately sized from an imported production statistics
 // Snapshot. Query plans must represent the relation sizes an agent is likely
 // To encounter, rather than passing against a deceptively tiny empty table.
 const statisticsDocument = await readFile(
-  nodePath.resolve(repositoryRoot, "query-plans/production-stats.json"),
+  nodePath.resolve(repositoryRoot, "devtools/query-plans/production-stats.json"),
   "utf8",
 );
 const statistics = productionStatsSchema.parse(JSON.parse(statisticsDocument));
