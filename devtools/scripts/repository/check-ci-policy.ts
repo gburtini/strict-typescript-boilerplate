@@ -27,7 +27,7 @@ const permissionSetSchema = z.record(z.string(), z.enum(["read", "write", "none"
     },
     "codeql.yml": {
       workflow: { contents: "read" },
-      jobs: { analyze: { contents: "read" } },
+      jobs: { analyze: { contents: "read", "security-events": "read" } },
     },
     "dependency-review.yml": {
       workflow: { contents: "read" },

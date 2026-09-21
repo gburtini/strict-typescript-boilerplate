@@ -14,9 +14,10 @@ permissions:
 jobs:
   analyze:
     name: Analyze JavaScript and TypeScript
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     permissions:
       contents: read
+      security-events: read
     steps:
       - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.0.0
       - id: init
@@ -68,7 +69,7 @@ jobs:
           } >> "${GITHUB_STEP_SUMMARY}"
       - name: Upload CodeQL results
         if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
           name: codeql-results
           path: ${{ runner.temp }}/codeql-results

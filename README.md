@@ -55,6 +55,31 @@ The starter is deliberately small. Add new applications under `apps/` and
 shared libraries under `packages/`; encode every repeated architectural
 decision in a check when it can be made mechanical.
 
+## Customize for a project
+
+Keep the generic `@template/*` package names and starter identity while this
+repository is used as a boilerplate. When creating a project from it, rename
+the package scopes and project-specific defaults together. Search the entire
+repository for these values before the first project commit:
+
+- `@template/`
+- `typescript-boilerplate`
+- `TypeScript Boilerplate`
+- starter/example screen names and copy
+
+Also review the environment defaults, database name, telemetry service name,
+package exports, test evidence, generated migration metadata, and deployment
+workflows. Run the full contract from the renamed repository root:
+
+```sh
+nvm install
+nvm use
+corepack enable
+corepack install
+pnpm install
+pnpm check:all
+```
+
 ## UI primitives
 
 The shared UI package includes Button, Card, Input, and Label primitives with Tailwind
