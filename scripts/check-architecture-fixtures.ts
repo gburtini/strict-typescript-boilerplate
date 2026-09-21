@@ -1,9 +1,10 @@
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
-import { tmpdir } from "node:os";
 import nodePath from "node:path";
 import { spawnSync } from "node:child_process";
 
-const fixtureRoot = mkdtempSync(nodePath.join(tmpdir(), "typescript-architecture-"));
+const fixtureRoot = mkdtempSync(
+  nodePath.join(process.cwd(), "apps", ".architecture-fixtures-"),
+);
 const domainDirectory = nodePath.join(fixtureRoot, "src/domain"),
   infrastructureDirectory = nodePath.join(fixtureRoot, "src/infrastructure");
 
@@ -12,12 +13,12 @@ try {
   mkdirSync(infrastructureDirectory, { recursive: true });
 
   writeFileSync(
-    nodePath.join(infrastructureDirectory, "database.ts"),
+    nodePath.join(infrastructureDirectory, "database.js"),
     "export const database = true;\n",
   );
   writeFileSync(
-    nodePath.join(domainDirectory, "policy.ts"),
-    'import { database } from "../infrastructure/database";\nexport const policy = database;\n',
+    nodePath.join(domainDirectory, "policy.js"),
+    'import { database } from "../infrastructure/database.js";\nexport const policy = database;\n',
   );
 
   const result = spawnSync(

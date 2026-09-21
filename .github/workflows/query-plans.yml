@@ -48,7 +48,12 @@ jobs:
       - run: pnpm db:plans
       - name: Publish planner report
         if: always()
-        run: cat .artifacts/query-plans.md >> "$GITHUB_STEP_SUMMARY"
+        run: |
+          if [[ -f .artifacts/query-plans.md ]]; then
+            cat .artifacts/query-plans.md >> "$GITHUB_STEP_SUMMARY"
+          else
+            printf 'Query plan report was not generated.\n' >> "$GITHUB_STEP_SUMMARY"
+          fi
       - name: Comment planner report on pull request
         if: >-
           always() && github.event_name == 'pull_request' &&

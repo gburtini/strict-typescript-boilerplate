@@ -5,6 +5,7 @@ import nodePath from "node:path";
 import postgres from "postgres";
 import { z } from "zod";
 import { queryCorpusSchema } from "../src/devtools/query-plans.js";
+import { mapWithConcurrency } from "./map-with-concurrency.js";
 
 // This is an AI-facing design guard: every captured query is explained against
 // A real PostgreSQL planner, then reported with a visible risk marker so query
@@ -266,8 +267,10 @@ try {
   if (databaseVersionRow.success) {
     databaseVersion = databaseVersionRow.data.version;
   }
-  const explainedEntries = await Promise.all(
-    corpus.queries.map(async (query): Promise<PlanEntry> => {
+  const explainedEntries = await mapWithConcurrency(
+    corpus.queries,
+    1,
+    async (query): Promise<PlanEntry> => {
       const rows: readonly unknown[] = await sql.unsafe(explainStatement(query.sql));
       const plan = readPlanResult(rows);
       return {
@@ -279,7 +282,7 @@ try {
         testSources: query.testSources,
         totalCost: plan["Total Cost"],
       };
-    }),
+    },
   );
   planEntries.push(...explainedEntries);
 } finally {

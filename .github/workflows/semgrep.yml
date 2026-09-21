@@ -7,14 +7,12 @@ on:
 
 permissions:
   contents: read
-  security-events: write
 
 jobs:
   scan:
     runs-on: ubuntu-latest
+    container:
+      image: semgrep/semgrep:1.176.1@sha256:34ab619bf1391a24bfda3f05debd0d8a6ce3093c2d5f9d39cfc00f83c1397823
     steps:
       - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.0.0
-      - uses: semgrep/semgrep-action@713efdd345f3035192eaa63f56867b88e63e4e5d # v1.0.0
-        with:
-          config: .semgrep.yml
-          args: --no-suppress-errors
+      - run: semgrep scan --config .semgrep.yml --error

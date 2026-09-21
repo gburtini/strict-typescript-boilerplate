@@ -1,10 +1,9 @@
 import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
-import { tmpdir } from "node:os";
 import nodePath from "node:path";
 import { spawnSync } from "node:child_process";
 
 const temporaryDirectory = mkdtempSync(
-  nodePath.join(tmpdir(), "typescript-boilerplate-"),
+  nodePath.join(process.cwd(), "apps", ".enforcement-fixtures-"),
 );
 const databaseFixturePath = nodePath.join(temporaryDirectory, "forbidden-database.ts"),
   fixturePath = nodePath.join(temporaryDirectory, "forbidden.browser.tsx"),

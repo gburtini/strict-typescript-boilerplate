@@ -6,6 +6,7 @@ import {
   serializeQueryCorpus,
   type QueryCorpus,
 } from "../src/devtools/query-plans.js";
+import { mapWithConcurrency } from "./map-with-concurrency.js";
 
 const repositoryRoot = nodePath.resolve(import.meta.dirname, "../../..");
 const artifactDirectory = nodePath.resolve(repositoryRoot, ".artifacts");
@@ -24,12 +25,10 @@ if (corpusPaths.length === 0) {
   corpusPaths = [bootstrapPath];
 }
 const corpora: QueryCorpus[] = [];
-const corpusDocuments = await Promise.all(
-  corpusPaths.map(async (corpusPath) => {
-    const corpusDocument = await readFile(corpusPath, "utf8");
-    return corpusDocument.trim();
-  }),
-);
+const corpusDocuments = await mapWithConcurrency(corpusPaths, 4, async (corpusPath) => {
+  const corpusDocument = await readFile(corpusPath, "utf8");
+  return corpusDocument.trim();
+});
 for (const corpusDocument of corpusDocuments) {
   const parsedDocument: unknown = JSON.parse(corpusDocument);
   corpora.push(parseQueryCorpus(parsedDocument));

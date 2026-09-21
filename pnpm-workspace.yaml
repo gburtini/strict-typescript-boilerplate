@@ -13,3 +13,5 @@ minimumReleaseAgeExclude:
 # Keep the architecture checker on the TypeScript 7-compatible release. The
 # explicit freshness exception is deliberate: this is a compiler/toolchain
 # compatibility update, not a general dependency-age bypass.
+overrides:
+  esbuild@0.18.20: 0.25.12
