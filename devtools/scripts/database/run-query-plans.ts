@@ -1,21 +1,17 @@
 import { createHash } from "node:crypto";
 import { existsSync } from "node:fs";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
-import nodePath from "node:path";
 import postgres from "postgres";
 import { z } from "zod";
-import { queryCorpusSchema } from "../src/devtools/query-plans.ts";
-import { mapWithConcurrency } from "./map-with-concurrency.ts";
+import {
+  mapWithConcurrency,
+  queryCorpusSchema,
+} from "@template/db/devtools/query-plans";
+import { resolveRepositoryPath } from "../shared/repository-paths.ts";
 
 // This is an AI-facing design guard: every captured query is explained against
 // A real PostgreSQL planner, then reported with a visible risk marker so query
 // Shape and scale are part of the implementation feedback loop.
-
-const repositoryRoot = nodePath.resolve(import.meta.dirname, "../../..");
-
-function repositoryPath(relativePath: string): string {
-  return nodePath.resolve(repositoryRoot, relativePath);
-}
 
 interface PlanNode {
   readonly "Index Name": string;
@@ -232,8 +228,8 @@ function renderComparison(comparison: PlanComparison): string {
 }
 
 const databaseUrl = process.env.QUERY_PLAN_DATABASE_URL;
-const generatedCorpusPath = repositoryPath(".artifacts/query-corpus.json");
-let corpusPath = "query-plans/corpus.json";
+const generatedCorpusPath = resolveRepositoryPath(".artifacts/query-corpus.json");
+let corpusPath = "devtools/query-plans/corpus.json";
 if (existsSync(generatedCorpusPath)) {
   corpusPath = ".artifacts/query-corpus.json";
 }
@@ -243,11 +239,11 @@ if (
 ) {
   corpusPath = process.env.QUERY_PLAN_CORPUS;
 }
-corpusPath = repositoryPath(corpusPath);
-const baselinePath = repositoryPath(
-  process.env.QUERY_PLAN_BASELINE ?? "query-plans/baseline.json",
+corpusPath = resolveRepositoryPath(corpusPath);
+const baselinePath = resolveRepositoryPath(
+  process.env.QUERY_PLAN_BASELINE ?? "devtools/query-plans/baseline.json",
 );
-const outputPath = repositoryPath(
+const outputPath = resolveRepositoryPath(
   process.env.QUERY_PLAN_OUTPUT ?? ".artifacts/query-plans.md",
 );
 if (typeof databaseUrl !== "string" || databaseUrl.length === 0) {
@@ -290,9 +286,13 @@ try {
 }
 
 const current: PlanArtifact = { databaseVersion, queries: planEntries, version: 1 };
-await mkdir(repositoryPath(".artifacts"), { recursive: true });
+await mkdir(resolveRepositoryPath(".artifacts"), { recursive: true });
 const currentJson = `${JSON.stringify(current, jsonIdentity, 2)}\n`;
-await writeFile(repositoryPath(".artifacts/query-plans.json"), currentJson, "utf8");
+await writeFile(
+  resolveRepositoryPath(".artifacts/query-plans.json"),
+  currentJson,
+  "utf8",
+);
 if (process.env.QUERY_PLAN_WRITE_BASELINE === "1") {
   await writeFile(baselinePath, currentJson, "utf8");
   await writeFile(

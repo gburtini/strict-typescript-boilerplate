@@ -8,7 +8,7 @@ tracked directly from their upstream release process and requires review.
 - Prefer packages with maintained provenance, clear licensing, and a concrete
   need that existing platform or workspace code cannot satisfy.
 - Lifecycle scripts are disabled by default; an explicit exception must be
-  documented in `SECURITY.md` and this file.
+  documented in [`SECURITY.md`](SECURITY.md) and this file.
 - Vulnerability exceptions require an owner, impact assessment, tracking issue,
   compensating control, and review date.
 - Keep dependency updates routine rather than allowing an unreviewed backlog.
@@ -21,5 +21,5 @@ tracked directly from their upstream release process and requires review.
 The `prepare` lifecycle script is an explicit toolchain exception. It runs
 `effect-tsgo patch --oxlint --typescript` so the installed TypeScript 7 and
 Oxlint binaries use the Effect diagnostics integration. The package, command,
-owner, and verification are recorded in `EXCEPTIONS.md`; the command must be
-idempotent and must not access application secrets.
+owner, and verification are recorded in [`EXCEPTIONS.md`](EXCEPTIONS.md). The
+command must be idempotent and must not access application secrets.

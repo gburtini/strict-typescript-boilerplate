@@ -13,7 +13,7 @@
       },
       "planFingerprint": "ae4eee7afdb39e647eb64636f37d35aec1877bd3112f589eb6479d35091cbc4a",
       "sql": "SELECT \"id\", \"email\", \"created_at\", \"updated_at\" FROM \"users\" WHERE \"email\" = $1",
-      "testSources": ["query-plans/fixture"],
+      "testSources": ["devtools/query-plans/fixture"],
       "totalCost": 8.3
     },
     {
@@ -41,7 +41,7 @@
       },
       "planFingerprint": "06c56d0bacb88f2aed612850881a85fca72f6f016da5c4239cd534f4a36b7d47",
       "sql": "SELECT \"id\", \"email\", \"created_at\", \"updated_at\" FROM \"users\" ORDER BY \"created_at\" DESC LIMIT $1",
-      "testSources": ["query-plans/fixture"],
+      "testSources": ["devtools/query-plans/fixture"],
       "totalCost": 890.89
     }
   ],

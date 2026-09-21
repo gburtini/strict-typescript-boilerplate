@@ -12,7 +12,7 @@ const rationalePattern = /(?:--|:)\s*\S+/u,
   suppressionPattern = /(?:eslint|oxlint|ts)-disable(?:-next-line)?/u,
   violations: string[] = [];
 if (roots.length === 0) {
-  roots.push("apps", "packages", "scripts");
+  roots.push("apps", "packages", "devtools/scripts");
 }
 
 function collectDisabledRules(domainValue: unknown, disabledRules: Set<string>): void {
@@ -92,10 +92,12 @@ const configPath = "oxlint.base.json";
 const config = configObjectSchema.parse(JSON.parse(readFileSync(configPath, "utf8"))),
   disabledRules = new Set<string>();
 collectDisabledRules(config, disabledRules);
-const exceptionPolicy = readFileSync("EXCEPTIONS.md", "utf8");
+const exceptionPolicy = readFileSync("docs/policies/EXCEPTIONS.md", "utf8");
 for (const rule of disabledRules) {
   if (!exceptionPolicy.includes(`\`${rule}\``)) {
-    violations.push(`EXCEPTIONS.md: missing registry entry for disabled rule ${rule}`);
+    violations.push(
+      `docs/policies/EXCEPTIONS.md: missing registry entry for disabled rule ${rule}`,
+    );
   }
 }
 
@@ -104,7 +106,7 @@ if (ignorePatterns) {
   for (const pattern of ignorePatterns) {
     if (typeof pattern === "string" && !exceptionPolicy.includes(`\`${pattern}\``)) {
       violations.push(
-        `EXCEPTIONS.md: missing registry entry for ignore pattern ${pattern}`,
+        `docs/policies/EXCEPTIONS.md: missing registry entry for ignore pattern ${pattern}`,
       );
     }
   }

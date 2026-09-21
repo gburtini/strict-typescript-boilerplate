@@ -3,19 +3,19 @@
   "workspaces": {
     ".": {
       "entry": [
-        "scripts/check-package-exports.ts",
-        "scripts/check-enforcement-fixtures.ts",
-        "scripts/check-exceptions.ts",
-        "scripts/check-architecture-fixtures.ts",
-        "scripts/check-ci-policy.ts",
-        "scripts/check-generated.ts",
-        "scripts/check-test-evidence.ts",
-        "scripts/check-coverage-ratchet.ts",
-        "scripts/check-db-migrations.ts",
-        "scripts/generate-enforcement-manifest.ts"
+        "devtools/scripts/repository/check-package-exports.ts",
+        "devtools/scripts/repository/check-enforcement-fixtures.ts",
+        "devtools/scripts/repository/check-exceptions.ts",
+        "devtools/scripts/repository/check-architecture-fixtures.ts",
+        "devtools/scripts/repository/check-ci-policy.ts",
+        "devtools/scripts/repository/check-generated.ts",
+        "devtools/scripts/repository/check-test-evidence.ts",
+        "devtools/scripts/repository/check-coverage-ratchet.ts",
+        "devtools/scripts/repository/check-db-migrations.ts",
+        "devtools/scripts/repository/generate-enforcement-manifest.ts"
       ],
       "ignoreDependencies": ["@effect/tsgo"],
-      "project": ["scripts/**/*.ts"]
+      "project": ["devtools/scripts/**/*.ts"]
     },
     "apps/web": {
       "entry": ["index.html", "src/env.ts"],

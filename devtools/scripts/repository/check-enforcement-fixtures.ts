@@ -115,7 +115,7 @@ const suppressionResult = spawnSync(
     "node",
     [
       "--experimental-strip-types",
-      "scripts/check-exceptions.ts",
+      "devtools/scripts/repository/check-exceptions.ts",
       suppressionFixturePath,
     ],
     { encoding: "utf8" },

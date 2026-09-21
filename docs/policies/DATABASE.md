@@ -77,20 +77,6 @@ closeable client. Runtime startup owns the client lifetime. Tests should inject
 an in-memory repository or a disposable database adapter; they must not mock
 Drizzle query chains.
 
-Query-plan capture is documented in `QUERY-PLANS.md`. Prefer automatic capture
-from integration tests over hand-authored query registries.
-
-Every database change should be planner-aware:
-
-```text
-schema/query change
-  -> capture the emitted SQL
-  -> prepare the pinned production-like fixture
-  -> run EXPLAIN (FORMAT JSON, GENERIC_PLAN TRUE)
-  -> compare against query-plans/baseline.json
-  -> investigate cost and plan-shape changes
-```
-
-Use `pnpm db:plans:prepare && pnpm db:plans` locally. The required CI job
-publishes the same Markdown report to the workflow summary and, when GitHub
-permissions allow, to the pull request.
+Every query or index change must be reviewed against the production-like planner
+fixture. Follow the capture, comparison, and baseline rules in
+[`QUERY-PLANS.md`](QUERY-PLANS.md).

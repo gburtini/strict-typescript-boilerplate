@@ -2,7 +2,8 @@ import { mkdir, writeFile } from "node:fs/promises";
 import nodePath from "node:path";
 import postgres from "postgres";
 import { z } from "zod";
-import { productionStatsSchema } from "../src/devtools/query-plan-stats.ts";
+import { productionStatsSchema } from "@template/db/devtools/query-plans";
+import { repositoryRoot } from "../shared/repository-paths.ts";
 
 // The planner must model production-sized relations without connecting CI to
 // Production. Export only table-size estimates, review the result, and commit
@@ -45,7 +46,6 @@ function readTableStatistics(candidate: unknown): TableStatistics {
   };
 }
 
-const repositoryRoot = nodePath.resolve(import.meta.dirname, "../../..");
 const databaseUrl = process.env.QUERY_PLAN_DATABASE_URL;
 if (typeof databaseUrl !== "string" || databaseUrl.length === 0) {
   throw new TypeError("QUERY_PLAN_DATABASE_URL is required");

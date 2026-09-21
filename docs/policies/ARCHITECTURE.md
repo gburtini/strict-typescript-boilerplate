@@ -109,7 +109,7 @@ Effect helper, but exporters, SDK registration, credentials, and transport
 configuration belong in runtime-specific adapter startup code.
 
 Database conventions, migration safety, query constraints, and adapter
-lifecycle rules are defined in `DATABASE.md`.
+lifecycle rules are defined in [`DATABASE.md`](DATABASE.md).
 
 ## Architecture changes
 

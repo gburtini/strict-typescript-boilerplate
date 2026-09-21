@@ -43,6 +43,10 @@ the implementation needs to change.
 - `apps/web/` is the runnable React/Vite example application.
 - `packages/ui/` contains shared design-system primitives.
 - `packages/ui/src/lib/utils.ts` contains the canonical `cn` class-merging helper.
+- `devtools/` contains repository checks, database operations, planner fixtures,
+  and schemas for tooling metadata.
+- `docs/` contains contributor policies, architecture decisions, and check
+  evidence.
 - `AGENTS.md` is the short policy for human and coding-agent contributors.
 - `oxlint.config.ts`, `oxlint.base.json`, and `.dependency-cruiser.cjs` are
   repository law.
