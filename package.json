@@ -22,7 +22,7 @@
     "db:plans": "pnpm --filter @template/db query-plans",
     "db:plans:prepare": "pnpm --filter @template/db query-plans:prepare",
     "deadcode": "NODE_OPTIONS=--disable-warning=DEP0205 knip --strict",
-    "deps": "dependency-cruiser --validate .dependency-cruiser.cjs apps packages",
+    "deps": "pnpm --dir tools/dependency-cruiser exec dependency-cruiser --config ../../.dependency-cruiser.cjs ../../apps ../../packages",
     "dev": "pnpm --filter @template/web dev",
     "format": "oxfmt --write .",
     "format:check": "oxfmt --check .",

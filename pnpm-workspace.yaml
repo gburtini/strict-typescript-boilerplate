@@ -1,6 +1,7 @@
 packages:
   - "apps/*"
   - "packages/*"
+  - "tools/*"
 
 # Do not consume newly published versions until they have had time for
 # ecosystem and security review. Explicit exceptions require documentation.
@@ -15,3 +16,10 @@ minimumReleaseAgeExclude:
 # compatibility update, not a general dependency-age bypass.
 overrides:
   esbuild@0.18.20: 0.25.12
+
+# dependency-cruiser loads its compiler from its own package boundary. Keep
+# that legacy compiler isolated from the TypeScript 7 application toolchain.
+packageExtensions:
+  dependency-cruiser@18.3.0:
+    dependencies:
+      typescript: npm:@typescript/typescript6@6.0.2
