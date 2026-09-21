@@ -21,6 +21,10 @@ const permissionSetSchema = z.record(z.string(), z.enum(["read", "write", "none"
   > = {
     "actionlint.yml": { workflow: { contents: "read" }, jobs: {} },
     "check.yml": { workflow: { contents: "read" }, jobs: {} },
+    "jev-eval.yml": {
+      workflow: { contents: "read" },
+      jobs: { evaluate: { contents: "read" } },
+    },
     "codeql.yml": {
       workflow: { contents: "read" },
       jobs: { analyze: { contents: "read", "security-events": "write" } },
@@ -127,6 +131,27 @@ for (const file of readdirSync(".github/workflows")) {
 const actionlintWorkflow = readFileSync(".github/workflows/actionlint.yml", "utf8");
 if (!actionlintWorkflow.includes("rhysd/actionlint@")) {
   failures.push(".github/workflows/actionlint.yml: actionlint is not configured");
+}
+
+const packageJsonSchema = z.object({
+    scripts: z.record(z.string(), z.string()),
+  }),
+  packageJson = packageJsonSchema.safeParse(
+    JSON.parse(readFileSync("package.json", "utf8")),
+  ),
+  ciWorkflow = readFileSync(".github/workflows/check.yml", "utf8");
+let hasSemanticCheck = false;
+if (packageJson.success) {
+  const checkScript = packageJson.data.scripts.check;
+  if (typeof checkScript === "string") {
+    hasSemanticCheck = checkScript.includes("pnpm semantic:check");
+  }
+}
+if (!hasSemanticCheck) {
+  failures.push("package.json: check must run deterministic semantic validation");
+}
+if (!ciWorkflow.includes("pnpm check:all")) {
+  failures.push(".github/workflows/check.yml: CI must run pnpm check:all");
 }
 
 if (failures.length > 0) {

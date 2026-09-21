@@ -1,0 +1,43 @@
+name: Jev semantic evaluation
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/jev-eval.yml"
+      - "quality/semantic/**"
+      - "scripts/check-semantic-lint.ts"
+      - "scripts/semantic-lint-core.ts"
+      - "scripts/check-ci-policy.ts"
+      - "package.json"
+      - "pnpm-lock.yaml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  evaluate:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.0.0
+      - uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4.0.0
+        with:
+          version: 10.30.3
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
+        with:
+          node-version-file: .node-version
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Run advisory Jev fixture evaluation
+        env:
+          AI_GATEWAY_API_KEY: ${{ secrets.AI_GATEWAY_API_KEY }}
+        run: |
+          if [ -z "$AI_GATEWAY_API_KEY" ]; then
+            echo "AI_GATEWAY_API_KEY is not configured; skipping live Jev evaluation."
+            exit 0
+          fi
+          pnpm lint:semantic:eval

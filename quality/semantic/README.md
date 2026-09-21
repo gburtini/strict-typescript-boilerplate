@@ -14,24 +14,39 @@ Run `pnpm lint:semantic` to evaluate the branch diff against `origin/main`, or
 `pnpm lint:semantic:eval` to run the checked-in labeled examples. The AI SDK
 uses Vercel AI Gateway and the `typesafe-ai/jev` model. Authentication uses the
 Gateway credentials available to the AI SDK, such as `VERCEL_OIDC_TOKEN` or
-`AI_GATEWAY_API_KEY`. Neither command is part of `pnpm check:all`; semantic
-findings remain observational until the fixture corpus and real-change results
-are reviewed.
+`AI_GATEWAY_API_KEY`. Set `AI_GATEWAY_API_KEY` locally to enable live calls.
+The versioned policy lives in `quality/semantic/rules.json`; pass
+`--config <path>` to any runner mode to use another rule configuration. The
+configuration owns the model ID, rule wording and criteria, rule versions,
+thresholds, observe mode, context-size limit, and minimum fixture counts.
+
+`pnpm semantic:check` always runs the offline config/corpus validation and
+positive/negative policy checks. It is part of `pnpm check:all` and CI checks
+that this path remains connected. A separate advisory workflow runs the live
+fixture evaluation only after matching changes land on `main`, or through
+manual dispatch on `main`.
+It provides the Gateway key only to the evaluation process, never to
+pull-request code. If the repository secret is not configured, that workflow
+reports the missing secret and skips live evaluation. Jev findings remain
+observational; evaluation metrics do not block merges.
 
 The review command sends the selected diff, repository policy documents, and
 changed source files with adjacent test files to AI Gateway. It does not send
-the entire repository. The state is capped at 90,000 characters. Use it only
-when sending that branch's source and policy context to the Gateway is
-appropriate. Gateway zero-data-retention is requested for each call. The
-service receives source code as untrusted evidence; policy questions are
-defined in the trusted script, and source comments do not define policy.
+the entire repository. The state is capped at the configured character limit.
+The current Gateway Hobby plan rejects the zero-data-retention request option,
+so source-diff review does not request ZDR. Run that command only when sending
+the selected source and policy context to the Gateway is appropriate. CI live
+evaluation sends only the synthetic fixture corpus. Jev receives source code
+as untrusted evidence; rule policy is defined in the trusted JSON
+configuration, and source comments do not define policy.
 
 The context collector currently includes `AGENTS.md`, `ARCHITECTURE.md`,
 `CONVENTIONS.md`, `TESTING.md`, changed code paths, and neighboring test files.
 It does not yet perform repository-wide symbol search or import-graph
 retrieval. The 24 synthetic fixtures produce 72 Boolean judgments per pass.
-Each rule has at least eight positive and eight negative examples; `--eval`
-reports the confusion counts, precision, recall, specificity, accuracy, and
+Each rule has at least eight positive and eight negative examples as required
+by `rules.json`; `--eval` reports the confusion counts, precision, recall,
+specificity, accuracy, and
 each case's probability. Precision is zero if the evaluator predicts no
 positive cases. These examples are an initial sanity corpus, not evidence that
 a rule is calibrated for blocking use. `finding` uses a 0.97
