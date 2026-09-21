@@ -205,12 +205,13 @@ function expectRejected(action: () => unknown, message: string): void {
     if (error instanceof Error && error.message.includes(message)) {
       return;
     }
-    throw new TypeError(
+    const wrappedError = new TypeError(
       `semantic policy validation failed for rejection case: ${message}`,
       {
         cause: error,
       },
     );
+    throw wrappedError;
   }
   throw new TypeError(`semantic policy validation accepted invalid input: ${message}`);
 }
@@ -325,9 +326,10 @@ async function evaluateState(
     if (error instanceof Error) {
       return { ok: false, error };
     }
-    throw new TypeError("Jev evaluation failed with a non-Error value", {
+    const wrappedError = new TypeError("Jev evaluation failed with a non-Error value", {
       cause: error,
     });
+    throw wrappedError;
   }
 }
 
@@ -347,20 +349,34 @@ async function evaluateCasesInBatches(
     return completed;
   }
   const batch = cases.slice(start, start + config.evaluationConcurrency),
-    batchResults = await Promise.all(
-      batch.map(async (evalCase) => {
-        const caseConfig = {
-          ...config,
-          rules: config.rules.filter((rule) =>
-            Object.hasOwn(evalCase.expected, rule.id),
-          ),
-        };
-        return {
-          evalCase,
-          result: await evaluateState(evalCase.state, caseConfig),
-        };
-      }),
-    );
+    batchResults: CaseEvaluation[] = [],
+    nextIndex = { value: 0 };
+  async function evaluateBatchWorker(): Promise<void> {
+    const index = nextIndex.value;
+    nextIndex.value += 1;
+    const evalCase = batch[index];
+    if (!evalCase) {
+      return;
+    }
+    const caseConfig = {
+      ...config,
+      rules: config.rules.filter((rule) => Object.hasOwn(evalCase.expected, rule.id)),
+    };
+    batchResults[index] = {
+      evalCase,
+      result: await evaluateState(evalCase.state, caseConfig),
+    };
+    return evaluateBatchWorker();
+  }
+  const workers: Promise<void>[] = [];
+  for (
+    let index = 0;
+    index < Math.min(config.evaluationConcurrency, batch.length);
+    index += 1
+  ) {
+    workers.push(evaluateBatchWorker());
+  }
+  await Promise.all(workers);
   return evaluateCasesInBatches(cases, config, start + config.evaluationConcurrency, [
     ...completed,
     ...batchResults,
