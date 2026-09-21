@@ -119,6 +119,15 @@ The query-plan devtool keeps `unicorn/no-null` enabled everywhere else because
 SQL `NULL` is a meaningful captured parameter value; it is disabled only in
 `packages/db/src/query-capture.ts`, owned by database tooling maintainers.
 
+The Jev semantic-lint prototype pins `ai@7.0.105` because Vercel's
+`experimental_evaluate` entry point is available from that release. Its
+currently required AI SDK transitive versions are individually listed in
+`pnpm-workspace.yaml`'s minimum-release-age exclusions; no package family is
+exempted. Owner: repository maintainers. Tracking task: branch
+`codex/jev-semantic-lint`. Expiry: 2026-09-30; remove the exact-version
+exclusions after review and once the releases have aged past the seven-day
+gate. Jev runs only on an explicit local command and findings are advisory.
+
 Database tooling and governance scripts receive the same lint policy as
 application code. They must use the public package entry points, satisfy the
 same control-flow rules, and fix their types rather than adding a scoped

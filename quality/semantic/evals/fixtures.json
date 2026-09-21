@@ -1,0 +1,317 @@
+{
+  "schemaVersion": 1,
+  "cases": [
+    {
+      "id": "duplicate-validation-helper",
+      "state": {
+        "change": "Adds validateProjectSlug in packages/core/src/project.ts. It lowercases the slug, rejects spaces, and enforces the existing slug format.",
+        "relatedContext": "packages/core/src/slug.ts already exports validateProjectSlug with the same normalization and checks. The new function has a different local name but implements the same responsibility.",
+        "testContext": "A unit test covers the new function's acceptance and rejection cases."
+      },
+      "expected": {
+        "duplicatesExistingAbstraction": true,
+        "bypassesRepositoryPrimitive": true,
+        "missingBehaviorTest": false
+      }
+    },
+    {
+      "id": "distinct-storage-adapter",
+      "state": {
+        "change": "Adds an S3-backed AvatarStorage adapter implementing the existing AvatarStore port. The adapter translates S3 failures into the port's typed StorageError.",
+        "relatedContext": "The repository has an AvatarStore port and a LocalAvatarStorage adapter for development. There is no S3 adapter or provider-specific implementation.",
+        "testContext": "An adapter contract test verifies stored bytes can be read back and that provider failures preserve their cause."
+      },
+      "expected": {
+        "duplicatesExistingAbstraction": false,
+        "bypassesRepositoryPrimitive": false,
+        "missingBehaviorTest": false
+      }
+    },
+    {
+      "id": "manual-cache-bypass",
+      "state": {
+        "change": "Adds a React effect that fetches the current user's projects, with local loading and error state.",
+        "relatedContext": "The application exposes api.projects.list.useQuery() for this operation. Existing project screens use the query hook and share its cache.",
+        "testContext": "No component or integration test was added for loading, error, or project-list behavior."
+      },
+      "expected": {
+        "duplicatesExistingAbstraction": true,
+        "bypassesRepositoryPrimitive": true,
+        "missingBehaviorTest": true
+      }
+    },
+    {
+      "id": "new-policy-with-tests",
+      "state": {
+        "change": "Adds a role-based export policy that permits a user to export only records inside their assigned organization.",
+        "relatedContext": "Existing authorization helpers cover read and edit permissions but do not express export permission or organization-scoped record selection.",
+        "testContext": "Tests verify an allowed export, a denied export, and that records from another organization are excluded."
+      },
+      "expected": {
+        "duplicatesExistingAbstraction": false,
+        "bypassesRepositoryPrimitive": false,
+        "missingBehaviorTest": false
+      }
+    },
+    {
+      "id": "duplicate-fetch-wrapper",
+      "state": {
+        "change": "Adds a fetchProjects hook that manages pending state, calls the API, stores results, and retries on failure.",
+        "relatedContext": "The repository already exports useProjectsQuery with loading, error, cache, and retry behavior for the same API operation.",
+        "testContext": "A hook test verifies loading, success, error, and retry behavior."
+      },
+      "expected": {
+        "duplicatesExistingAbstraction": true,
+        "bypassesRepositoryPrimitive": true,
+        "missingBehaviorTest": false
+      }
+    },
+    {
+      "id": "new-webhook-signature-boundary",
+      "state": {
+        "change": "Adds webhook signature verification and rejects requests with invalid or missing signatures.",
+        "relatedContext": "No webhook verification helper or signature policy exists in the repository.",
+        "testContext": "No tests were added for accepted signatures, invalid signatures, or missing signatures."
+      },
+      "expected": {
+        "duplicatesExistingAbstraction": false,
+        "bypassesRepositoryPrimitive": false,
+        "missingBehaviorTest": true
+      }
+    },
+    {
+      "id": "pure-type-refactor",
+      "state": {
+        "change": "Renames an internal TypeScript alias and updates its references without changing runtime code or exported package types.",
+        "relatedContext": "The alias is private to one module. No other type or helper has the same role.",
+        "testContext": "No behavior test changed because runtime behavior and public contracts are unchanged."
+      },
+      "expected": {
+        "duplicatesExistingAbstraction": false,
+        "bypassesRepositoryPrimitive": false,
+        "missingBehaviorTest": false
+      }
+    },
+    {
+      "id": "existing-query-repository-reuse",
+      "state": {
+        "change": "Adds a project search screen using the existing searchProjects repository function and its existing query hook.",
+        "relatedContext": "searchProjects owns filtering and pagination. useProjectSearchQuery owns server state and cache behavior.",
+        "testContext": "Screen tests cover matching results, no results, and pagination."
+      },
+      "expected": {
+        "duplicatesExistingAbstraction": false,
+        "bypassesRepositoryPrimitive": false,
+        "missingBehaviorTest": false
+      }
+    },
+    {
+      "id": "raw-database-access-duplicates-repository",
+      "state": {
+        "change": "Adds a route that imports the database client and queries project membership directly to decide whether to show a project.",
+        "relatedContext": "The repository's projectAccess repository function performs this membership check and returns the typed access result used by other routes.",
+        "testContext": "A route test covers both accessible and inaccessible projects."
+      },
+      "expected": {
+        "duplicatesExistingAbstraction": true,
+        "bypassesRepositoryPrimitive": true,
+        "missingBehaviorTest": false
+      }
+    },
+    {
+      "id": "new-data-retention-policy",
+      "state": {
+        "change": "Adds a policy that deletes expired export files after the configured retention period.",
+        "relatedContext": "No retention policy or scheduled file cleanup exists. Existing storage helpers support listing and deleting an individual file.",
+        "testContext": "No tests cover files before expiry, files after expiry, or deletion failures."
+      },
+      "expected": {
+        "duplicatesExistingAbstraction": false,
+        "bypassesRepositoryPrimitive": false,
+        "missingBehaviorTest": true
+      }
+    },
+    {
+      "id": "compose-dialog-primitive",
+      "state": {
+        "change": "Builds a project confirmation dialog by composing the existing Dialog, DialogContent, and Button primitives.",
+        "relatedContext": "The design system exposes these primitives and has no project-specific confirmation dialog abstraction.",
+        "testContext": "An interaction test verifies cancel closes the dialog and confirm invokes the requested action."
+      },
+      "expected": {
+        "duplicatesExistingAbstraction": false,
+        "bypassesRepositoryPrimitive": false,
+        "missingBehaviorTest": false
+      }
+    },
+    {
+      "id": "inline-role-check-bypasses-authorization-helper",
+      "state": {
+        "change": "Adds an export button that checks user.role === 'admin' inline before calling the export endpoint.",
+        "relatedContext": "The can(user, 'export', resource) authorization helper already models export permission, organization scope, and administrator access.",
+        "testContext": "A component test checks that the button is hidden for non-admin users but does not cover users granted export permission by policy."
+      },
+      "expected": {
+        "duplicatesExistingAbstraction": true,
+        "bypassesRepositoryPrimitive": true,
+        "missingBehaviorTest": true
+      }
+    },
+    {
+      "id": "distinct-policy-export-path",
+      "state": {
+        "change": "Adds an export authorization policy that restricts each request to records belonging to the user's organization.",
+        "relatedContext": "Existing read and edit policies do not cover data export or organization-scoped selection. The new policy composes the existing permission evaluator.",
+        "testContext": "Tests cover permitted export, denied export, and exclusion of records from another organization."
+      },
+      "expected": {
+        "duplicatesExistingAbstraction": false,
+        "bypassesRepositoryPrimitive": false,
+        "missingBehaviorTest": false
+      }
+    },
+    {
+      "id": "internal-metadata-rename",
+      "state": {
+        "change": "Renames a private local variable from itemCount to resultCount without changing how the value is calculated or used.",
+        "relatedContext": "The variable is local to one function and has no competing abstraction.",
+        "testContext": "The behavior and public API are unchanged."
+      },
+      "expected": {
+        "duplicatesExistingAbstraction": false,
+        "bypassesRepositoryPrimitive": false,
+        "missingBehaviorTest": false
+      }
+    },
+    {
+      "id": "authorization-denial-without-test",
+      "state": {
+        "change": "Changes a resource endpoint to return forbidden when a signed-in user lacks access to the requested resource.",
+        "relatedContext": "The endpoint uses the existing access-check repository function and authorization policy.",
+        "testContext": "No test verifies the forbidden response or confirms that an inaccessible resource is not returned."
+      },
+      "expected": {
+        "duplicatesExistingAbstraction": false,
+        "bypassesRepositoryPrimitive": false,
+        "missingBehaviorTest": true
+      }
+    },
+    {
+      "id": "upload-retry-behavior-without-test",
+      "state": {
+        "change": "Adds automatic retry with exponential backoff to file uploads after transient network failures.",
+        "relatedContext": "The shared upload primitive supports cancellation and progress but does not retry failed uploads. The new retry logic extends that primitive.",
+        "testContext": "No tests verify retry count, successful retry, or final failure after exhaustion."
+      },
+      "expected": {
+        "duplicatesExistingAbstraction": false,
+        "bypassesRepositoryPrimitive": false,
+        "missingBehaviorTest": true
+      }
+    },
+    {
+      "id": "inline-audit-redaction-with-contract-test",
+      "state": {
+        "change": "Adds a route-specific audit event that calls the existing redactSensitiveFields helper before persistence.",
+        "relatedContext": "The shared redaction helper owns sensitive-field removal. No audit-event writer exists yet, so the route creates a new event path while using the helper.",
+        "testContext": "A contract test verifies sensitive fields are absent from the stored event and nonsensitive fields remain present."
+      },
+      "expected": {
+        "duplicatesExistingAbstraction": false,
+        "bypassesRepositoryPrimitive": false,
+        "missingBehaviorTest": false
+      }
+    },
+    {
+      "id": "duplicate-notification-wrapper",
+      "state": {
+        "change": "Adds a useAlerts hook that stores alert messages, dismisses them after a timeout, and exposes success and error helpers.",
+        "relatedContext": "The repository already exports useNotifications with the same queue, timeout, dismissal, and severity behavior.",
+        "testContext": "A hook test covers alert insertion, dismissal, and timeout cleanup."
+      },
+      "expected": {
+        "duplicatesExistingAbstraction": true,
+        "bypassesRepositoryPrimitive": true,
+        "missingBehaviorTest": false
+      }
+    },
+    {
+      "id": "duplicate-invoice-validation-without-tests",
+      "state": {
+        "change": "Adds validateInvoiceNumber in a route module with trimming, uppercase normalization, and the existing invoice-number format check.",
+        "relatedContext": "The billing package already exports validateInvoiceNumber with those same normalization and validation steps.",
+        "testContext": "No tests cover the new route helper or the invalid-input response."
+      },
+      "expected": {
+        "duplicatesExistingAbstraction": true,
+        "bypassesRepositoryPrimitive": true,
+        "missingBehaviorTest": true
+      }
+    },
+    {
+      "id": "duplicate-redaction-wrapper-with-tests",
+      "state": {
+        "change": "Adds stripPrivateFields in the audit module by copying the existing sensitive-field filtering logic before audit persistence.",
+        "relatedContext": "The shared redactSensitiveFields helper already removes the same fields and is used by other audit writers.",
+        "testContext": "Tests verify that private fields are absent from the persisted audit event."
+      },
+      "expected": {
+        "duplicatesExistingAbstraction": true,
+        "bypassesRepositoryPrimitive": true,
+        "missingBehaviorTest": false
+      }
+    },
+    {
+      "id": "new-domain-invariant-without-tests",
+      "state": {
+        "change": "Adds a rule that prevents an organization from assigning more active seats than its subscription permits.",
+        "relatedContext": "No seat-limit policy or equivalent subscription invariant exists in the supplied context.",
+        "testContext": "No tests cover a permitted assignment, an assignment at the limit, or an assignment over the limit."
+      },
+      "expected": {
+        "duplicatesExistingAbstraction": false,
+        "bypassesRepositoryPrimitive": false,
+        "missingBehaviorTest": true
+      }
+    },
+    {
+      "id": "compose-existing-tooltip",
+      "state": {
+        "change": "Adds a help label by composing the repository's Tooltip, TooltipTrigger, and TooltipContent components.",
+        "relatedContext": "The design system owns tooltip behavior and has no separate help-label component.",
+        "testContext": "A browser test verifies the help text appears on hover and keyboard focus."
+      },
+      "expected": {
+        "duplicatesExistingAbstraction": false,
+        "bypassesRepositoryPrimitive": false,
+        "missingBehaviorTest": false
+      }
+    },
+    {
+      "id": "private-name-only-cleanup",
+      "state": {
+        "change": "Renames a private function parameter to clarify its meaning; the calculation and all callers are unchanged.",
+        "relatedContext": "The parameter is local to the function and does not represent a separate abstraction or repository primitive.",
+        "testContext": "No behavior or public contract changes."
+      },
+      "expected": {
+        "duplicatesExistingAbstraction": false,
+        "bypassesRepositoryPrimitive": false,
+        "missingBehaviorTest": false
+      }
+    },
+    {
+      "id": "custom-modal-bypasses-dialog-primitive",
+      "state": {
+        "change": "Implements a modal with a div, manually managed focus, Escape handling, and backdrop dismissal.",
+        "relatedContext": "The repository's Dialog primitive already provides focus trapping, keyboard dismissal, backdrop behavior, and accessible labeling. There is no custom modal behavior requirement.",
+        "testContext": "A browser test verifies open and close behavior, focus return, and keyboard dismissal."
+      },
+      "expected": {
+        "duplicatesExistingAbstraction": false,
+        "bypassesRepositoryPrimitive": true,
+        "missingBehaviorTest": false
+      }
+    }
+  ]
+}
