@@ -64,7 +64,10 @@ after reviewing the new plan and recording why the change is safe.
 Plan checks should distinguish generic-plan regressions from parameter-skew
 cases and should compare normalized plan structure rather than exact costs.
 Cost and row thresholds belong in a production-like PostgreSQL environment
-with representative statistics, not in unit tests or source lint.
+with representative statistics, not in unit tests or source lint. The PR report
+adds informational warnings for nested loops and sequential scans to prompt
+review; these are not failures by themselves because both can be appropriate
+for bounded or small relations.
 
 The executable gate is:
 
@@ -76,8 +79,9 @@ pnpm db:plans
 The runner executes `EXPLAIN (FORMAT JSON, GENERIC_PLAN TRUE)` for every
 captured query, stores the current plans in `.artifacts/query-plans.json`, and
 emits `.artifacts/query-plans.md`. It reports added, changed, and unchanged
-plans, originating test sources, plan shape, estimated rows, and cost. Every
-added or changed query gets a visible risk marker:
+plans, originating test sources, plan shape, estimated rows, and cost. Added
+and changed entries keep SQL and the full JSON plan in a collapsed section.
+Every added or changed query gets a visible risk marker:
 
 - ✅ low — no material plan concern detected;
 - 🟠 review — plan shape or a moderate scan/cost deserves investigation;

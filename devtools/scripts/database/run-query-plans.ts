@@ -92,6 +92,28 @@ function hasSequentialScan(node: PlanNode): boolean {
   return node.Plans.some((childPlan) => hasSequentialScan(childPlan));
 }
 
+function hasNodeType(node: PlanNode, nodeType: string): boolean {
+  return (
+    node["Node Type"] === nodeType ||
+    node.Plans.some((childPlan) => hasNodeType(childPlan, nodeType))
+  );
+}
+
+function warningsForPlan(node: PlanNode): readonly string[] {
+  const warnings: string[] = [];
+  if (hasNodeType(node, "Nested Loop")) {
+    warnings.push(
+      "Nested Loop can repeat inner work for each outer row; check that the outer row count is bounded and the inner side has an efficient access path.",
+    );
+  }
+  if (hasSequentialScan(node)) {
+    warnings.push(
+      "Sequential scan present; confirm the scanned relation is small or the scan is intentional.",
+    );
+  }
+  return warnings;
+}
+
 function riskForPlan(entry: PlanEntry, previous?: PlanEntry): string {
   if (
     hasLargeSequentialScan(entry.plan) ||
@@ -189,6 +211,44 @@ function comparePlans(current: PlanArtifact, baseline: PlanArtifact): PlanCompar
   return { added, changed, riskByFingerprint, unchanged, violations };
 }
 
+function renderEntry(entry: PlanEntry, risk: string): readonly string[] {
+  const warnings = warningsForPlan(entry.plan);
+  let warningLabel = "warnings";
+  if (warnings.length === 1) {
+    warningLabel = "warning";
+  }
+  const lines = [
+    `- ${risk} \`${entry.fingerprint.slice(0, 12)}\` · cost ${entry.totalCost} · max rows ${entry.maxPlanRows} · shape \`${entry.planFingerprint.slice(0, 12)}\` · sources: ${entry.testSources.join(", ") || "unknown"}`,
+    "",
+    "  <details>",
+    `  <summary>SQL, plan, and ${warnings.length} planner ${warningLabel}</summary>`,
+    "",
+    "  **SQL**",
+    "  ```sql",
+    ...entry.sql.split("\n").map((line) => `  ${line}`),
+    "  ```",
+  ];
+  if (warnings.length > 0) {
+    lines.push(
+      "",
+      "  **Planner warnings**",
+      "",
+      ...warnings.map((warning) => `  - ${warning}`),
+    );
+  }
+  lines.push(
+    "",
+    "  **Current plan**",
+    "  ```json",
+    ...JSON.stringify(entry.plan, jsonIdentity, 2)
+      .split("\n")
+      .map((line) => `  ${line}`),
+    "  ```",
+    "  </details>",
+  );
+  return lines;
+}
+
 function renderComparison(comparison: PlanComparison): string {
   const lines = [
     "## Database query-plan changes",
@@ -204,7 +264,10 @@ function renderComparison(comparison: PlanComparison): string {
     lines.push("", "### Added query plans", "");
     for (const entry of comparison.added) {
       lines.push(
-        `- ${comparison.riskByFingerprint.get(entry.fingerprint)} \`${entry.fingerprint.slice(0, 12)}\`: ${entry.sql} (cost ${entry.totalCost}, max rows ${entry.maxPlanRows}, sources: ${entry.testSources.join(", ") || "unknown"})`,
+        ...renderEntry(
+          entry,
+          comparison.riskByFingerprint.get(entry.fingerprint) ?? "🟠 review",
+        ),
       );
     }
   }
@@ -212,7 +275,10 @@ function renderComparison(comparison: PlanComparison): string {
     lines.push("", "### Changed query plans", "");
     for (const entry of comparison.changed) {
       lines.push(
-        `- ${comparison.riskByFingerprint.get(entry.fingerprint)} \`${entry.fingerprint.slice(0, 12)}\`: ${entry.sql} (cost ${entry.totalCost}, max rows ${entry.maxPlanRows}, shape ${entry.planFingerprint.slice(0, 12)}, sources: ${entry.testSources.join(", ") || "unknown"})`,
+        ...renderEntry(
+          entry,
+          comparison.riskByFingerprint.get(entry.fingerprint) ?? "🟠 review",
+        ),
       );
     }
   }
