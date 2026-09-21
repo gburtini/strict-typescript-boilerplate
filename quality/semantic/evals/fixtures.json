@@ -1,0 +1,434 @@
+{
+  "schemaVersion": 1,
+  "cases": [
+    {
+      "id": "duplicate-validation-helper",
+      "state": {
+        "change": "Adds validateProjectSlug in packages/core/src/project.ts. It lowercases the slug, rejects spaces, and enforces the existing slug format.",
+        "relatedContext": "packages/core/src/slug.ts already exports validateProjectSlug with the same normalization and checks. The new function has a different local name but implements the same responsibility.",
+        "testContext": "A unit test covers the new function's acceptance and rejection cases."
+      },
+      "expected": {
+        "duplicatesExistingAbstraction": true,
+        "bypassesRepositoryPrimitive": true,
+        "behaviorInWrongLayer": false
+      }
+    },
+    {
+      "id": "distinct-storage-adapter",
+      "state": {
+        "change": "Adds an S3-backed AvatarStorage adapter implementing the existing AvatarStore port. The adapter translates S3 failures into the port's typed StorageError.",
+        "relatedContext": "The repository has an AvatarStore port and a LocalAvatarStorage adapter for development. There is no S3 adapter or provider-specific implementation.",
+        "testContext": "An adapter contract test verifies stored bytes can be read back and that provider failures preserve their cause."
+      },
+      "expected": {
+        "duplicatesExistingAbstraction": false,
+        "bypassesRepositoryPrimitive": false,
+        "behaviorInWrongLayer": false
+      }
+    },
+    {
+      "id": "manual-cache-bypass",
+      "state": {
+        "change": "Adds a React effect that fetches the current user's projects, with local loading and error state.",
+        "relatedContext": "The application exposes api.projects.list.useQuery() for this operation. Existing project screens use the query hook and share its cache. The established query hook owns remote request state and caching; feature UI should use that owner instead of implementing request state.",
+        "testContext": "No component or integration test was added for loading, error, or project-list behavior."
+      },
+      "expected": {
+        "duplicatesExistingAbstraction": false,
+        "bypassesRepositoryPrimitive": true,
+        "behaviorInWrongLayer": false
+      }
+    },
+    {
+      "id": "new-policy-with-tests",
+      "state": {
+        "change": "Adds a role-based export policy that permits a user to export only records inside their assigned organization.",
+        "relatedContext": "Existing authorization helpers cover read and edit permissions but do not express export permission or organization-scoped record selection.",
+        "testContext": "Tests verify an allowed export, a denied export, and that records from another organization are excluded."
+      },
+      "expected": {
+        "duplicatesExistingAbstraction": false,
+        "bypassesRepositoryPrimitive": false,
+        "behaviorInWrongLayer": false
+      }
+    },
+    {
+      "id": "duplicate-fetch-wrapper",
+      "state": {
+        "change": "Adds a fetchProjects hook that manages pending state, calls the API, stores results, and retries on failure.",
+        "relatedContext": "The repository already exports useProjectsQuery with loading, error, cache, and retry behavior for the same API operation. The established query hook owns remote request state and caching; feature UI should use that owner instead of implementing request state.",
+        "testContext": "A hook test verifies loading, success, error, and retry behavior."
+      },
+      "expected": {
+        "duplicatesExistingAbstraction": true,
+        "bypassesRepositoryPrimitive": true,
+        "behaviorInWrongLayer": false
+      }
+    },
+    {
+      "id": "new-webhook-signature-boundary",
+      "state": {
+        "change": "Adds webhook signature verification and rejects requests with invalid or missing signatures.",
+        "relatedContext": "No webhook verification helper or signature policy exists in the repository.",
+        "testContext": "No tests were added for accepted signatures, invalid signatures, or missing signatures."
+      },
+      "expected": {
+        "duplicatesExistingAbstraction": false,
+        "bypassesRepositoryPrimitive": false,
+        "behaviorInWrongLayer": false
+      }
+    },
+    {
+      "id": "pure-type-refactor",
+      "state": {
+        "change": "Renames an internal TypeScript alias and updates its references without changing runtime code or exported package types.",
+        "relatedContext": "The alias is private to one module. No other type or helper has the same role.",
+        "testContext": "No behavior test changed because runtime behavior and public contracts are unchanged."
+      },
+      "expected": {
+        "duplicatesExistingAbstraction": false,
+        "bypassesRepositoryPrimitive": false,
+        "behaviorInWrongLayer": false
+      }
+    },
+    {
+      "id": "existing-query-repository-reuse",
+      "state": {
+        "change": "Adds a project search screen using the existing searchProjects repository function and its existing query hook.",
+        "relatedContext": "searchProjects owns filtering and pagination. useProjectSearchQuery owns server state and cache behavior.",
+        "testContext": "Screen tests cover matching results, no results, and pagination."
+      },
+      "expected": {
+        "duplicatesExistingAbstraction": false,
+        "bypassesRepositoryPrimitive": false,
+        "behaviorInWrongLayer": false
+      }
+    },
+    {
+      "id": "raw-database-access-duplicates-repository",
+      "state": {
+        "change": "Adds a route that imports the database client and queries project membership directly to decide whether to show a project.",
+        "relatedContext": "The projectAccess repository primitive is intended for this caller and performs the same membership lookup. docs/policies/ARCHITECTURE.md explicitly assigns Drizzle to @template/db; application and API code use repository ports.",
+        "testContext": "A route test covers both accessible and inaccessible projects."
+      },
+      "expected": {
+        "duplicatesExistingAbstraction": false,
+        "bypassesRepositoryPrimitive": true,
+        "behaviorInWrongLayer": true
+      }
+    },
+    {
+      "id": "new-data-retention-policy",
+      "state": {
+        "change": "Adds a policy that deletes expired export files after the configured retention period.",
+        "relatedContext": "No retention policy or scheduled file cleanup exists. Existing storage helpers support listing and deleting an individual file.",
+        "testContext": "No tests cover files before expiry, files after expiry, or deletion failures."
+      },
+      "expected": {
+        "duplicatesExistingAbstraction": false,
+        "bypassesRepositoryPrimitive": false,
+        "behaviorInWrongLayer": false
+      }
+    },
+    {
+      "id": "compose-dialog-primitive",
+      "state": {
+        "change": "Builds a project confirmation dialog by composing the existing Dialog, DialogContent, and Button primitives.",
+        "relatedContext": "The design system exposes these primitives and has no project-specific confirmation dialog abstraction.",
+        "testContext": "An interaction test verifies cancel closes the dialog and confirm invokes the requested action."
+      },
+      "expected": {
+        "duplicatesExistingAbstraction": false,
+        "bypassesRepositoryPrimitive": false,
+        "behaviorInWrongLayer": false
+      }
+    },
+    {
+      "id": "inline-role-check-bypasses-authorization-helper",
+      "state": {
+        "change": "Adds an export button with an inline admin-role check. The export endpoint has no server-side authorization check, so a direct request reaches protected data.",
+        "relatedContext": "The can(user, 'export', resource) policy models export permission, organization scope, and administrator access. Protected operations must enforce it in the application layer; a UI check is not an authorization boundary.",
+        "testContext": "A component test checks that the button is hidden for non-admin users but does not exercise a direct request to the endpoint."
+      },
+      "expected": {
+        "duplicatesExistingAbstraction": false,
+        "bypassesRepositoryPrimitive": true,
+        "behaviorInWrongLayer": true
+      }
+    },
+    {
+      "id": "distinct-policy-export-path",
+      "state": {
+        "change": "Adds an export authorization policy that restricts each request to records belonging to the user's organization.",
+        "relatedContext": "Existing read and edit policies do not cover data export or organization-scoped selection. The new policy composes the existing permission evaluator.",
+        "testContext": "Tests cover permitted export, denied export, and exclusion of records from another organization."
+      },
+      "expected": {
+        "duplicatesExistingAbstraction": false,
+        "bypassesRepositoryPrimitive": false,
+        "behaviorInWrongLayer": false
+      }
+    },
+    {
+      "id": "internal-metadata-rename",
+      "state": {
+        "change": "Renames a private local variable from itemCount to resultCount without changing how the value is calculated or used.",
+        "relatedContext": "The variable is local to one function and has no competing abstraction.",
+        "testContext": "The behavior and public API are unchanged."
+      },
+      "expected": {
+        "duplicatesExistingAbstraction": false,
+        "bypassesRepositoryPrimitive": false,
+        "behaviorInWrongLayer": false
+      }
+    },
+    {
+      "id": "authorization-denial-without-test",
+      "state": {
+        "change": "Changes a resource endpoint to return forbidden when a signed-in user lacks access to the requested resource.",
+        "relatedContext": "The endpoint uses the existing access-check repository function and authorization policy.",
+        "testContext": "No test verifies the forbidden response or confirms that an inaccessible resource is not returned."
+      },
+      "expected": {
+        "duplicatesExistingAbstraction": false,
+        "bypassesRepositoryPrimitive": false,
+        "behaviorInWrongLayer": false
+      }
+    },
+    {
+      "id": "upload-retry-behavior-without-test",
+      "state": {
+        "change": "Adds automatic retry with exponential backoff to file uploads after transient network failures.",
+        "relatedContext": "The shared upload primitive supports cancellation and progress but does not retry failed uploads. The new retry logic extends that primitive.",
+        "testContext": "No tests verify retry count, successful retry, or final failure after exhaustion."
+      },
+      "expected": {
+        "duplicatesExistingAbstraction": false,
+        "bypassesRepositoryPrimitive": false,
+        "behaviorInWrongLayer": false
+      }
+    },
+    {
+      "id": "inline-audit-redaction-with-contract-test",
+      "state": {
+        "change": "Adds a route-specific audit event that calls the existing redactSensitiveFields helper before persistence.",
+        "relatedContext": "The shared redaction helper owns sensitive-field removal. No audit-event writer exists yet, so the route creates a new event path while using the helper.",
+        "testContext": "A contract test verifies sensitive fields are absent from the stored event and nonsensitive fields remain present."
+      },
+      "expected": {
+        "duplicatesExistingAbstraction": false,
+        "bypassesRepositoryPrimitive": false,
+        "behaviorInWrongLayer": false
+      }
+    },
+    {
+      "id": "duplicate-notification-wrapper",
+      "state": {
+        "change": "Adds a useAlerts hook that stores alert messages, dismisses them after a timeout, and exposes success and error helpers.",
+        "relatedContext": "The repository already exports useNotifications with the same queue, timeout, dismissal, and severity behavior. The shared notification provider owns app-wide alert state and lifecycle; feature hooks consume that owner instead of keeping a competing alert queue.",
+        "testContext": "A hook test covers alert insertion, dismissal, and timeout cleanup."
+      },
+      "expected": {
+        "duplicatesExistingAbstraction": true,
+        "bypassesRepositoryPrimitive": true,
+        "behaviorInWrongLayer": false
+      }
+    },
+    {
+      "id": "duplicate-invoice-validation-without-tests",
+      "state": {
+        "change": "Adds validateInvoiceNumber in a route module with trimming, uppercase normalization, and the existing invoice-number format check.",
+        "relatedContext": "The billing package already exports validateInvoiceNumber with those same normalization and validation steps. The invoice business invariant is owned by the domain schema; the transport route validates request shape and delegates the invariant.",
+        "testContext": "No tests cover the new route helper or the invalid-input response."
+      },
+      "expected": {
+        "duplicatesExistingAbstraction": true,
+        "bypassesRepositoryPrimitive": true,
+        "behaviorInWrongLayer": true
+      }
+    },
+    {
+      "id": "duplicate-redaction-wrapper-with-tests",
+      "state": {
+        "change": "Adds stripPrivateFields in the audit module by copying the existing sensitive-field filtering logic before audit persistence.",
+        "relatedContext": "The shared redactSensitiveFields helper already removes the same fields and is used by other audit writers. The shared audit redaction helper owns sensitive-field removal; the route should call that owner rather than reimplement its field policy.",
+        "testContext": "Tests verify that private fields are absent from the persisted audit event."
+      },
+      "expected": {
+        "duplicatesExistingAbstraction": true,
+        "bypassesRepositoryPrimitive": true,
+        "behaviorInWrongLayer": false
+      }
+    },
+    {
+      "id": "new-domain-invariant-without-tests",
+      "state": {
+        "change": "Adds a rule that prevents an organization from assigning more active seats than its subscription permits.",
+        "relatedContext": "No seat-limit policy or equivalent subscription invariant exists in the supplied context.",
+        "testContext": "No tests cover a permitted assignment, an assignment at the limit, or an assignment over the limit."
+      },
+      "expected": {
+        "duplicatesExistingAbstraction": false,
+        "bypassesRepositoryPrimitive": false,
+        "behaviorInWrongLayer": false
+      }
+    },
+    {
+      "id": "compose-existing-tooltip",
+      "state": {
+        "change": "Adds a help label by composing the repository's Tooltip, TooltipTrigger, and TooltipContent components.",
+        "relatedContext": "The design system owns tooltip behavior and has no separate help-label component.",
+        "testContext": "A browser test verifies the help text appears on hover and keyboard focus."
+      },
+      "expected": {
+        "duplicatesExistingAbstraction": false,
+        "bypassesRepositoryPrimitive": false,
+        "behaviorInWrongLayer": false
+      }
+    },
+    {
+      "id": "private-name-only-cleanup",
+      "state": {
+        "change": "Renames a private function parameter to clarify its meaning; the calculation and all callers are unchanged.",
+        "relatedContext": "The parameter is local to the function and does not represent a separate abstraction or repository primitive.",
+        "testContext": "No behavior or public contract changes."
+      },
+      "expected": {
+        "duplicatesExistingAbstraction": false,
+        "bypassesRepositoryPrimitive": false,
+        "behaviorInWrongLayer": false
+      }
+    },
+    {
+      "id": "custom-modal-bypasses-dialog-primitive",
+      "state": {
+        "change": "Implements a modal with a div, manually managed focus, Escape handling, and backdrop dismissal.",
+        "relatedContext": "The repository's Dialog primitive already provides focus trapping, keyboard dismissal, backdrop behavior, and accessible labeling. There is no custom modal behavior requirement. Both the primitive and feature implementation are in the UI layer.",
+        "testContext": "A browser test verifies open and close behavior, focus return, and keyboard dismissal."
+      },
+      "expected": {
+        "duplicatesExistingAbstraction": false,
+        "bypassesRepositoryPrimitive": true,
+        "behaviorInWrongLayer": false
+      }
+    },
+    {
+      "id": "domain-parses-provider-json",
+      "state": {
+        "change": "Adds a named Zod schema in a domain module and parses an upstream provider response there before using it.",
+        "relatedContext": "docs/policies/ARCHITECTURE.md assigns external integrations and their response parsing to infrastructure adapters; adapters translate external concepts into application types. Domain code has no HTTP or external-system APIs.",
+        "testContext": "A domain unit test supplies a provider-shaped JSON string and checks the extracted status."
+      },
+      "expected": {
+        "duplicatesExistingAbstraction": false,
+        "bypassesRepositoryPrimitive": false,
+        "behaviorInWrongLayer": true
+      }
+    },
+    {
+      "id": "database-package-owns-api-contract-type",
+      "state": {
+        "change": "Exports a Drizzle row type as the HTTP response contract for the project listing endpoint.",
+        "relatedContext": "docs/policies/ARCHITECTURE.md assigns Drizzle rows to @template/db and public API contracts to oRPC transport. The transport contract uses a separate application-facing Project type.",
+        "testContext": "A package test checks the response object includes each database column."
+      },
+      "expected": {
+        "duplicatesExistingAbstraction": false,
+        "bypassesRepositoryPrimitive": false,
+        "behaviorInWrongLayer": true
+      }
+    },
+    {
+      "id": "rpc-parses-request-and-delegates",
+      "state": {
+        "change": "Defines a Zod request schema in the oRPC contract, parses incoming data at the procedure boundary, and passes the validated value to an application use case.",
+        "relatedContext": "docs/policies/ARCHITECTURE.md assigns transport schemas and public API contracts to oRPC. The application use case receives typed input and does not parse HTTP data.",
+        "testContext": "Procedure tests verify accepted input reaches the use case result and invalid input receives a validation response."
+      },
+      "expected": {
+        "duplicatesExistingAbstraction": false,
+        "bypassesRepositoryPrimitive": false,
+        "behaviorInWrongLayer": false
+      }
+    },
+    {
+      "id": "repository-maps-row-to-api-contract",
+      "state": {
+        "change": "Implements a repository query in @template/db and maps its row into an application record; the oRPC contract separately defines the HTTP response shape.",
+        "relatedContext": "docs/policies/ARCHITECTURE.md assigns SQL access to the database adapter and request and response schemas to oRPC transport. The application coordinates the repository port and transport maps the returned application record.",
+        "testContext": "A repository test checks the application record and an API contract test checks the response schema."
+      },
+      "expected": {
+        "duplicatesExistingAbstraction": false,
+        "bypassesRepositoryPrimitive": false,
+        "behaviorInWrongLayer": false
+      }
+    },
+    {
+      "id": "billing-discount-calculator-in-ui",
+      "state": {
+        "change": "Adds a reusable discount calculator in the UI package and calls it from the checkout component.",
+        "relatedContext": "The domain package already exports the same subscription discount calculation and owns pricing invariants. UI components call the application use case; they do not own pricing policy.",
+        "testContext": "A component test covers one discounted subscription."
+      },
+      "expected": {
+        "duplicatesExistingAbstraction": true,
+        "bypassesRepositoryPrimitive": true,
+        "behaviorInWrongLayer": true
+      }
+    },
+    {
+      "id": "duplicate-tenant-slug-normalizer",
+      "state": {
+        "change": "Adds a second reusable tenant slug normalizer beside the canonical normalizer in the same domain package.",
+        "relatedContext": "The existing normalizeTenantSlug function already defines accepted characters, normalization, and length limits and is intended for all domain callers.",
+        "testContext": "Unit tests cover lowercasing and invalid characters."
+      },
+      "expected": {
+        "duplicatesExistingAbstraction": true,
+        "bypassesRepositoryPrimitive": true,
+        "behaviorInWrongLayer": false
+      }
+    },
+    {
+      "id": "duplicate-project-access-policy",
+      "state": {
+        "change": "Adds a reusable project-owner policy object that repeats the existing can(user, 'read', project) decision in the same application policy module.",
+        "relatedContext": "The can helper is the established access mechanism for application operations and already owns project read permission and organization scope.",
+        "testContext": "Tests cover project owners but do not cover organization-scoped collaborators."
+      },
+      "expected": {
+        "duplicatesExistingAbstraction": true,
+        "bypassesRepositoryPrimitive": true,
+        "behaviorInWrongLayer": false
+      }
+    },
+    {
+      "id": "application-reads-process-env",
+      "state": {
+        "change": "Reads process.env directly from an application use case on every invocation to choose a storage mode.",
+        "relatedContext": "Environment variables are parsed once at startup by the runtime configuration module. Application code receives typed configuration and does not access process state.",
+        "testContext": "A test sets the process environment before calling the use case."
+      },
+      "expected": {
+        "duplicatesExistingAbstraction": false,
+        "bypassesRepositoryPrimitive": false,
+        "behaviorInWrongLayer": true
+      }
+    },
+    {
+      "id": "transport-schema-owned-by-domain",
+      "state": {
+        "change": "Moves the HTTP request Zod schema into the domain package, then imports it into the oRPC procedure to validate the request before calling the use case.",
+        "relatedContext": "oRPC transport owns request schemas and public API contracts. Validation still runs at the request boundary; domain types do not model HTTP payload shape.",
+        "testContext": "Procedure tests cover valid input and the invalid-input response."
+      },
+      "expected": {
+        "duplicatesExistingAbstraction": false,
+        "bypassesRepositoryPrimitive": false,
+        "behaviorInWrongLayer": true
+      }
+    }
+  ]
+}

@@ -18,6 +18,13 @@ tracked directly from their upstream release process and requires review.
   workflow permissions; branch protection must require `Check`, `Actionlint`,
   and the applicable security workflows in the consuming repo.
 
+`ai@7.0.105` is pinned for the experimental Jev evaluation API used through
+Vercel AI Gateway. Its exact release and the exact AI SDK transitive versions
+required by that release are exempted from the seven-day age gate in
+`pnpm-workspace.yaml`. The exception is limited to those versions, owned by
+the repository maintainers, and expires 2026-09-30; remove it after this
+initial integration is evaluated or when the versions have aged past the gate.
+
 The `prepare` lifecycle script is an explicit toolchain exception. It runs
 `effect-tsgo patch --oxlint --typescript` so the installed TypeScript 7 and
 Oxlint binaries use the Effect diagnostics integration. The package, command,
