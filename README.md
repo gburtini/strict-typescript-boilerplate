@@ -13,13 +13,20 @@ correctness as enforceable contracts.
 ## The contract
 
 ```sh
+# Run these from the repository root in a shell where nvm is initialized.
 nvm install
 nvm use
+node --version
 corepack enable
 corepack install
 pnpm install
 pnpm check:all
 ```
+
+`.nvmrc` is the source of truth for Node.js. Always use nvm to select that
+version before running Node.js or pnpm commands; if `nvm` is not available,
+initialize/install it in your shell first. The `node --version` output should
+match `.nvmrc` (`v24.13.1`).
 
 `pnpm check:all` runs the complete repository gate: formatting, runtime preflight,
 strict type checking, Oxlint with type-aware

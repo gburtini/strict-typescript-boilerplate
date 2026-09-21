@@ -23,6 +23,17 @@ Before completing any change, run `pnpm check:all`. It must pass with zero
 errors and zero lint warnings. Tool-generated informational output is not a
 repository warning unless the named check reports it as a failure.
 
+## Runtime setup
+
+Use nvm for Node.js in this repository. Before running `pnpm`, `node`, or any
+repository check, run `nvm install` and `nvm use` from the repository root;
+`.nvmrc` pins the required Node.js version. Confirm `node --version` matches
+`.nvmrc`. Do not use a system Node.js or another version manager for this
+repository. If `nvm` is unavailable in the shell, initialize/install nvm first
+and then repeat these commands. For an existing nvm installation, source its
+`nvm.sh` in the shell before continuing. Enable Corepack and install
+dependencies with `corepack enable`, `corepack install`, and `pnpm install`.
+
 ## Never weaken verification
 
 Fix failures at their cause. Do not:
