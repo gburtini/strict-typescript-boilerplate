@@ -72,6 +72,9 @@ jobs:
       - name: Install Playwright browsers
         if: matrix.name == 'end-to-end tests' || matrix.name == 'full repository gate'
         run: pnpm --filter @template/web exec playwright install --with-deps chromium
+      - name: Build application for E2E
+        if: matrix.name == 'end-to-end tests'
+        run: pnpm build
       - name: Run check
         if: matrix.name != 'full repository gate'
         run: pnpm run ${{ matrix.script }}
