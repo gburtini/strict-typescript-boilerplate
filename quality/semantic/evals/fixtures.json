@@ -11,7 +11,7 @@
       "expected": {
         "duplicatesExistingAbstraction": true,
         "bypassesRepositoryPrimitive": true,
-        "missingBehaviorTest": false
+        "behaviorInWrongLayer": false
       }
     },
     {
@@ -24,20 +24,20 @@
       "expected": {
         "duplicatesExistingAbstraction": false,
         "bypassesRepositoryPrimitive": false,
-        "missingBehaviorTest": false
+        "behaviorInWrongLayer": false
       }
     },
     {
       "id": "manual-cache-bypass",
       "state": {
         "change": "Adds a React effect that fetches the current user's projects, with local loading and error state.",
-        "relatedContext": "The application exposes api.projects.list.useQuery() for this operation. Existing project screens use the query hook and share its cache.",
+        "relatedContext": "The application exposes api.projects.list.useQuery() for this operation. Existing project screens use the query hook and share its cache. The established query hook owns remote request state and caching; feature UI should use that owner instead of implementing request state.",
         "testContext": "No component or integration test was added for loading, error, or project-list behavior."
       },
       "expected": {
         "duplicatesExistingAbstraction": true,
         "bypassesRepositoryPrimitive": true,
-        "missingBehaviorTest": true
+        "behaviorInWrongLayer": true
       }
     },
     {
@@ -50,20 +50,20 @@
       "expected": {
         "duplicatesExistingAbstraction": false,
         "bypassesRepositoryPrimitive": false,
-        "missingBehaviorTest": false
+        "behaviorInWrongLayer": false
       }
     },
     {
       "id": "duplicate-fetch-wrapper",
       "state": {
         "change": "Adds a fetchProjects hook that manages pending state, calls the API, stores results, and retries on failure.",
-        "relatedContext": "The repository already exports useProjectsQuery with loading, error, cache, and retry behavior for the same API operation.",
+        "relatedContext": "The repository already exports useProjectsQuery with loading, error, cache, and retry behavior for the same API operation. The established query hook owns remote request state and caching; feature UI should use that owner instead of implementing request state.",
         "testContext": "A hook test verifies loading, success, error, and retry behavior."
       },
       "expected": {
         "duplicatesExistingAbstraction": true,
         "bypassesRepositoryPrimitive": true,
-        "missingBehaviorTest": false
+        "behaviorInWrongLayer": true
       }
     },
     {
@@ -76,7 +76,7 @@
       "expected": {
         "duplicatesExistingAbstraction": false,
         "bypassesRepositoryPrimitive": false,
-        "missingBehaviorTest": true
+        "behaviorInWrongLayer": false
       }
     },
     {
@@ -89,7 +89,7 @@
       "expected": {
         "duplicatesExistingAbstraction": false,
         "bypassesRepositoryPrimitive": false,
-        "missingBehaviorTest": false
+        "behaviorInWrongLayer": false
       }
     },
     {
@@ -102,20 +102,20 @@
       "expected": {
         "duplicatesExistingAbstraction": false,
         "bypassesRepositoryPrimitive": false,
-        "missingBehaviorTest": false
+        "behaviorInWrongLayer": false
       }
     },
     {
       "id": "raw-database-access-duplicates-repository",
       "state": {
         "change": "Adds a route that imports the database client and queries project membership directly to decide whether to show a project.",
-        "relatedContext": "The repository's projectAccess repository function performs this membership check and returns the typed access result used by other routes.",
+        "relatedContext": "The repository's projectAccess repository function performs this membership check and returns the typed access result used by other routes. ARCHITECTURE.md explicitly assigns Drizzle to @template/db; application and API code use repository ports.",
         "testContext": "A route test covers both accessible and inaccessible projects."
       },
       "expected": {
         "duplicatesExistingAbstraction": true,
         "bypassesRepositoryPrimitive": true,
-        "missingBehaviorTest": false
+        "behaviorInWrongLayer": true
       }
     },
     {
@@ -128,7 +128,7 @@
       "expected": {
         "duplicatesExistingAbstraction": false,
         "bypassesRepositoryPrimitive": false,
-        "missingBehaviorTest": true
+        "behaviorInWrongLayer": false
       }
     },
     {
@@ -141,20 +141,20 @@
       "expected": {
         "duplicatesExistingAbstraction": false,
         "bypassesRepositoryPrimitive": false,
-        "missingBehaviorTest": false
+        "behaviorInWrongLayer": false
       }
     },
     {
       "id": "inline-role-check-bypasses-authorization-helper",
       "state": {
         "change": "Adds an export button that checks user.role === 'admin' inline before calling the export endpoint.",
-        "relatedContext": "The can(user, 'export', resource) authorization helper already models export permission, organization scope, and administrator access.",
+        "relatedContext": "The can(user, 'export', resource) authorization helper already models export permission, organization scope, and administrator access. This component owns the only permission decision for the export action; repository policy assigns authorization decisions to server-side application policy, represented here by the can helper.",
         "testContext": "A component test checks that the button is hidden for non-admin users but does not cover users granted export permission by policy."
       },
       "expected": {
         "duplicatesExistingAbstraction": true,
         "bypassesRepositoryPrimitive": true,
-        "missingBehaviorTest": true
+        "behaviorInWrongLayer": true
       }
     },
     {
@@ -167,7 +167,7 @@
       "expected": {
         "duplicatesExistingAbstraction": false,
         "bypassesRepositoryPrimitive": false,
-        "missingBehaviorTest": false
+        "behaviorInWrongLayer": false
       }
     },
     {
@@ -180,7 +180,7 @@
       "expected": {
         "duplicatesExistingAbstraction": false,
         "bypassesRepositoryPrimitive": false,
-        "missingBehaviorTest": false
+        "behaviorInWrongLayer": false
       }
     },
     {
@@ -193,7 +193,7 @@
       "expected": {
         "duplicatesExistingAbstraction": false,
         "bypassesRepositoryPrimitive": false,
-        "missingBehaviorTest": true
+        "behaviorInWrongLayer": false
       }
     },
     {
@@ -206,7 +206,7 @@
       "expected": {
         "duplicatesExistingAbstraction": false,
         "bypassesRepositoryPrimitive": false,
-        "missingBehaviorTest": true
+        "behaviorInWrongLayer": false
       }
     },
     {
@@ -219,46 +219,46 @@
       "expected": {
         "duplicatesExistingAbstraction": false,
         "bypassesRepositoryPrimitive": false,
-        "missingBehaviorTest": false
+        "behaviorInWrongLayer": false
       }
     },
     {
       "id": "duplicate-notification-wrapper",
       "state": {
         "change": "Adds a useAlerts hook that stores alert messages, dismisses them after a timeout, and exposes success and error helpers.",
-        "relatedContext": "The repository already exports useNotifications with the same queue, timeout, dismissal, and severity behavior.",
+        "relatedContext": "The repository already exports useNotifications with the same queue, timeout, dismissal, and severity behavior. The shared notification provider owns app-wide alert state and lifecycle; feature hooks consume that owner instead of keeping a competing alert queue.",
         "testContext": "A hook test covers alert insertion, dismissal, and timeout cleanup."
       },
       "expected": {
         "duplicatesExistingAbstraction": true,
         "bypassesRepositoryPrimitive": true,
-        "missingBehaviorTest": false
+        "behaviorInWrongLayer": true
       }
     },
     {
       "id": "duplicate-invoice-validation-without-tests",
       "state": {
         "change": "Adds validateInvoiceNumber in a route module with trimming, uppercase normalization, and the existing invoice-number format check.",
-        "relatedContext": "The billing package already exports validateInvoiceNumber with those same normalization and validation steps.",
+        "relatedContext": "The billing package already exports validateInvoiceNumber with those same normalization and validation steps. The invoice business invariant is owned by the domain schema; the transport route validates request shape and delegates the invariant.",
         "testContext": "No tests cover the new route helper or the invalid-input response."
       },
       "expected": {
         "duplicatesExistingAbstraction": true,
         "bypassesRepositoryPrimitive": true,
-        "missingBehaviorTest": true
+        "behaviorInWrongLayer": true
       }
     },
     {
       "id": "duplicate-redaction-wrapper-with-tests",
       "state": {
         "change": "Adds stripPrivateFields in the audit module by copying the existing sensitive-field filtering logic before audit persistence.",
-        "relatedContext": "The shared redactSensitiveFields helper already removes the same fields and is used by other audit writers.",
+        "relatedContext": "The shared redactSensitiveFields helper already removes the same fields and is used by other audit writers. The shared audit redaction helper owns sensitive-field removal; the route should call that owner rather than reimplement its field policy.",
         "testContext": "Tests verify that private fields are absent from the persisted audit event."
       },
       "expected": {
         "duplicatesExistingAbstraction": true,
         "bypassesRepositoryPrimitive": true,
-        "missingBehaviorTest": false
+        "behaviorInWrongLayer": true
       }
     },
     {
@@ -271,7 +271,7 @@
       "expected": {
         "duplicatesExistingAbstraction": false,
         "bypassesRepositoryPrimitive": false,
-        "missingBehaviorTest": true
+        "behaviorInWrongLayer": false
       }
     },
     {
@@ -284,7 +284,7 @@
       "expected": {
         "duplicatesExistingAbstraction": false,
         "bypassesRepositoryPrimitive": false,
-        "missingBehaviorTest": false
+        "behaviorInWrongLayer": false
       }
     },
     {
@@ -297,20 +297,72 @@
       "expected": {
         "duplicatesExistingAbstraction": false,
         "bypassesRepositoryPrimitive": false,
-        "missingBehaviorTest": false
+        "behaviorInWrongLayer": false
       }
     },
     {
       "id": "custom-modal-bypasses-dialog-primitive",
       "state": {
         "change": "Implements a modal with a div, manually managed focus, Escape handling, and backdrop dismissal.",
-        "relatedContext": "The repository's Dialog primitive already provides focus trapping, keyboard dismissal, backdrop behavior, and accessible labeling. There is no custom modal behavior requirement.",
+        "relatedContext": "The repository's Dialog primitive already provides focus trapping, keyboard dismissal, backdrop behavior, and accessible labeling. There is no custom modal behavior requirement. The reusable Dialog primitive in packages/ui owns focus management and keyboard interaction; feature components compose it rather than implementing those mechanics.",
         "testContext": "A browser test verifies open and close behavior, focus return, and keyboard dismissal."
       },
       "expected": {
         "duplicatesExistingAbstraction": false,
         "bypassesRepositoryPrimitive": true,
-        "missingBehaviorTest": false
+        "behaviorInWrongLayer": true
+      }
+    },
+    {
+      "id": "domain-parses-provider-json",
+      "state": {
+        "change": "Adds JSON.parse and field extraction inside a domain operation to decode an upstream provider response.",
+        "relatedContext": "ARCHITECTURE.md assigns external integrations and their response parsing to infrastructure adapters; adapters translate external concepts into application types. Domain code has no HTTP or external-system APIs.",
+        "testContext": "A domain unit test supplies a provider-shaped JSON string and checks the extracted status."
+      },
+      "expected": {
+        "duplicatesExistingAbstraction": false,
+        "bypassesRepositoryPrimitive": false,
+        "behaviorInWrongLayer": true
+      }
+    },
+    {
+      "id": "database-package-owns-api-contract-type",
+      "state": {
+        "change": "Defines and exports the HTTP response contract for the project listing endpoint from packages/db alongside its Drizzle table schema.",
+        "relatedContext": "ARCHITECTURE.md assigns Drizzle and database schemas to @template/db, and assigns request and response schemas plus public API contracts to oRPC transport. The endpoint is consumed by the web application.",
+        "testContext": "A package test checks the response object includes each database column."
+      },
+      "expected": {
+        "duplicatesExistingAbstraction": false,
+        "bypassesRepositoryPrimitive": false,
+        "behaviorInWrongLayer": true
+      }
+    },
+    {
+      "id": "rpc-parses-request-and-delegates",
+      "state": {
+        "change": "Defines a Zod request schema in the oRPC contract, parses incoming data at the procedure boundary, and passes the validated value to an application use case.",
+        "relatedContext": "ARCHITECTURE.md assigns transport schemas and public API contracts to oRPC. The application use case receives typed input and does not parse HTTP data.",
+        "testContext": "Procedure tests verify accepted input reaches the use case result and invalid input receives a validation response."
+      },
+      "expected": {
+        "duplicatesExistingAbstraction": false,
+        "bypassesRepositoryPrimitive": false,
+        "behaviorInWrongLayer": false
+      }
+    },
+    {
+      "id": "repository-maps-row-to-api-contract",
+      "state": {
+        "change": "Implements a repository query in @template/db and maps its row into an application record; the oRPC contract separately defines the HTTP response shape.",
+        "relatedContext": "ARCHITECTURE.md assigns SQL access to the database adapter and request and response schemas to oRPC transport. The application coordinates the repository port and transport maps the returned application record.",
+        "testContext": "A repository test checks the application record and an API contract test checks the response schema."
+      },
+      "expected": {
+        "duplicatesExistingAbstraction": false,
+        "bypassesRepositoryPrimitive": false,
+        "behaviorInWrongLayer": false
       }
     }
   ]

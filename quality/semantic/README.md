@@ -1,14 +1,17 @@
 # Jev semantic checks
 
-This prototype uses Jev through Vercel AI Gateway for three judgments that the
-repository's deterministic checks do not currently express:
+This prototype uses Jev through Vercel AI Gateway for three maintainability
+judgments that the repository's deterministic checks do not currently express:
 
 - `duplicatesExistingAbstraction` — the change adds an abstraction with an
   existing responsibility;
 - `bypassesRepositoryPrimitive` — the change reimplements behavior already
   provided by a repository primitive in the supplied context;
-- `missingBehaviorTest` — observable behavior changes without an appropriate
-  behavior test in the supplied context.
+- `behaviorInWrongLayer` — the change places parsing, API contract types,
+  business decisions, UI state, or database access outside the layer that the
+  supplied architecture assigns to that responsibility. The rule requires
+  evidence for both the changed layer and the established owner; missing
+  ownership evidence is labeled false.
 
 Run `pnpm lint:semantic` to evaluate the branch diff against `origin/main`, or
 `pnpm lint:semantic:eval` to run the checked-in labeled examples. The AI SDK
@@ -43,7 +46,7 @@ configuration, and source comments do not define policy.
 The context collector currently includes `AGENTS.md`, `ARCHITECTURE.md`,
 `CONVENTIONS.md`, `TESTING.md`, changed code paths, and neighboring test files.
 It does not yet perform repository-wide symbol search or import-graph
-retrieval. The 24 synthetic fixtures produce 72 Boolean judgments per pass.
+retrieval. The 28 synthetic fixtures produce 84 Boolean judgments per pass.
 Each rule has at least eight positive and eight negative examples as required
 by `rules.json`; `--eval` reports the confusion counts, precision, recall,
 specificity, accuracy, and
