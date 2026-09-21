@@ -188,8 +188,14 @@ function actionForFlag(flag: "--check" | "--eval"): "check" | "eval" {
 }
 
 function readEvalCorpus(root: string, config: SemanticConfig): SemanticCase[] {
-  const corpusPath = pathModule.resolve(root, "quality/semantic/evals/fixtures.json");
-  return parseCorpus(JSON.parse(readFileSync(corpusPath, "utf8")), config);
+  const fixturesPath = pathModule.resolve(root, "quality/semantic/evals/fixtures.json"),
+    architecturePath = pathModule.resolve(
+      root,
+      "quality/semantic/evals/architecture.json",
+    ),
+    fixtures: unknown = JSON.parse(readFileSync(fixturesPath, "utf8")),
+    architectureFixtures: unknown = JSON.parse(readFileSync(architecturePath, "utf8"));
+  return parseCorpus(fixtures, config, architectureFixtures);
 }
 
 function expectRejected(action: () => unknown, message: string): void {
@@ -241,8 +247,9 @@ function checkPolicyRejections(config: SemanticConfig, root: string): number {
           cases: [{ ...firstCase, expected: { unexpectedRule: false } }],
         },
         config,
+        { schemaVersion: 1, labelRules: [], cases: [] },
       ),
-    "expected keys must exactly match",
+    "expected keys must be configured rule IDs",
   );
   expectRejected(
     () =>
@@ -259,6 +266,7 @@ function checkPolicyRejections(config: SemanticConfig, root: string): number {
           ],
         },
         config,
+        { schemaVersion: 1, labelRules: [], cases: [] },
       ),
     "positive and negative cases",
   );
@@ -285,7 +293,7 @@ function makeQuestions(config: SemanticConfig): Record<
       rule.id,
       {
         type: rule.type,
-        instructions: rule.instructions,
+        instructions: `${config.evaluationInstructions}\n\n${rule.instructions}`,
         criteria: rule.criteria,
       },
     ]),
@@ -323,14 +331,46 @@ async function evaluateState(
   }
 }
 
+type StateEvaluation = Awaited<ReturnType<typeof evaluateState>>;
+interface CaseEvaluation {
+  evalCase: SemanticCase;
+  result: StateEvaluation;
+}
+
+async function evaluateCasesInBatches(
+  cases: SemanticCase[],
+  config: SemanticConfig,
+  start = 0,
+  completed: CaseEvaluation[] = [],
+): Promise<CaseEvaluation[]> {
+  if (start >= cases.length) {
+    return completed;
+  }
+  const batch = cases.slice(start, start + config.evaluationConcurrency),
+    batchResults = await Promise.all(
+      batch.map(async (evalCase) => {
+        const caseConfig = {
+          ...config,
+          rules: config.rules.filter((rule) =>
+            Object.hasOwn(evalCase.expected, rule.id),
+          ),
+        };
+        return {
+          evalCase,
+          result: await evaluateState(evalCase.state, caseConfig),
+        };
+      }),
+    );
+  return evaluateCasesInBatches(cases, config, start + config.evaluationConcurrency, [
+    ...completed,
+    ...batchResults,
+  ]);
+}
+
 async function runEval(root: string, config: SemanticConfig): Promise<void> {
   const cases = readEvalCorpus(root, config),
-    evaluationPromises: Promise<Awaited<ReturnType<typeof evaluateState>>>[] = [];
-  for (const evalCase of cases) {
-    evaluationPromises.push(evaluateState(evalCase.state, config));
-  }
-  const evaluations = await Promise.all(evaluationPromises);
-  for (const result of evaluations) {
+    evaluations = await evaluateCasesInBatches(cases, config);
+  for (const { result } of evaluations) {
     if (!result.ok) {
       process.stderr.write(`${result.error.message}\n`);
       process.exitCode = 1;
@@ -339,22 +379,29 @@ async function runEval(root: string, config: SemanticConfig): Promise<void> {
   }
   const outcomes: RuleOutcome[] = [];
   const resolvedModels = new Set<string>();
-  for (const [index, evalCase] of cases.entries()) {
-    const result = evaluations[index];
-    if (!result || !result.ok) {
-      throw new TypeError("semantic evaluation result is missing");
+  for (const { evalCase, result } of evaluations) {
+    if (!result.ok) {
+      throw new TypeError("semantic evaluation result is missing", {
+        cause: result.error,
+      });
     }
     resolvedModels.add(result.modelId);
     for (const rule of config.rules) {
-      const probability = z.number().min(0).max(1).parse(result.probabilities[rule.id]),
-        expected = z.boolean().parse(evalCase.expected[rule.id]);
-      outcomes.push({
-        caseId: evalCase.id,
-        rule: rule.id,
-        expected,
-        probability,
-        predicted: probability >= rule.thresholds.finding,
-      });
+      if (Object.hasOwn(evalCase.expected, rule.id)) {
+        const probability = z
+            .number()
+            .min(0)
+            .max(1)
+            .parse(result.probabilities[rule.id]),
+          expected = z.boolean().parse(evalCase.expected[rule.id]);
+        outcomes.push({
+          caseId: evalCase.id,
+          rule: rule.id,
+          expected,
+          probability,
+          decision: decisionFor(probability, rule.thresholds),
+        });
+      }
     }
   }
   process.stdout.write(

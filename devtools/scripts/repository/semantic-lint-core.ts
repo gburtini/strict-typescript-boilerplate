@@ -15,6 +15,8 @@ const ruleSchema = z.object({
   configSchema = z.object({
     schemaVersion: z.literal(1),
     model: z.string().min(1),
+    evaluationInstructions: z.string().min(1),
+    evaluationConcurrency: z.number().int().positive().max(32),
     minimumExamplesPerLabel: z.number().int().positive(),
     maximumStateCharacters: z.number().int().positive(),
     rules: z.array(ruleSchema).min(1),
@@ -29,10 +31,20 @@ const ruleSchema = z.object({
     state: stateSchema,
     expected: z.record(z.string(), z.boolean()),
   }),
+  violationsCaseSchema = z.object({
+    id: z.string().min(1),
+    state: stateSchema,
+    violations: z.array(z.string()),
+  }),
   corpusSchema = z.object({
     schemaVersion: z.literal(1),
     cases: z.array(caseSchema).min(1),
   });
+const violationsCorpusSchema = z.object({
+  schemaVersion: z.literal(1),
+  labelRules: z.array(z.string()),
+  cases: z.array(violationsCaseSchema),
+});
 
 interface SemanticRule {
   id: string;
@@ -46,6 +58,8 @@ interface SemanticRule {
 interface SemanticConfig {
   schemaVersion: 1;
   model: string;
+  evaluationInstructions: string;
+  evaluationConcurrency: number;
   minimumExamplesPerLabel: number;
   maximumStateCharacters: number;
   rules: SemanticRule[];
@@ -66,19 +80,26 @@ interface RuleOutcome {
   rule: string;
   expected: boolean;
   probability: number;
-  predicted: boolean;
+  decision: "finding" | "abstain" | "pass";
 }
 interface RuleSummary {
   rule: string;
   cases: number;
+  findings: number;
+  passes: number;
+  abstentions: number;
+  abstainedPositive: number;
+  abstainedNegative: number;
   truePositive: number;
   falsePositive: number;
   trueNegative: number;
   falseNegative: number;
+  coverage: number;
   precision: number;
   recall: number;
   specificity: number;
   accuracy: number;
+  decisiveAccuracy: number;
 }
 
 function parseConfig(input: unknown): SemanticConfig {
@@ -97,26 +118,64 @@ function parseConfig(input: unknown): SemanticConfig {
   return config;
 }
 
-function parseCorpus(input: unknown, config: SemanticConfig): SemanticCase[] {
+function parseCorpus(
+  input: unknown,
+  config: SemanticConfig,
+  violationsInput: unknown,
+): SemanticCase[] {
   const corpus = corpusSchema.parse(input),
-    ruleIds = config.rules.map((rule) => rule.id),
-    expectedIds = new Set(ruleIds);
-  for (const evalCase of corpus.cases) {
-    const actualIds = Object.keys(evalCase.expected);
-    if (
-      actualIds.length !== expectedIds.size ||
-      actualIds.some((id) => !expectedIds.has(id))
-    ) {
-      throw new TypeError(
-        `fixture ${evalCase.id} expected keys must exactly match configured rule IDs`,
-      );
+    configuredRuleIds = new Set(config.rules.map((rule) => rule.id)),
+    violationsCorpus = violationsCorpusSchema.parse(violationsInput);
+  const labeledRuleIds = new Set<string>();
+  for (const ruleId of violationsCorpus.labelRules) {
+    labeledRuleIds.add(ruleId);
+  }
+  if (labeledRuleIds.size !== violationsCorpus.labelRules.length) {
+    throw new TypeError("semantic fixture label rule IDs must be unique");
+  }
+  for (const ruleId of labeledRuleIds) {
+    if (!configuredRuleIds.has(ruleId)) {
+      throw new TypeError(`semantic fixture corpus labels unknown rule ${ruleId}`);
     }
   }
-  for (const ruleId of ruleIds) {
-    const positiveCount = corpus.cases.filter(
+  const baseCases = corpus.cases.map((evalCase) => {
+    const expectedIds = Object.keys(evalCase.expected);
+    if (
+      expectedIds.length === 0 ||
+      expectedIds.some((id) => !configuredRuleIds.has(id))
+    ) {
+      throw new TypeError(
+        `fixture ${evalCase.id} expected keys must be configured rule IDs`,
+      );
+    }
+    return evalCase;
+  });
+  const violationsCases: SemanticCase[] = [];
+  for (const evalCase of violationsCorpus.cases) {
+    if (evalCase.violations.some((ruleId) => !labeledRuleIds.has(ruleId))) {
+      throw new TypeError(
+        `fixture ${evalCase.id} lists a violation outside its labeled rule set`,
+      );
+    }
+    const expected: Record<string, boolean> = {};
+    for (const ruleId of labeledRuleIds) {
+      expected[ruleId] = evalCase.violations.includes(ruleId);
+    }
+    violationsCases.push({ ...evalCase, expected });
+  }
+  const cases = [...baseCases, ...violationsCases],
+    caseIds = cases.map((evalCase) => evalCase.id);
+  if (new Set(caseIds).size !== caseIds.length) {
+    throw new TypeError("semantic fixture IDs must be unique");
+  }
+  for (const ruleId of configuredRuleIds) {
+    const labeledCases = cases.filter((evalCase) =>
+        Object.hasOwn(evalCase.expected, ruleId),
+      ),
+      positiveCount = labeledCases.filter(
         (evalCase) => evalCase.expected[ruleId] === true,
       ).length,
-      negativeCount = corpus.cases.length - positiveCount;
+      negativeCount = labeledCases.length - positiveCount;
     if (
       positiveCount < config.minimumExamplesPerLabel ||
       negativeCount < config.minimumExamplesPerLabel
@@ -126,7 +185,7 @@ function parseCorpus(input: unknown, config: SemanticConfig): SemanticCase[] {
       );
     }
   }
-  return corpus.cases;
+  return cases;
 }
 
 function decisionFor(
@@ -152,29 +211,52 @@ function ratio(numerator: number, denominator: number): number {
 function summarizeOutcomes(outcomes: RuleOutcome[], ruleIds: string[]): RuleSummary[] {
   return ruleIds.map((rule) => {
     const ruleOutcomes = outcomes.filter((outcome) => outcome.rule === rule),
+      findings = ruleOutcomes.filter((outcome) => outcome.decision === "finding"),
+      passes = ruleOutcomes.filter((outcome) => outcome.decision === "pass"),
+      abstentions = ruleOutcomes.filter((outcome) => outcome.decision === "abstain"),
       truePositive = ruleOutcomes.filter(
-        (outcome) => outcome.expected && outcome.predicted,
+        (outcome) => outcome.expected && outcome.decision === "finding",
       ).length,
       falsePositive = ruleOutcomes.filter(
-        (outcome) => !outcome.expected && outcome.predicted,
+        (outcome) => !outcome.expected && outcome.decision === "finding",
       ).length,
       trueNegative = ruleOutcomes.filter(
-        (outcome) => !outcome.expected && !outcome.predicted,
+        (outcome) => !outcome.expected && outcome.decision === "pass",
       ).length,
       falseNegative = ruleOutcomes.filter(
-        (outcome) => outcome.expected && !outcome.predicted,
+        (outcome) => outcome.expected && outcome.decision === "pass",
       ).length;
     return {
       rule,
       cases: ruleOutcomes.length,
+      findings: findings.length,
+      passes: passes.length,
+      abstentions: abstentions.length,
+      abstainedPositive: abstentions.filter((outcome) => outcome.expected).length,
+      abstainedNegative: abstentions.filter((outcome) => !outcome.expected).length,
       truePositive,
       falsePositive,
       trueNegative,
       falseNegative,
+      coverage: ratio(findings.length + passes.length, ruleOutcomes.length),
       precision: ratio(truePositive, truePositive + falsePositive),
-      recall: ratio(truePositive, truePositive + falseNegative),
-      specificity: ratio(trueNegative, trueNegative + falsePositive),
+      recall: ratio(
+        truePositive,
+        truePositive +
+          falseNegative +
+          abstentions.filter((outcome) => outcome.expected).length,
+      ),
+      specificity: ratio(
+        trueNegative,
+        trueNegative +
+          falsePositive +
+          abstentions.filter((outcome) => !outcome.expected).length,
+      ),
       accuracy: ratio(truePositive + trueNegative, ruleOutcomes.length),
+      decisiveAccuracy: ratio(
+        truePositive + trueNegative,
+        findings.length + passes.length,
+      ),
     };
   });
 }

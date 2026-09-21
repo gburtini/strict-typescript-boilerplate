@@ -35,9 +35,9 @@
         "testContext": "No component or integration test was added for loading, error, or project-list behavior."
       },
       "expected": {
-        "duplicatesExistingAbstraction": true,
+        "duplicatesExistingAbstraction": false,
         "bypassesRepositoryPrimitive": true,
-        "behaviorInWrongLayer": true
+        "behaviorInWrongLayer": false
       }
     },
     {
@@ -63,7 +63,7 @@
       "expected": {
         "duplicatesExistingAbstraction": true,
         "bypassesRepositoryPrimitive": true,
-        "behaviorInWrongLayer": true
+        "behaviorInWrongLayer": false
       }
     },
     {
@@ -109,11 +109,11 @@
       "id": "raw-database-access-duplicates-repository",
       "state": {
         "change": "Adds a route that imports the database client and queries project membership directly to decide whether to show a project.",
-        "relatedContext": "The repository's projectAccess repository function performs this membership check and returns the typed access result used by other routes. docs/policies/ARCHITECTURE.md explicitly assigns Drizzle to @template/db; application and API code use repository ports.",
+        "relatedContext": "The projectAccess repository primitive is intended for this caller and performs the same membership lookup. docs/policies/ARCHITECTURE.md explicitly assigns Drizzle to @template/db; application and API code use repository ports.",
         "testContext": "A route test covers both accessible and inaccessible projects."
       },
       "expected": {
-        "duplicatesExistingAbstraction": true,
+        "duplicatesExistingAbstraction": false,
         "bypassesRepositoryPrimitive": true,
         "behaviorInWrongLayer": true
       }
@@ -147,12 +147,12 @@
     {
       "id": "inline-role-check-bypasses-authorization-helper",
       "state": {
-        "change": "Adds an export button that checks user.role === 'admin' inline before calling the export endpoint.",
-        "relatedContext": "The can(user, 'export', resource) authorization helper already models export permission, organization scope, and administrator access. This component owns the only permission decision for the export action; repository policy assigns authorization decisions to server-side application policy, represented here by the can helper.",
-        "testContext": "A component test checks that the button is hidden for non-admin users but does not cover users granted export permission by policy."
+        "change": "Adds an export button with an inline admin-role check. The export endpoint has no server-side authorization check, so a direct request reaches protected data.",
+        "relatedContext": "The can(user, 'export', resource) policy models export permission, organization scope, and administrator access. Protected operations must enforce it in the application layer; a UI check is not an authorization boundary.",
+        "testContext": "A component test checks that the button is hidden for non-admin users but does not exercise a direct request to the endpoint."
       },
       "expected": {
-        "duplicatesExistingAbstraction": true,
+        "duplicatesExistingAbstraction": false,
         "bypassesRepositoryPrimitive": true,
         "behaviorInWrongLayer": true
       }
@@ -232,7 +232,7 @@
       "expected": {
         "duplicatesExistingAbstraction": true,
         "bypassesRepositoryPrimitive": true,
-        "behaviorInWrongLayer": true
+        "behaviorInWrongLayer": false
       }
     },
     {
@@ -258,7 +258,7 @@
       "expected": {
         "duplicatesExistingAbstraction": true,
         "bypassesRepositoryPrimitive": true,
-        "behaviorInWrongLayer": true
+        "behaviorInWrongLayer": false
       }
     },
     {
@@ -304,19 +304,19 @@
       "id": "custom-modal-bypasses-dialog-primitive",
       "state": {
         "change": "Implements a modal with a div, manually managed focus, Escape handling, and backdrop dismissal.",
-        "relatedContext": "The repository's Dialog primitive already provides focus trapping, keyboard dismissal, backdrop behavior, and accessible labeling. There is no custom modal behavior requirement. The reusable Dialog primitive in packages/ui owns focus management and keyboard interaction; feature components compose it rather than implementing those mechanics.",
+        "relatedContext": "The repository's Dialog primitive already provides focus trapping, keyboard dismissal, backdrop behavior, and accessible labeling. There is no custom modal behavior requirement. Both the primitive and feature implementation are in the UI layer.",
         "testContext": "A browser test verifies open and close behavior, focus return, and keyboard dismissal."
       },
       "expected": {
         "duplicatesExistingAbstraction": false,
         "bypassesRepositoryPrimitive": true,
-        "behaviorInWrongLayer": true
+        "behaviorInWrongLayer": false
       }
     },
     {
       "id": "domain-parses-provider-json",
       "state": {
-        "change": "Adds JSON.parse and field extraction inside a domain operation to decode an upstream provider response.",
+        "change": "Adds a named Zod schema in a domain module and parses an upstream provider response there before using it.",
         "relatedContext": "docs/policies/ARCHITECTURE.md assigns external integrations and their response parsing to infrastructure adapters; adapters translate external concepts into application types. Domain code has no HTTP or external-system APIs.",
         "testContext": "A domain unit test supplies a provider-shaped JSON string and checks the extracted status."
       },
@@ -329,8 +329,8 @@
     {
       "id": "database-package-owns-api-contract-type",
       "state": {
-        "change": "Defines and exports the HTTP response contract for the project listing endpoint from packages/db alongside its Drizzle table schema.",
-        "relatedContext": "docs/policies/ARCHITECTURE.md assigns Drizzle and database schemas to @template/db, and assigns request and response schemas plus public API contracts to oRPC transport. The endpoint is consumed by the web application.",
+        "change": "Exports a Drizzle row type as the HTTP response contract for the project listing endpoint.",
+        "relatedContext": "docs/policies/ARCHITECTURE.md assigns Drizzle rows to @template/db and public API contracts to oRPC transport. The transport contract uses a separate application-facing Project type.",
         "testContext": "A package test checks the response object includes each database column."
       },
       "expected": {
@@ -363,6 +363,71 @@
         "duplicatesExistingAbstraction": false,
         "bypassesRepositoryPrimitive": false,
         "behaviorInWrongLayer": false
+      }
+    },
+    {
+      "id": "billing-discount-calculator-in-ui",
+      "state": {
+        "change": "Adds a reusable discount calculator in the UI package and calls it from the checkout component.",
+        "relatedContext": "The domain package already exports the same subscription discount calculation and owns pricing invariants. UI components call the application use case; they do not own pricing policy.",
+        "testContext": "A component test covers one discounted subscription."
+      },
+      "expected": {
+        "duplicatesExistingAbstraction": true,
+        "bypassesRepositoryPrimitive": true,
+        "behaviorInWrongLayer": true
+      }
+    },
+    {
+      "id": "duplicate-tenant-slug-normalizer",
+      "state": {
+        "change": "Adds a second reusable tenant slug normalizer beside the canonical normalizer in the same domain package.",
+        "relatedContext": "The existing normalizeTenantSlug function already defines accepted characters, normalization, and length limits and is intended for all domain callers.",
+        "testContext": "Unit tests cover lowercasing and invalid characters."
+      },
+      "expected": {
+        "duplicatesExistingAbstraction": true,
+        "bypassesRepositoryPrimitive": true,
+        "behaviorInWrongLayer": false
+      }
+    },
+    {
+      "id": "duplicate-project-access-policy",
+      "state": {
+        "change": "Adds a reusable project-owner policy object that repeats the existing can(user, 'read', project) decision in the same application policy module.",
+        "relatedContext": "The can helper is the established access mechanism for application operations and already owns project read permission and organization scope.",
+        "testContext": "Tests cover project owners but do not cover organization-scoped collaborators."
+      },
+      "expected": {
+        "duplicatesExistingAbstraction": true,
+        "bypassesRepositoryPrimitive": true,
+        "behaviorInWrongLayer": false
+      }
+    },
+    {
+      "id": "application-reads-process-env",
+      "state": {
+        "change": "Reads process.env directly from an application use case on every invocation to choose a storage mode.",
+        "relatedContext": "Environment variables are parsed once at startup by the runtime configuration module. Application code receives typed configuration and does not access process state.",
+        "testContext": "A test sets the process environment before calling the use case."
+      },
+      "expected": {
+        "duplicatesExistingAbstraction": false,
+        "bypassesRepositoryPrimitive": false,
+        "behaviorInWrongLayer": true
+      }
+    },
+    {
+      "id": "transport-schema-owned-by-domain",
+      "state": {
+        "change": "Moves the HTTP request Zod schema into the domain package, then imports it into the oRPC procedure to validate the request before calling the use case.",
+        "relatedContext": "oRPC transport owns request schemas and public API contracts. Validation still runs at the request boundary; domain types do not model HTTP payload shape.",
+        "testContext": "Procedure tests cover valid input and the invalid-input response."
+      },
+      "expected": {
+        "duplicatesExistingAbstraction": false,
+        "bypassesRepositoryPrimitive": false,
+        "behaviorInWrongLayer": true
       }
     }
   ]
