@@ -5,8 +5,8 @@ import {
   parseQueryCorpus,
   serializeQueryCorpus,
   type QueryCorpus,
-} from "../src/devtools/query-plans.js";
-import { mapWithConcurrency } from "./map-with-concurrency.js";
+} from "../src/devtools/query-plans.ts";
+import { mapWithConcurrency } from "./map-with-concurrency.ts";
 
 const repositoryRoot = nodePath.resolve(import.meta.dirname, "../../..");
 const artifactDirectory = nodePath.resolve(repositoryRoot, ".artifacts");

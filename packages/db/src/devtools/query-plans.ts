@@ -14,11 +14,11 @@ export {
   renderQueryCorpusDiff,
   serializeQueryCorpus,
   writeQueryCorpus,
-} from "../query-capture.js";
+} from "../query-capture.ts";
 export type {
   QueryCapture,
   QueryCaptureOptions,
   QueryCorpus,
   QueryCorpusDiff,
   QueryCorpusEntry,
-} from "../query-capture.js";
+} from "../query-capture.ts";

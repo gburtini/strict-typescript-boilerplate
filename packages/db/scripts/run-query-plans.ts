@@ -4,8 +4,8 @@ import { mkdir, readFile, writeFile } from "node:fs/promises";
 import nodePath from "node:path";
 import postgres from "postgres";
 import { z } from "zod";
-import { queryCorpusSchema } from "../src/devtools/query-plans.js";
-import { mapWithConcurrency } from "./map-with-concurrency.js";
+import { queryCorpusSchema } from "../src/devtools/query-plans.ts";
+import { mapWithConcurrency } from "./map-with-concurrency.ts";
 
 // This is an AI-facing design guard: every captured query is explained against
 // A real PostgreSQL planner, then reported with a visible risk marker so query
