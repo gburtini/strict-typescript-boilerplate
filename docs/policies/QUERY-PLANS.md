@@ -114,5 +114,8 @@ pnpm db:query-corpus:report baseline.json current.json
 
 The required `Query Plans` CI job runs the real PostgreSQL planner against the
 fixture, appends the report to `GITHUB_STEP_SUMMARY`, and comments on same-
-repository pull requests when the token can write comments. Forks still get
-the required check and workflow summary without granting write permissions.
+repository pull requests when the token can write comments. The uniquely marked
+report comment is edited on subsequent runs and created only when no prior
+marked comment exists; if the report is unavailable, only that marked comment is
+deleted. Forks still get the required check and workflow summary without
+granting write permissions.

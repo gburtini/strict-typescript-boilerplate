@@ -62,4 +62,31 @@ jobs:
           github.event.pull_request.head.repo.full_name == github.repository
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh pr comment "${{ github.event.pull_request.number }}" --body-file .artifacts/query-plans.md
+        run: |
+          comment_marker='<!-- query-plan-report -->'
+          comments_endpoint="repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments"
+          existing_comment_id="$(gh api --paginate --slurp "$comments_endpoint?per_page=100" \
+            --jq "add[] | select(.body | contains(\"$comment_marker\")) | .id" | tail -n 1)"
+
+          if [[ -f .artifacts/query-plans.md ]]; then
+            report_body_file="$(mktemp)"
+            trap 'rm -f "$report_body_file"' EXIT
+            {
+              printf '%s\n' "$comment_marker"
+              cat .artifacts/query-plans.md
+            } > "$report_body_file"
+
+            if [[ -n "$existing_comment_id" ]]; then
+              gh api --method PATCH \
+                "repos/${{ github.repository }}/issues/comments/$existing_comment_id" \
+                --field "body=$(cat "$report_body_file")"
+            else
+              gh pr comment "${{ github.event.pull_request.number }}" \
+                --body-file "$report_body_file"
+            fi
+          else
+            if [[ -n "$existing_comment_id" ]]; then
+              gh api --method DELETE \
+                "repos/${{ github.repository }}/issues/comments/$existing_comment_id"
+            fi
+          fi
