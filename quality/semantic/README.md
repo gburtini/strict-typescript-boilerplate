@@ -53,7 +53,10 @@ findings remain observational; evaluation metrics do not block merges.
 
 The review command sends the selected diff, repository policy documents, and
 changed source files with adjacent test files to AI Gateway. It does not send
-the entire repository. The state is capped at the configured character limit.
+the entire repository. Lockfiles, lock-shaped JSON/YAML, and generated output
+under artifacts, coverage, and dist are excluded. If the selected state is
+larger than the configured character limit, the collector compacts each context
+section with an explicit truncation marker instead of failing the review.
 The current Gateway Hobby plan rejects the zero-data-retention request option,
 so source-diff review does not request ZDR. Run that command only when sending
 the selected source and policy context to the Gateway is appropriate. CI live
