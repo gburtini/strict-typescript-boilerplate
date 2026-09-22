@@ -3,7 +3,7 @@ import { defineConfig } from "vitest/config";
 export default defineConfig({
   test: {
     coverage: {
-      exclude: ["src/main.tsx", "src/__tests__/**"],
+      exclude: ["src/main.tsx", "src/tests/**/*.test.ts", "src/tests/**/*.test.tsx"],
       include: ["src/**/*.{ts,tsx}"],
       provider: "v8",
       reporter: ["text", "json-summary", "lcov"],
@@ -16,7 +16,7 @@ export default defineConfig({
       },
     },
     environment: "jsdom",
-    include: ["src/__tests__/**/*.test.ts", "src/__tests__/**/*.test.tsx"],
+    include: ["src/tests/**/*.test.ts", "src/tests/**/*.test.tsx"],
     setupFiles: ["src/test-setup.ts"],
     testTimeout: 5000,
   },

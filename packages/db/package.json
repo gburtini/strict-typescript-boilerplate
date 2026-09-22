@@ -15,7 +15,8 @@
     "query-plans:prepare": "node --experimental-strip-types ../../devtools/scripts/database/prepare-query-plans.ts",
     "query-corpus:merge": "node --experimental-strip-types ../../devtools/scripts/database/merge-query-corpus.ts",
     "query-plan-stats:export": "node --experimental-strip-types ../../devtools/scripts/database/export-query-plan-stats.ts",
-    "test": "vitest run"
+    "test": "vitest run --exclude src/tests/integration/**",
+    "test:integration": "vitest run --config vitest.integration.config.ts"
   },
   "dependencies": {
     "@t3-oss/env-core": "0.13.11",

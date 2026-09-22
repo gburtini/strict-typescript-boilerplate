@@ -1,19 +1,14 @@
 services:
   postgres:
-    image: postgres:18
+    image: postgres:18.3-alpine
     environment:
-      POSTGRES_DB: template
+      POSTGRES_DB: typescript_boilerplate
       POSTGRES_PASSWORD: postgres
       POSTGRES_USER: postgres
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d template"]
-      interval: 5s
+      interval: 2s
+      retries: 20
+      test: ["CMD-SHELL", "pg_isready -U postgres -d typescript_boilerplate"]
       timeout: 5s
-      retries: 10
     ports:
-      - "${POSTGRES_PORT:-55432}:5432"
-    volumes:
-      - template-postgres-data:/var/lib/postgresql
-
-volumes:
-  template-postgres-data:
+      - "127.0.0.1::5432"
