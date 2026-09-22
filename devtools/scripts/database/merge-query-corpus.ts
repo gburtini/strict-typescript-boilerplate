@@ -1,32 +1,29 @@
 import { mkdir, readdir, readFile, writeFile } from "node:fs/promises";
 import nodePath from "node:path";
 import {
+  mapWithConcurrency,
   mergeQueryCorpora,
   parseQueryCorpus,
   serializeQueryCorpus,
   type QueryCorpus,
-  mapWithConcurrency,
 } from "@template/db/devtools/query-plans";
 import { repositoryRoot } from "../shared/repository-paths.ts";
 
 const artifactDirectory = nodePath.resolve(repositoryRoot, ".artifacts");
-const bootstrapPath = nodePath.resolve(
-  repositoryRoot,
-  "devtools/query-plans/corpus.json",
-);
 const outputPath = nodePath.resolve(artifactDirectory, "query-corpus.json");
 
 // The test runner can fork workers. Each worker writes a shard so corpus
-// Generation observes the SQL that tests actually exercised, not a hand-made
-// List that an agent could forget to update.
+// Generation observes the SQL that tests actually exercised.
 const artifactEntries = await readdir(artifactDirectory).catch(() => []);
-const artifactFiles = artifactEntries
+const corpusPaths = artifactEntries
   .filter((file) => /^query-corpus-\d+\.json$/u.test(file))
   .map((file) => nodePath.resolve(artifactDirectory, file));
-let corpusPaths = artifactFiles;
 if (corpusPaths.length === 0) {
-  corpusPaths = [bootstrapPath];
+  throw new TypeError(
+    "No query corpus shards were captured; run the database integration tests with QUERY_PLAN_CAPTURE=1",
+  );
 }
+
 const corpora: QueryCorpus[] = [];
 const corpusDocuments = await mapWithConcurrency(corpusPaths, 4, async (corpusPath) => {
   const corpusDocument = await readFile(corpusPath, "utf8");
@@ -37,5 +34,10 @@ for (const corpusDocument of corpusDocuments) {
   corpora.push(parseQueryCorpus(parsedDocument));
 }
 
+const mergedCorpus = mergeQueryCorpora(corpora);
+if (mergedCorpus.queries.length === 0) {
+  throw new TypeError("The captured query corpus is empty");
+}
+
 await mkdir(artifactDirectory, { recursive: true });
-await writeFile(outputPath, serializeQueryCorpus(mergeQueryCorpora(corpora)), "utf8");
+await writeFile(outputPath, serializeQueryCorpus(mergedCorpus), "utf8");

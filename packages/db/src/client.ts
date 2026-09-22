@@ -1,7 +1,10 @@
 import { drizzle } from "drizzle-orm/postgres-js";
 import type { Logger } from "drizzle-orm";
 import postgres from "postgres";
-import { getProcessQueryCapture } from "./devtools/query-plans";
+import {
+  flushProcessQueryCapture,
+  getProcessQueryCapture,
+} from "./devtools/query-plans";
 import { users } from "./schema";
 
 interface DatabaseOptions {
@@ -38,7 +41,11 @@ export function createDatabase(options: DatabaseOptions): DatabaseClient {
 
   return {
     close: async () => {
-      await sql.end({ timeout: 5 });
+      try {
+        await sql.end({ timeout: 5 });
+      } finally {
+        flushProcessQueryCapture();
+      }
     },
     db,
   };

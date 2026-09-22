@@ -6,6 +6,7 @@ export {
   createQueryCapture,
   diffQueryCorpus,
   fingerprintSql,
+  flushProcessQueryCapture,
   getProcessQueryCapture,
   mergeQueryCorpora,
   normalizeSql,

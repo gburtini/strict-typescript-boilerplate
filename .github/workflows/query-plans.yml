@@ -1,8 +1,6 @@
 name: Query Plans
 
 on:
-  push:
-    branches: [main]
   pull_request:
 
 permissions:
@@ -29,24 +27,86 @@ jobs:
       DATABASE_URL: postgresql://postgres:postgres@localhost:5432/typescript_boilerplate
       QUERY_PLAN_DATABASE_URL: postgresql://postgres:postgres@localhost:5432/typescript_boilerplate
     steps:
-      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.0.0
+      - name: Check out base
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.0.0
+        with:
+          ref: ${{ github.event.pull_request.base.sha }}
+          path: base
+      - name: Check out proposed merge
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.0.0
+        with:
+          path: proposed
       - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
         with:
           version: 10.30.3
       - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
         with:
-          node-version-file: .node-version
+          node-version-file: proposed/.node-version
           cache: pnpm
-      - run: pnpm install --frozen-lockfile
-      - run: pnpm db:migrate
-      - run: pnpm db:plans:prepare
-      - name: Capture query corpus from tests
+          cache-dependency-path: |
+            base/pnpm-lock.yaml
+            proposed/pnpm-lock.yaml
+      - name: Install base dependencies
+        working-directory: base
+        run: pnpm install --frozen-lockfile
+      - name: Install proposed dependencies
+        working-directory: proposed
+        run: pnpm install --frozen-lockfile
+      - name: Prepare base database
+        working-directory: proposed
+        run: pnpm db:plans:reset
+      - name: Migrate and seed base database
+        working-directory: base
+        run: |
+          pnpm db:migrate
+          pnpm db:plans:prepare
+      - name: Capture base query corpus
+        working-directory: base
         run: pnpm test
         env:
           QUERY_PLAN_CAPTURE: "1"
           QUERY_PLAN_CORPUS_DIR: .artifacts
-      - run: pnpm db:query-corpus:merge
-      - run: pnpm db:plans
+      - name: Merge base query corpus
+        working-directory: base
+        run: pnpm db:query-corpus:merge
+      - name: Generate base query plans
+        working-directory: base
+        env:
+          QUERY_PLAN_BASELINE: ../.artifacts/query-plans-base.json
+          QUERY_PLAN_OUTPUT: ../.artifacts/query-plans-base.md
+          QUERY_PLAN_WRITE_BASELINE: "1"
+        run: |
+          mkdir -p ../.artifacts
+          pnpm db:plans
+      - name: Prepare proposed database
+        working-directory: proposed
+        run: pnpm db:plans:reset
+      - name: Migrate and seed proposed database
+        working-directory: proposed
+        run: |
+          pnpm db:migrate
+          pnpm db:plans:prepare
+      - name: Capture proposed query corpus
+        working-directory: proposed
+        run: pnpm test
+        env:
+          QUERY_PLAN_CAPTURE: "1"
+          QUERY_PLAN_CORPUS_DIR: .artifacts
+      - name: Capture proposed integration query corpus
+        working-directory: proposed
+        run: pnpm --filter @template/db test:integration
+        env:
+          QUERY_PLAN_CAPTURE: "1"
+          QUERY_PLAN_CORPUS_DIR: .artifacts
+      - name: Merge proposed query corpus
+        working-directory: proposed
+        run: pnpm db:query-corpus:merge
+      - name: Compare proposed query plans with base
+        working-directory: proposed
+        env:
+          QUERY_PLAN_BASELINE: ../.artifacts/query-plans-base.json
+          QUERY_PLAN_OUTPUT: ../.artifacts/query-plans.md
+        run: pnpm db:plans
       - name: Publish planner report
         if: always()
         run: |
@@ -57,7 +117,7 @@ jobs:
           fi
       - name: Comment planner report on pull request
         if: >-
-          always() && github.event_name == 'pull_request' &&
+          always() &&
           github.event.pull_request.head.repo.full_name == github.repository
         env:
           GH_TOKEN: ${{ github.token }}
@@ -83,9 +143,7 @@ jobs:
               gh pr comment "${{ github.event.pull_request.number }}" \
                 --body-file "$report_body_file"
             fi
-          else
-            if [[ -n "$existing_comment_id" ]]; then
-              gh api --method DELETE \
-                "repos/${{ github.repository }}/issues/comments/$existing_comment_id"
-            fi
+          elif [[ -n "$existing_comment_id" ]]; then
+            gh api --method DELETE \
+              "repos/${{ github.repository }}/issues/comments/$existing_comment_id"
           fi

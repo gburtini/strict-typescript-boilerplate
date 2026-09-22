@@ -37,15 +37,15 @@ opt into concrete values for skew-sensitive queries.
 
 ## Plan corpus sources
 
-The long-term corpus has two sources:
+The pull-request corpus is captured independently from the base and proposed
+test suites. The corpus is observational: ordinary tests exercise queries, and
+the plan tool evaluates what actually ran. It does not require query
+registration. A missing or empty capture fails the gate instead of silently
+substituting a committed query list.
 
-1. test-captured query shapes for new or changed code;
-2. periodically imported `pg_stat_statements` shapes for production relevance.
-
-The corpus is observational: ordinary tests exercise queries, and the plan
-tool evaluates what actually ran. It does not require query registration.
-Uncovered dynamic branches remain a test-coverage gap and must not be treated
-as proven safe.
+Production `pg_stat_statements` shapes may supplement scheduled analysis, but
+they are not the baseline for a pull-request comparison. Uncovered dynamic
+branches remain a test-coverage gap and must not be treated as proven safe.
 
 The repository includes `devtools/query-plans/fixture.sql`, a sanitized, deterministic
 planner fixture. It is deliberately data-shaped rather than a raw
@@ -54,10 +54,9 @@ version-sensitive and difficult to restore safely. The fixture is loaded and
 `ANALYZE`d on a pinned PostgreSQL 18.3 server, which reconstructs planner
 statistics reproducibly.
 
-The committed `devtools/query-plans/baseline.json` contains normalized plans produced
-from that fixture. It is evidence, not permission to ignore a new plan. When a
-schema or query intentionally changes a plan, regenerate the baseline only
-after reviewing the new plan and recording why the change is safe.
+The committed `devtools/query-plans/baseline.json` is a local reference artifact.
+Pull-request CI does not use it: CI plans the base and proposed merge against
+fresh, isolated database states on the same pinned PostgreSQL service.
 
 ## Policy boundary
 
@@ -78,9 +77,10 @@ pnpm db:plans
 
 The runner executes `EXPLAIN (FORMAT JSON, GENERIC_PLAN TRUE)` for every
 captured query, stores the current plans in `.artifacts/query-plans.json`, and
-emits `.artifacts/query-plans.md`. It reports added, changed, and unchanged
-plans, originating test sources, plan shape, estimated rows, and cost. Added
-and changed entries keep SQL and the full JSON plan in a collapsed section.
+emits `.artifacts/query-plans.md`. It reports added, removed, changed, and
+unchanged plans, originating test sources, plan shape, estimated rows, and
+cost. Changed entries include both plans so the reason for the difference is
+reviewable.
 Every added or changed query gets a visible risk marker:
 
 - ✅ low — no material plan concern detected;
@@ -91,8 +91,8 @@ When `QUERY_PLAN_CAPTURE=1`, `@template/db` automatically attaches a process
 capture logger to `createDatabase()`. Each test process writes a redacted
 `.artifacts/query-corpus-<pid>.json` shard. CI merges those shards with
 `pnpm db:query-corpus:merge` and `pnpm db:plans` automatically prefers the
-merged `.artifacts/query-corpus.json`. The committed
-`devtools/query-plans/corpus.json` is only a bootstrap fallback for this empty template.
+merged `.artifacts/query-corpus.json`. The merge fails if tests captured no
+queries.
 
 To intentionally establish a reviewed baseline:
 
@@ -112,9 +112,12 @@ The report command compares two captured corpus artifacts and emits Markdown:
 pnpm db:query-corpus:report baseline.json current.json
 ```
 
-The required `Query Plans` CI job runs the real PostgreSQL planner against the
-fixture, appends the report to `GITHUB_STEP_SUMMARY`, and comments on same-
-repository pull requests when the token can write comments. The uniquely marked
+The required `Query Plans` CI job checks out the pull request's base commit and
+proposed merge separately. For each side it resets the database, applies that
+side's migrations and fixture, runs that side's tests with capture enabled,
+and produces plans. It then compares the two fresh artifacts, appends the
+report to `GITHUB_STEP_SUMMARY`, and comments on same-repository pull requests
+when the token can write comments. The uniquely marked
 report comment is edited on subsequent runs and created only when no prior
 marked comment exists; if the report is unavailable, only that marked comment is
 deleted. Forks still get the required check and workflow summary without
