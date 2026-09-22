@@ -2,11 +2,37 @@
 
 Tests are evidence of observable behavior, in addition to static verification.
 
+## Test layout
+
+Tests belong inside the workspace that owns the behavior:
+
+- `packages/*/src/tests/**/*.test.ts` — unit tests for package code.
+- `packages/*/src/tests/integration/**/*.integration.test.ts` — integration
+  tests against real infrastructure, with the boundary named in the filename.
+- `apps/*/src/tests/**/*.test.tsx` — component and application unit tests.
+- `apps/web/e2e/**/*.browser.ts` — browser end-to-end tests. Browser tests keep
+  their separate directory because Playwright owns their runtime and server.
+
+Do not put tests beside production modules. A test filename must identify its
+runner contract: `.test.ts` for unit tests, `.integration.test.ts` for
+infrastructure integration tests, and `.browser.ts` for Playwright tests.
+
 ## Required commands
 
+Run the narrowest command that proves the change, then run the repository gate:
+
 ```text
+pnpm test:unit
+pnpm test:integration
+pnpm test:e2e
 pnpm check:all
 ```
+
+`pnpm test:integration` starts the repository's Docker Postgres service,
+applies migrations, runs the integration suite, and removes the test container
+and volume on exit. It requires Docker. `pnpm check:all` intentionally runs
+unit and browser tests but not Docker-backed integration tests; integration
+tests must be run explicitly when an infrastructure boundary changes.
 
 The command runs runtime preflight, formatting, package API checks, type checking,
 linting, enforcement fixtures, dead-code analysis, architecture checks, package
@@ -15,11 +41,14 @@ hygiene, coverage-enabled unit tests, and zero lint-warning enforcement.
 ## Test levels
 
 - Unit tests cover pure logic, transformations, edge cases, and deterministic
-  state transitions.
+  state transitions. `packages/core/src/tests/retry.test.ts` is the canonical
+  unit-test example.
 - Integration tests cover interactions between real application modules and
-  infrastructure boundaries.
+  infrastructure boundaries. `packages/db/src/tests/integration/writer.integration.test.ts`
+  is the canonical Docker-Postgres example.
 - End-to-end tests cover critical user-visible workflows that lower levels do
-  not adequately demonstrate.
+  not adequately demonstrate. `apps/web/e2e/accessibility.browser.ts` is the
+  canonical browser example.
 
 Do not replace cheap unit or integration evidence with end-to-end tests.
 
@@ -97,13 +126,3 @@ evidence rather than relying on the repository-wide baseline.
 The test override intentionally relaxes production size/complexity limits, but
 correctness, accessibility, React, React Doctor, and focused-test rules remain
 active.
-
-## Test location
-
-Place unit, component, integration, and contract tests under the owning
-workspace's `src/__tests__/` directory rather than mixing them with production
-modules. Integration tests that require a real infrastructure boundary use a
-descriptive `.integration.ts` suffix so the default unit command does not
-discover them. Each workspace with such tests must expose an explicit
-integration command and a matching Vitest configuration. End-to-end tests live
-under the runnable application's `e2e/` directory.

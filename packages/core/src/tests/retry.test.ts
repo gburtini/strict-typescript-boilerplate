@@ -1,6 +1,6 @@
 import { Effect, Exit } from "effect";
 import { describe, expect, it } from "vitest";
-import { retryWithPolicy } from "./retry";
+import { retryWithPolicy } from "../retry";
 
 function eventuallySucceeds(attempts: number): Effect.Effect<string, Error> {
   if (attempts < 3) {

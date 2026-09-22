@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
-import { ApplicationError } from "./application-error";
-import { asError } from "./errors";
-import { InfrastructureError } from "./infrastructure-error";
+import { ApplicationError } from "../application-error";
+import { asError } from "../errors";
+import { InfrastructureError } from "../infrastructure-error";
 
 describe("error boundaries", () => {
   it("preserves an existing Error instance", () => {
