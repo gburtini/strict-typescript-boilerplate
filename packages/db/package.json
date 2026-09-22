@@ -13,6 +13,7 @@
   "scripts": {
     "query-plans": "node --experimental-strip-types ../../devtools/scripts/database/run-query-plans.ts",
     "query-plans:prepare": "node --experimental-strip-types ../../devtools/scripts/database/prepare-query-plans.ts",
+    "query-plans:reset": "node --experimental-strip-types ../../devtools/scripts/database/reset-query-plan-database.ts",
     "query-corpus:merge": "node --experimental-strip-types ../../devtools/scripts/database/merge-query-corpus.ts",
     "query-plan-stats:export": "node --experimental-strip-types ../../devtools/scripts/database/export-query-plan-stats.ts",
     "test": "vitest run"

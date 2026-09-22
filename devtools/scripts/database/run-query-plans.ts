@@ -52,6 +52,8 @@ interface PlanArtifact {
 interface PlanComparison {
   readonly added: readonly PlanEntry[];
   readonly changed: readonly PlanEntry[];
+  readonly previousByFingerprint: ReadonlyMap<string, PlanEntry>;
+  readonly removed: readonly PlanEntry[];
   readonly riskByFingerprint: ReadonlyMap<string, string>;
   readonly violations: readonly string[];
   readonly unchanged: readonly PlanEntry[];
@@ -182,8 +184,14 @@ function comparePlans(current: PlanArtifact, baseline: PlanArtifact): PlanCompar
   const baselineByFingerprint = new Map(
     baseline.queries.map((entry) => [entry.fingerprint, entry]),
   );
+  const currentFingerprints = new Set(
+    current.queries.map((entry) => entry.fingerprint),
+  );
   const added: PlanEntry[] = [];
   const changed: PlanEntry[] = [];
+  const removed = baseline.queries.filter(
+    (entry) => !currentFingerprints.has(entry.fingerprint),
+  );
   const unchanged: PlanEntry[] = [];
   const riskByFingerprint = new Map<string, string>();
   const violations: string[] = [];
@@ -208,10 +216,27 @@ function comparePlans(current: PlanArtifact, baseline: PlanArtifact): PlanCompar
       );
     }
   }
-  return { added, changed, riskByFingerprint, unchanged, violations };
+  if (current.databaseVersion !== baseline.databaseVersion) {
+    violations.push(
+      `PostgreSQL version changed (${baseline.databaseVersion} -> ${current.databaseVersion}); plans are not directly comparable`,
+    );
+  }
+  return {
+    added,
+    changed,
+    previousByFingerprint: baselineByFingerprint,
+    removed,
+    riskByFingerprint,
+    unchanged,
+    violations,
+  };
 }
 
-function renderEntry(entry: PlanEntry, risk: string): readonly string[] {
+function renderEntry(
+  entry: PlanEntry,
+  risk: string,
+  previous?: PlanEntry,
+): readonly string[] {
   const warnings = warningsForPlan(entry.plan);
   let warningLabel = "warnings";
   if (warnings.length === 1) {
@@ -236,6 +261,17 @@ function renderEntry(entry: PlanEntry, risk: string): readonly string[] {
       ...warnings.map((warning) => `  - ${warning}`),
     );
   }
+  if (previous) {
+    lines.push(
+      "",
+      "  **Base plan**",
+      "  ```json",
+      ...JSON.stringify(previous.plan, jsonIdentity, 2)
+        .split("\n")
+        .map((line) => `  ${line}`),
+      "  ```",
+    );
+  }
   lines.push(
     "",
     "  **Current plan**",
@@ -254,6 +290,7 @@ function renderComparison(comparison: PlanComparison): string {
     "## Database query-plan changes",
     "",
     `- Added: ${comparison.added.length}`,
+    `- Removed: ${comparison.removed.length}`,
     `- Changed: ${comparison.changed.length}`,
     `- Unchanged: ${comparison.unchanged.length}`,
     `- Violations: ${comparison.violations.length}`,
@@ -267,7 +304,20 @@ function renderComparison(comparison: PlanComparison): string {
         ...renderEntry(
           entry,
           comparison.riskByFingerprint.get(entry.fingerprint) ?? "🟠 review",
+          comparison.previousByFingerprint.get(entry.fingerprint),
         ),
+      );
+    }
+  }
+  if (comparison.removed.length > 0) {
+    lines.push("", "### Removed query plans", "");
+    for (const entry of comparison.removed) {
+      lines.push(
+        `- \`${entry.fingerprint.slice(0, 12)}\` · previous cost ${entry.totalCost} · sources: ${entry.testSources.join(", ") || "unknown"}`,
+        "",
+        "  ```sql",
+        ...entry.sql.split("\n").map((line) => `  ${line}`),
+        "  ```",
       );
     }
   }
