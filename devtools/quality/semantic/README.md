@@ -35,7 +35,7 @@ Run `pnpm lint:semantic` to evaluate the branch diff against `origin/main`, or
 uses Vercel AI Gateway and the `typesafe-ai/jev` model. Authentication uses the
 Gateway credentials available to the AI SDK, such as `VERCEL_OIDC_TOKEN` or
 `AI_GATEWAY_API_KEY`. Set `AI_GATEWAY_API_KEY` locally to enable live calls.
-The versioned policy lives in `quality/semantic/rules.json`; pass
+The versioned policy lives in `devtools/quality/semantic/rules.json`; pass
 `--config <path>` to any runner mode to use another rule configuration. The
 configuration owns the model ID, shared evidence policy, rule wording and
 criteria, rule versions, thresholds, observe mode, context-size limit, and

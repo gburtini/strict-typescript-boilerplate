@@ -27,10 +27,14 @@ try {
         "exec",
         "dependency-cruiser",
         "--validate",
-        ".dependency-cruiser.cjs",
+        "--config",
+        "dependency-cruiser.cjs",
         fixtureRoot,
       ],
-      { encoding: "utf8" },
+      {
+        encoding: "utf8",
+        cwd: nodePath.join(process.cwd(), "devtools/dependency-cruiser"),
+      },
     ),
     output = `${result.stdout}\n${result.stderr}`;
   if (result.status === 0 || !output.includes("domain-does-not-import-outer-layers")) {

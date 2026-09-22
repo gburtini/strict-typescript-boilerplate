@@ -1,7 +1,7 @@
 packages:
   - "apps/*"
   - "packages/*"
-  - "tools/*"
+  - "devtools/dependency-cruiser"
 
 # Do not consume newly published versions until they have had time for
 # ecosystem and security review. Explicit exceptions require documentation.

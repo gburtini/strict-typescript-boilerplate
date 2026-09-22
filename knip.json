@@ -17,6 +17,10 @@
       "ignoreDependencies": ["@effect/tsgo"],
       "project": ["devtools/scripts/**/*.ts"]
     },
+    "devtools/dependency-cruiser": {
+      "entry": ["dependency-cruiser.cjs"],
+      "project": ["*.cjs"]
+    },
     "apps/web": {
       "entry": ["index.html", "src/env.ts"],
       "project": ["src/**/*.{ts,tsx,css}"],

@@ -36,10 +36,13 @@ function actionForFlag(flag: "--check" | "--eval"): "check" | "eval" {
 }
 
 function readEvalCorpus(root: string, config: SemanticConfig): SemanticCase[] {
-  const fixturesPath = pathModule.resolve(root, "quality/semantic/evals/fixtures.json"),
+  const fixturesPath = pathModule.resolve(
+      root,
+      "devtools/quality/semantic/evals/fixtures.json",
+    ),
     architecturePath = pathModule.resolve(
       root,
-      "quality/semantic/evals/architecture.json",
+      "devtools/quality/semantic/evals/architecture.json",
     ),
     fixtures: unknown = JSON.parse(readFileSync(fixturesPath, "utf8")),
     architectureFixtures: unknown = JSON.parse(readFileSync(architecturePath, "utf8"));
@@ -317,7 +320,7 @@ function parseArguments(args: string[]): CliOptions {
   let action: CliOptions["action"] = "check",
     actionSet = false,
     base = "origin/main",
-    configPath = "quality/semantic/rules.json";
+    configPath = "devtools/quality/semantic/rules.json";
   for (let index = 0; index < args.length; index += 1) {
     const arg = args[index];
     if (arg === "--check" || arg === "--eval") {

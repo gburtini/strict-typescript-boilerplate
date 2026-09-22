@@ -4,7 +4,7 @@ on:
   pull_request:
     paths:
       - ".github/workflows/jev-eval.yml"
-      - "quality/semantic/**"
+      - "devtools/quality/semantic/**"
       - "devtools/scripts/repository/check-semantic-lint.ts"
       - "devtools/scripts/repository/semantic-lint-core.ts"
       - "devtools/scripts/repository/check-ci-policy.ts"
