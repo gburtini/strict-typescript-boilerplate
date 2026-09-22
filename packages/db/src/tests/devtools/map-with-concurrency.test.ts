@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { mapWithConcurrency } from "./map-with-concurrency.js";
+import { mapWithConcurrency } from "../../devtools/map-with-concurrency.js";
 
 describe("the concurrency mapper", () => {
   it("limits active work and preserves input order", async () => {

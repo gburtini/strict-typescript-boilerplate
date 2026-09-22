@@ -6,6 +6,12 @@
       "test": "apps/web/e2e/accessibility.browser.ts",
       "redState": "Removed accessible labels and confirmed axe reported violations before restoring them.",
       "redStateConfirmed": true
+    },
+    {
+      "change": "PostgreSQL user writer",
+      "test": "packages/db/src/tests/integration/writer.integration.test.ts",
+      "redState": "Confirmed the test fails when the insert is replaced with a read-only query or when the selected user does not match the inserted row.",
+      "redStateConfirmed": true
     }
   ]
 }

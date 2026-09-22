@@ -1,7 +1,7 @@
 import { is } from "drizzle-orm";
 import { getTableConfig, PgTable } from "drizzle-orm/pg-core";
 import { describe, expect, it } from "vitest";
-import * as schema from "./schema";
+import * as schema from "../schema";
 
 const snakeCaseName = /^[a-z][a-z0-9]*(?:_[a-z0-9]+)*$/u;
 type SchemaValue = (typeof schema)[keyof typeof schema];

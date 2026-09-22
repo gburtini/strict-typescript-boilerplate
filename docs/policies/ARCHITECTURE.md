@@ -37,7 +37,9 @@ adapter implements a boundary.
 
 Adapters own side effects. They receive validated inputs, translate external
 failures into typed infrastructure errors while preserving `cause`, and are
-provided to application code through explicit dependency injection.
+provided to application code through explicit dependency injection. Put
+concrete implementations under the owning package's `src/adapters/`
+directory; keep their ports in the stable core or application layer.
 
 `@template/db` is the database adapter boundary. It owns Drizzle, the
 PostgreSQL driver, schema definitions, Drizzle-Zod boundary schemas, and

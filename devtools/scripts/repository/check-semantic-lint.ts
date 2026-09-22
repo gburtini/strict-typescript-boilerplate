@@ -1,5 +1,4 @@
-import { execFileSync } from "node:child_process";
-import { existsSync, readFileSync, realpathSync } from "node:fs";
+import { readFileSync, realpathSync } from "node:fs";
 import pathModule from "node:path";
 import { experimental_evaluate as evaluate } from "ai";
 import { z } from "zod";
@@ -12,168 +11,17 @@ import {
   type SemanticCase,
   type SemanticConfig,
 } from "./semantic-lint-core.ts";
+import { changedState } from "./semantic-lint-state.ts";
 
-const changedPathsSchema = z.array(z.string().min(1).max(4096)),
-  booleanAnswerSchema = z.object({
-    type: z.literal("boolean"),
-    probability: z.number().min(0).max(1),
-  }),
-  sourceDiffPaths = [
-    "--",
-    "apps",
-    "packages",
-    "devtools",
-    "docs/policies",
-    "quality",
-    "package.json",
-    "pnpm-workspace.yaml",
-  ];
+const booleanAnswerSchema = z.object({
+  type: z.literal("boolean"),
+  probability: z.number().min(0).max(1),
+});
 
 interface CliOptions {
   action: "check" | "eval" | "review";
   base: string;
   configPath: string;
-}
-
-function runGit(args: readonly string[]): string {
-  return execFileSync("git", [...args], { encoding: "utf8" });
-}
-
-function readChangedPaths(args: readonly string[]): string[] {
-  return changedPathsSchema.parse(
-    runGit(args)
-      .split("\n")
-      .filter((path) => path.length > 0),
-  );
-}
-
-function isSafeRepositoryFile(path: string, root: string): boolean {
-  const absolutePath = pathModule.resolve(root, path),
-    rootPrefix = `${root}/`;
-  if (!absolutePath.startsWith(rootPrefix) || !existsSync(absolutePath)) {
-    return false;
-  }
-  const realPath = realpathSync(absolutePath);
-  return (
-    realPath.startsWith(rootPrefix) &&
-    !pathModule.isAbsolute(pathModule.relative(root, realPath))
-  );
-}
-
-function sourcePaths(paths: readonly string[]): string[] {
-  return paths.filter((path) =>
-    [".ts", ".tsx", ".js", ".jsx"].includes(pathModule.extname(path)),
-  );
-}
-
-function readSourceContext(paths: readonly string[], root: string): string {
-  const selected = new Set<string>(),
-    testPathPattern = /\.(?:test|spec)\.[cm]?[jt]sx?$/u;
-  for (const path of sourcePaths(paths)) {
-    selected.add(path);
-    if (!testPathPattern.test(path)) {
-      const extension = pathModule.extname(path),
-        stem = path.slice(0, -extension.length);
-      for (const testExtension of [".test.ts", ".test.tsx", ".spec.ts"]) {
-        const testPath = `${stem}${testExtension}`;
-        if (isSafeRepositoryFile(testPath, root)) {
-          selected.add(testPath);
-        }
-      }
-    }
-  }
-  const sections: string[] = [];
-  let remaining = 90_000;
-  for (const path of selected) {
-    if (isSafeRepositoryFile(path, root)) {
-      const content = readFileSync(pathModule.resolve(root, path), "utf8").slice(
-          0,
-          12_000,
-        ),
-        section = `\n--- ${path} ---\n${content}`;
-      if (section.length > remaining) {
-        break;
-      }
-      sections.push(section);
-      remaining -= section.length;
-    }
-  }
-  return sections.join("");
-}
-
-function readRepositoryPolicy(root: string): string {
-  return [
-    "AGENTS.md",
-    "docs/policies/ARCHITECTURE.md",
-    "docs/policies/CONVENTIONS.md",
-    "docs/policies/TESTING.md",
-  ]
-    .filter((path) => isSafeRepositoryFile(path, root))
-    .map(
-      (path) =>
-        `\n--- ${path} ---\n${readFileSync(pathModule.resolve(root, path), "utf8")}`,
-    )
-    .join("");
-}
-
-function collectChangedPaths(base: string): string[] {
-  const committedPaths = readChangedPaths([
-      "diff",
-      "--name-only",
-      "--diff-filter=ACMRD",
-      `${base}...HEAD`,
-      ...sourceDiffPaths,
-    ]),
-    workingPaths = readChangedPaths([
-      "diff",
-      "--name-only",
-      "--diff-filter=ACMRD",
-      "HEAD",
-      ...sourceDiffPaths,
-    ]),
-    untrackedPaths = readChangedPaths([
-      "ls-files",
-      "--others",
-      "--exclude-standard",
-      ...sourceDiffPaths,
-    ]);
-  return [...new Set([...committedPaths, ...workingPaths, ...untrackedPaths])];
-}
-
-function collectDiff(base: string): string {
-  return [
-    runGit([
-      "diff",
-      "--no-ext-diff",
-      "--unified=24",
-      `${base}...HEAD`,
-      ...sourceDiffPaths,
-    ]),
-    runGit(["diff", "--no-ext-diff", "--unified=24", "HEAD", ...sourceDiffPaths]),
-  ].join("\n");
-}
-
-function changedState(
-  base: string,
-  maximumStateCharacters: number,
-): SemanticCase["state"] {
-  const root = realpathSync(process.cwd()),
-    paths = collectChangedPaths(base),
-    diff = collectDiff(base),
-    state = {
-      change: `${diff}\n\nChanged paths:\n${paths.join("\n")}`,
-      relatedContext: `${readRepositoryPolicy(root)}\n\n${readSourceContext(paths, root)}`,
-      testContext: readSourceContext(
-        paths.filter((path) => /\.(?:test|spec)\.[cm]?[jt]sx?$/u.test(path)),
-        root,
-      ),
-    };
-  if (JSON.stringify(state).length > maximumStateCharacters) {
-    throw new RangeError(
-      `semantic-lint state exceeds ${maximumStateCharacters} characters; narrow the diff`,
-    );
-  }
-  return state;
 }
 
 function readConfig(path: string): SemanticConfig {

@@ -8,7 +8,7 @@ import {
   parseQueryCorpus,
   renderQueryCorpusDiff,
   serializeQueryCorpus,
-} from "./devtools/query-plans";
+} from "../devtools/query-plans";
 
 describe("query capture", () => {
   it("normalizes only superficial SQL whitespace", () => {

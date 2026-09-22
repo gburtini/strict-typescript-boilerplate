@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { healthContract } from "./contract";
+import { healthContract } from "../../api/contract";
 
 interface HealthSchemas {
   inputSchema: NonNullable<(typeof healthContract)["~orpc"]["inputSchema"]>;
