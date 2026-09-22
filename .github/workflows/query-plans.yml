@@ -92,6 +92,12 @@ jobs:
         env:
           QUERY_PLAN_CAPTURE: "1"
           QUERY_PLAN_CORPUS_DIR: .artifacts
+      - name: Capture proposed integration query corpus
+        working-directory: proposed
+        run: pnpm --filter @template/db test:integration
+        env:
+          QUERY_PLAN_CAPTURE: "1"
+          QUERY_PLAN_CORPUS_DIR: .artifacts
       - name: Merge proposed query corpus
         working-directory: proposed
         run: pnpm db:query-corpus:merge

@@ -3,6 +3,7 @@ import { mkdirSync, writeFileSync } from "node:fs";
 import { writeFile as writeFileAsync } from "node:fs/promises";
 import type { Logger } from "drizzle-orm";
 import nodePath from "node:path";
+import { fileURLToPath, URL } from "node:url";
 import { z } from "zod";
 
 // Tests generate the query corpus automatically. Keeping capture here means
@@ -47,6 +48,7 @@ interface QueryCorpusAccumulator {
 }
 
 let processCapture: QueryCapture | null = null;
+let processCaptureOutputPath: string | null = null;
 
 const parameterSamplesSchema = z.array(z.unknown());
 const queryCorpusEntrySchema = z.object({
@@ -239,30 +241,40 @@ function createQueryCapture(options: QueryCaptureOptions = {}): QueryCapture {
   };
 }
 
+function flushProcessQueryCapture(): void {
+  if (processCapture !== null && processCaptureOutputPath !== null) {
+    writeFileSync(
+      processCaptureOutputPath,
+      serializeQueryCorpus(processCapture.getCorpus()),
+      "utf8",
+    );
+  }
+}
+
 function getProcessQueryCapture(): QueryCapture {
   if (processCapture !== null) {
     return processCapture;
   }
 
-  const outputDirectory = process.env.QUERY_PLAN_CORPUS_DIR ?? ".artifacts";
-  const outputPath = nodePath.join(outputDirectory, `query-corpus-${process.pid}.json`);
+  const repositoryRoot = fileURLToPath(new URL("../../../", import.meta.url));
+  const outputDirectory = nodePath.resolve(
+    repositoryRoot,
+    process.env.QUERY_PLAN_CORPUS_DIR ?? ".artifacts",
+  );
+  processCaptureOutputPath = nodePath.join(
+    outputDirectory,
+    `query-corpus-${process.pid}.json`,
+  );
   mkdirSync(outputDirectory, { recursive: true });
   processCapture = createQueryCapture();
-  process.once("exit", () => {
-    if (processCapture !== null) {
-      writeFileSync(
-        outputPath,
-        serializeQueryCorpus(processCapture.getCorpus()),
-        "utf8",
-      );
-    }
-  });
+  process.once("exit", flushProcessQueryCapture);
   return processCapture;
 }
 
 export {
   createQueryCapture,
   diffQueryCorpus,
+  flushProcessQueryCapture,
   fingerprintSql,
   getProcessQueryCapture,
   mergeQueryCorpora,
