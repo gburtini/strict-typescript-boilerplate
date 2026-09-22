@@ -67,9 +67,15 @@ repository for these values before the first project commit:
 - `TypeScript Boilerplate`
 - starter/example screen names and copy
 
-Also review the environment defaults, database name, telemetry service name,
-package exports, test evidence, generated migration metadata, and deployment
-workflows. Run the full contract from the renamed repository root:
+Do not begin feature work until the template identity is removed. The first
+project commit must replace the package scope, root package name, database name,
+telemetry scope, UI copy, and generated metadata as one atomic initialization
+change. Package manifests and imports must use the project scope; carrying
+`@template/*` into product code is a failed initialization, not harmless
+boilerplate.
+
+Also review environment defaults, package exports, test evidence, migration
+metadata, and deployment workflows. Run the full contract from the renamed repository root:
 
 ```sh
 nvm install

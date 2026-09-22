@@ -5,10 +5,7 @@
   "type": "module",
   "exports": {
     ".": "./src/index.ts",
-    "./client": "./src/client.ts",
-    "./devtools/query-plans": "./src/devtools/query-plans.ts",
-    "./env": "./src/env.ts",
-    "./schema": "./src/schema.ts"
+    "./devtools/query-plans": "./src/devtools/query-plans.ts"
   },
   "scripts": {
     "query-plans": "node --experimental-strip-types ../../devtools/scripts/database/run-query-plans.ts",

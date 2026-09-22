@@ -80,3 +80,12 @@ Drizzle query chains.
 Every query or index change must be reviewed against the production-like planner
 fixture. Follow the capture, comparison, and baseline rules in
 [`QUERY-PLANS.md`](QUERY-PLANS.md).
+
+
+## Local PostgreSQL
+
+The template supplies a disposable PostgreSQL service in `compose.yaml`.
+Projects must change the database and volume identity during initialization,
+but should retain the health check, pinned major version, explicit host-port
+override, and documented destructive reset command. Local credentials are
+development-only and must never be reused by a deployed environment.
