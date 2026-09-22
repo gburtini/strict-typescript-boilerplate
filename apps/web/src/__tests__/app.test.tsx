@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
-import { App } from "./app";
+import { App } from "../app";
 
 describe("application", () => {
   it("renders the starter screen", () => {

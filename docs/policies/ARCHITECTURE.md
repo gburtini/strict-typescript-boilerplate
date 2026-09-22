@@ -117,3 +117,18 @@ Before adding a layer, service abstraction, repository abstraction, event
 system, state container, dependency-injection mechanism, or global registry,
 show the concrete duplication or boundary failure it solves. Prefer the
 smallest architecture that preserves these dependency rules.
+
+## Ports, adapters, and composition
+
+Domain packages own capability-shaped ports. Infrastructure packages own
+their concrete adapters. Runnable applications own composition: they validate
+config, construct adapters, and pass one cohesive dependency object into the
+use case or session. Do not mix validated configuration with injected runtime
+services in a single options schema.
+
+A repository is an application-facing persistence capability, not a table
+wrapper. Prefer one repository per cohesive aggregate or evidence stream. When
+multiple repositories differ only by table and validation schema, share a small
+infrastructure helper for the insert/error mechanics while retaining distinct
+ports. Do not duplicate the same try/insert/returning/error protocol across
+adapters.

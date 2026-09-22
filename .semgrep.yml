@@ -72,7 +72,8 @@ rules:
             ...
           }
       - pattern: throw new $WRAPPER(...)
-      - pattern-not: "throw new $WRAPPER(..., { cause: $ERROR }, ...)"
+      - pattern-not: |
+          throw new $WRAPPER(..., { cause: $CAUSE }, ...)
 
   - id: no-raw-fetch
     languages:
