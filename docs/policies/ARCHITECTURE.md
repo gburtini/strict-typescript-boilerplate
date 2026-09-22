@@ -118,7 +118,6 @@ system, state container, dependency-injection mechanism, or global registry,
 show the concrete duplication or boundary failure it solves. Prefer the
 smallest architecture that preserves these dependency rules.
 
-
 ## Ports, adapters, and composition
 
 Domain packages own capability-shaped ports. Infrastructure packages own

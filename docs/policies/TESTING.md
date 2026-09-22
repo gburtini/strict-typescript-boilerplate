@@ -98,7 +98,6 @@ The test override intentionally relaxes production size/complexity limits, but
 correctness, accessibility, React, React Doctor, and focused-test rules remain
 active.
 
-
 ## Test location
 
 Unit and component tests live under the owning package's `src/__tests__/`

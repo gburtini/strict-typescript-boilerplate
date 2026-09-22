@@ -81,7 +81,6 @@ Every query or index change must be reviewed against the production-like planner
 fixture. Follow the capture, comparison, and baseline rules in
 [`QUERY-PLANS.md`](QUERY-PLANS.md).
 
-
 ## Local PostgreSQL
 
 The template supplies a disposable PostgreSQL service in `compose.yaml`.

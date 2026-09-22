@@ -6,8 +6,8 @@ interface PackageManifest {
   exports?: Record<string, string> | undefined;
 }
 
-const packageRoots = ["apps", "packages"];
-const failures: string[] = [];
+const packageRoots = ["apps", "packages"],
+  failures: string[] = [];
 
 function readJson(path: string): PackageManifest {
   const manifestSchema = z.object({
@@ -20,34 +20,14 @@ function readJson(path: string): PackageManifest {
   }
 }
 
-function wildcardTargetExists(packagePath: string, target: string): boolean {
-  const directory = nodePath.resolve(
-    nodePath.dirname(packagePath),
-    nodePath.dirname(target),
-  );
-  const extension = nodePath.extname(target);
-  if (!existsSync(directory)) {
-    return false;
-  }
-  return readdirSync(directory, { withFileTypes: true }).some(
-    (entry) => entry.isFile() && nodePath.extname(entry.name) === extension,
-  );
-}
-
-function exportTargetExists(packagePath: string, target: string): boolean {
-  if (target.includes("*")) {
-    return wildcardTargetExists(packagePath, target);
-  }
-  return existsSync(nodePath.resolve(nodePath.dirname(packagePath), target));
-}
-
 function missingExports(packagePath: string): string[] {
   const packageJson = readJson(packagePath);
   if (!packageJson.exports) {
     return [];
   }
   return Object.entries(packageJson.exports).flatMap(([specifier, target]) => {
-    if (exportTargetExists(packagePath, target)) {
+    const targetPath = nodePath.resolve(nodePath.dirname(packagePath), target);
+    if (existsSync(targetPath)) {
       return [];
     }
     return [`${packagePath}: export '${specifier}' points to missing '${target}'`];
@@ -57,8 +37,8 @@ function missingExports(packagePath: string): string[] {
 for (const root of packageRoots) {
   for (const entry of readdirSync(root, { withFileTypes: true })) {
     if (entry.isDirectory()) {
-      const packageDirectory = nodePath.resolve(root, entry.name);
-      const packagePath = nodePath.join(packageDirectory, "package.json");
+      const packageDirectory = nodePath.resolve(root, entry.name),
+        packagePath = nodePath.join(packageDirectory, "package.json");
       if (existsSync(packagePath)) {
         failures.push(...missingExports(packagePath));
       }
