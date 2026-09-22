@@ -102,8 +102,8 @@ active.
 ## Test location
 
 Unit and component tests live under the owning package's `src/__tests__/`
-directory. Integration tests that require a real external adapter live under the
-owning package's top-level `tests/` directory and use a dedicated Vitest
+directory. Integration tests that require a real external adapter live under
+the owning package's top-level `tests/` directory and use a dedicated Vitest
 configuration. End-to-end tests live under the runnable application's `e2e/`
 directory. Do not create source-adjacent `*.test.*` files or repository-root
 test directories.

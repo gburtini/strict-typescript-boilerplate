@@ -87,5 +87,5 @@ fixture. Follow the capture, comparison, and baseline rules in
 The template supplies a disposable PostgreSQL service in `compose.yaml`.
 Projects must change the database and volume identity during initialization,
 but should retain the health check, pinned major version, explicit host-port
-override, and documented destructive reset command. Local credentials are
-development-only and must never be reused by a deployed environment.
+override, and documented destructive reset command. Local credentials are for
+development only and must never be reused by a deployed environment.
