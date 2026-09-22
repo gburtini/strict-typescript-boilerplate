@@ -24,6 +24,9 @@ jobs:
       - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
         with:
           node-version-file: .node-version
+          # This job audits the lockfile without installing, so no pnpm store
+          # exists for setup-node to save during post-job cleanup.
+          package-manager-cache: false
 
       - name: Audit dependencies
         shell: bash
