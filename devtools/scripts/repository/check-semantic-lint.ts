@@ -27,6 +27,7 @@ const changedPathsSchema = z.array(z.string().min(1).max(4096)),
     "quality",
     "package.json",
     "pnpm-workspace.yaml",
+    ":(exclude)packages/db/drizzle/meta/**",
   ];
 
 interface CliOptions {
@@ -66,7 +67,11 @@ function sourcePaths(paths: readonly string[]): string[] {
   );
 }
 
-function readSourceContext(paths: readonly string[], root: string): string {
+function readSourceContext(
+  paths: readonly string[],
+  root: string,
+  maximumCharacters: number,
+): string {
   const selected = new Set<string>(),
     testPathPattern = /\.(?:test|spec)\.[cm]?[jt]sx?$/u;
   for (const path of sourcePaths(paths)) {
@@ -83,7 +88,7 @@ function readSourceContext(paths: readonly string[], root: string): string {
     }
   }
   const sections: string[] = [];
-  let remaining = 90_000;
+  let remaining = maximumCharacters;
   for (const path of selected) {
     if (isSafeRepositoryFile(path, root)) {
       const content = readFileSync(pathModule.resolve(root, path), "utf8").slice(
@@ -145,11 +150,11 @@ function collectDiff(base: string): string {
     runGit([
       "diff",
       "--no-ext-diff",
-      "--unified=24",
+      "--unified=12",
       `${base}...HEAD`,
       ...sourceDiffPaths,
     ]),
-    runGit(["diff", "--no-ext-diff", "--unified=24", "HEAD", ...sourceDiffPaths]),
+    runGit(["diff", "--no-ext-diff", "--unified=12", "HEAD", ...sourceDiffPaths]),
   ].join("\n");
 }
 
@@ -160,17 +165,49 @@ function changedState(
   const root = realpathSync(process.cwd()),
     paths = collectChangedPaths(base),
     diff = collectDiff(base),
+    change = `${diff}\n\nChanged paths:\n${paths.join("\n")}`,
+    policy = readRepositoryPolicy(root),
+    testPathPattern = /\.(?:integration|test|spec)\.[cm]?[jt]sx?$/u,
+    nonTestPaths = paths.filter((path) => !testPathPattern.test(path)),
+    testPaths = paths.filter((path) => testPathPattern.test(path)),
+    emptyState = {
+      change,
+      relatedContext: policy,
+      testContext: "",
+    },
+    emptyStateCharacters = JSON.stringify(emptyState).length;
+  if (emptyStateCharacters > maximumStateCharacters) {
+    throw new RangeError(
+      `semantic-lint diff and policy exceed ${maximumStateCharacters} characters; narrow the diff`,
+    );
+  }
+  const safetyCharacters = 2_048,
+    availableCharacters = Math.max(
+      0,
+      maximumStateCharacters - emptyStateCharacters - safetyCharacters,
+    ),
+    relatedSource = readSourceContext(
+      nonTestPaths,
+      root,
+      Math.floor(availableCharacters * 0.67),
+    ),
+    stateWithRelatedContext = {
+      ...emptyState,
+      relatedContext: `${policy}\n\n${relatedSource}`,
+    },
+    testContextCharacters = Math.max(
+      0,
+      maximumStateCharacters -
+        JSON.stringify(stateWithRelatedContext).length -
+        safetyCharacters,
+    ),
     state = {
-      change: `${diff}\n\nChanged paths:\n${paths.join("\n")}`,
-      relatedContext: `${readRepositoryPolicy(root)}\n\n${readSourceContext(paths, root)}`,
-      testContext: readSourceContext(
-        paths.filter((path) => /\.(?:test|spec)\.[cm]?[jt]sx?$/u.test(path)),
-        root,
-      ),
+      ...stateWithRelatedContext,
+      testContext: readSourceContext(testPaths, root, testContextCharacters),
     };
   if (JSON.stringify(state).length > maximumStateCharacters) {
     throw new RangeError(
-      `semantic-lint state exceeds ${maximumStateCharacters} characters; narrow the diff`,
+      `semantic-lint state exceeds ${maximumStateCharacters} characters after budgeting`,
     );
   }
   return state;
