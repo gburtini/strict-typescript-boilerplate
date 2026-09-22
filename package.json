@@ -44,7 +44,8 @@
     "test:evidence": "node --experimental-strip-types devtools/scripts/repository/check-test-evidence.ts",
     "test:e2e": "pnpm --filter @template/web test:e2e",
     "toolchain:check": "node --experimental-strip-types devtools/scripts/repository/check-toolchain.ts",
-    "typecheck": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p devtools/tsconfig.json && tsc --noEmit -p apps/web/tsconfig.json && tsc --noEmit -p packages/ui/tsconfig.json && tsc --noEmit -p packages/core/tsconfig.json && tsc --noEmit -p packages/db/tsconfig.json"
+    "typecheck": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p devtools/tsconfig.json && tsc --noEmit -p apps/web/tsconfig.json && tsc --noEmit -p packages/ui/tsconfig.json && tsc --noEmit -p packages/core/tsconfig.json && tsc --noEmit -p packages/db/tsconfig.json",
+    "test:integration": "pnpm --filter @template/db test:integration"
   },
   "devDependencies": {
     "@effect/tsgo": "0.45.0",

@@ -78,6 +78,12 @@ maintainability limits such as maximum lines, statements, parameters, and
 function depth, but correctness, accessibility, React, React Doctor, and
 focused-test rules remain enforced.
 
+Place tests under the owning workspace's `src/__tests__/` directory. Keep unit,
+integration, and contract tests there, with names that identify their level
+where useful. Integration tests that require a local service use an
+`.integration.ts` suffix so the default unit command does not discover them;
+run them through the workspace's explicit integration command.
+
 ## Telemetry
 
 - Configure `TelemetryLive` from the runtime composition root with the deployed
