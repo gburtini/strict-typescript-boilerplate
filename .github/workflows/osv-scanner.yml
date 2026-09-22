@@ -8,6 +8,9 @@ on:
 permissions:
   actions: read
   contents: read
+  # The pinned reusable workflow declares this permission even when SARIF
+  # upload is disabled. Called workflows cannot elevate beyond their caller.
+  security-events: write
 
 jobs:
   scan-pr:
