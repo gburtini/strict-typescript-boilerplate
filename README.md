@@ -16,20 +16,20 @@ Exact dependency versions are pinned in the workspace manifests and lockfile.
 
 ## Repository guarantees
 
-| Engineering value                         | How the repository supports it                                                          |
-| ----------------------------------------- | --------------------------------------------------------------------------------------- |
-| Reproducible setup                        | Node and pnpm versions are pinned through nvm and Corepack.                             |
-| Strict types and validated inputs         | TypeScript, Oxlint, named Zod schemas, and boundary fixtures.                           |
-| Clear ownership and dependency direction  | Effect ports, public package APIs, dependency-cruiser, and architecture checks.         |
-| Explicit async and failure handling       | Oxlint, Effect diagnostics, Semgrep, and failure-path tests.                            |
-| Safe, predictable database changes        | Typed Drizzle queries, migration checks, PostgreSQL integration tests, and query plans. |
-| Accessible, responsive interfaces         | Shared UI primitives, React Compiler checks, and browser evidence.                      |
-| Reliable tests and generated output       | Vitest, Playwright, test-evidence checks, and generated-file freshness checks.          |
-| Security and dependency hygiene           | Security policies, Semgrep, OSV-Scanner, and dependency audits.                         |
-| Narrow, reviewable exceptions             | Structured exception registry with scope, owner, rationale, and evidence.               |
-| Independent review of enforcement changes | Trusted base comparison and repository ruleset requirements.                            |
-| One command for the full local gate       | `pnpm check:all`; CI adds acceptance and security checks.                               |
-| AI review stays advisory                  | Versioned rules and labeled fixtures; insufficient evidence is reported separately.     |
+| Engineering value                         | How the repository supports it                                                                                                            |
+| ----------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| Reproducible setup                        | Node and pnpm versions are pinned through nvm and Corepack.                                                                               |
+| Strict types and validated inputs         | TypeScript, Oxlint, named Zod schemas, and boundary fixtures.                                                                             |
+| Clear module boundaries                   | Packages expose public APIs; checks prevent reverse dependencies and cycles; Effect ports keep application logic independent of adapters. |
+| Explicit async and failure handling       | Oxlint, Effect diagnostics, Semgrep, and failure-path tests.                                                                              |
+| Safe, predictable database changes        | Typed Drizzle queries, migration checks, PostgreSQL integration tests, and query plans.                                                   |
+| Accessible, responsive interfaces         | Shared UI primitives, React Compiler checks, and browser evidence.                                                                        |
+| Reliable tests and generated output       | Vitest, Playwright, test-evidence checks, and generated-file freshness checks.                                                            |
+| Security and dependency hygiene           | Security policies, Semgrep, OSV-Scanner, and dependency audits.                                                                           |
+| Narrow, reviewable exceptions             | Structured exception registry with scope, owner, rationale, and evidence.                                                                 |
+| Independent review of enforcement changes | Trusted base comparison and repository ruleset requirements.                                                                              |
+| One command for the full local gate       | `pnpm check:all`; CI adds acceptance and security checks.                                                                                 |
+| AI review stays advisory                  | Versioned rules and labeled fixtures; insufficient evidence is reported separately.                                                       |
 
 | Written policy                                  | Decisions it governs                                                            |
 | ----------------------------------------------- | ------------------------------------------------------------------------------- |
