@@ -4,7 +4,7 @@
     {
       "test": "apps/web/e2e/accessibility.browser.ts",
       "method": "attestation",
-      "owner": "@gburtini",
+      "owner": "repository-maintainers",
       "revision": "52935042f2fcdf42097a78a20a99c4ebf2062c1a",
       "command": ["pnpm", "test:e2e"],
       "redState": "Removed accessible labels and confirmed axe reported violations before restoring them."
@@ -12,7 +12,7 @@
     {
       "test": "apps/web/src/tests/app.test.tsx",
       "method": "attestation",
-      "owner": "@gburtini",
+      "owner": "repository-maintainers",
       "revision": "52935042f2fcdf42097a78a20a99c4ebf2062c1a",
       "command": ["pnpm", "test:unit"],
       "redState": "Historical test retained; prior failure demonstration needs independent owner review."
@@ -20,7 +20,7 @@
     {
       "test": "packages/db/src/tests/schema.test.ts",
       "method": "attestation",
-      "owner": "@gburtini",
+      "owner": "repository-maintainers",
       "revision": "52935042f2fcdf42097a78a20a99c4ebf2062c1a",
       "command": ["pnpm", "test:unit"],
       "redState": "Historical test retained; prior failure demonstration needs independent owner review."
@@ -28,7 +28,7 @@
     {
       "test": "packages/db/src/tests/query-capture.test.ts",
       "method": "attestation",
-      "owner": "@gburtini",
+      "owner": "repository-maintainers",
       "revision": "52935042f2fcdf42097a78a20a99c4ebf2062c1a",
       "command": ["pnpm", "test:unit"],
       "redState": "Historical test retained; prior failure demonstration needs independent owner review."
@@ -36,7 +36,7 @@
     {
       "test": "packages/db/src/tests/integration/writer.integration.test.ts",
       "method": "attestation",
-      "owner": "@gburtini",
+      "owner": "repository-maintainers",
       "revision": "52935042f2fcdf42097a78a20a99c4ebf2062c1a",
       "command": ["pnpm", "test:integration"],
       "redState": "Confirmed the test fails when the insert is replaced with a read-only query or when the selected user does not match the inserted row."
@@ -44,7 +44,7 @@
     {
       "test": "packages/db/src/tests/devtools/map-with-concurrency.test.ts",
       "method": "attestation",
-      "owner": "@gburtini",
+      "owner": "repository-maintainers",
       "revision": "52935042f2fcdf42097a78a20a99c4ebf2062c1a",
       "command": ["pnpm", "test:unit"],
       "redState": "Historical test retained; prior failure demonstration needs independent owner review."
@@ -52,7 +52,7 @@
     {
       "test": "packages/core/src/tests/errors.test.ts",
       "method": "attestation",
-      "owner": "@gburtini",
+      "owner": "repository-maintainers",
       "revision": "52935042f2fcdf42097a78a20a99c4ebf2062c1a",
       "command": ["pnpm", "test:unit"],
       "redState": "Historical test retained; prior failure demonstration needs independent owner review."
@@ -60,7 +60,7 @@
     {
       "test": "packages/core/src/tests/retry.test.ts",
       "method": "attestation",
-      "owner": "@gburtini",
+      "owner": "repository-maintainers",
       "revision": "52935042f2fcdf42097a78a20a99c4ebf2062c1a",
       "command": ["pnpm", "test:unit"],
       "redState": "Historical test retained; prior failure demonstration needs independent owner review."
@@ -68,7 +68,7 @@
     {
       "test": "packages/core/src/tests/api/contract.test.ts",
       "method": "attestation",
-      "owner": "@gburtini",
+      "owner": "repository-maintainers",
       "revision": "52935042f2fcdf42097a78a20a99c4ebf2062c1a",
       "command": ["pnpm", "test:unit"],
       "redState": "Historical test retained; prior failure demonstration needs independent owner review."
@@ -76,7 +76,7 @@
     {
       "test": "packages/core/src/tests/registration.test.ts",
       "method": "execution",
-      "owner": "@gburtini",
+      "owner": "repository-maintainers",
       "revision": "5c2a1f9e750471deb943d0de5170cbf1a1767de0",
       "command": [
         "pnpm",
@@ -93,7 +93,7 @@
     {
       "test": "apps/web/src/tests/registration-form.test.tsx",
       "method": "execution",
-      "owner": "@gburtini",
+      "owner": "repository-maintainers",
       "revision": "5c2a1f9e750471deb943d0de5170cbf1a1767de0",
       "command": [
         "pnpm",
@@ -110,7 +110,7 @@
     {
       "test": "apps/web/src/tests/registration-client.test.ts",
       "method": "execution",
-      "owner": "@gburtini",
+      "owner": "repository-maintainers",
       "revision": "5c2a1f9e750471deb943d0de5170cbf1a1767de0",
       "command": [
         "pnpm",
@@ -127,7 +127,7 @@
     {
       "test": "apps/web/e2e/registration.browser.ts",
       "method": "execution",
-      "owner": "@gburtini",
+      "owner": "repository-maintainers",
       "revision": "5c2a1f9e750471deb943d0de5170cbf1a1767de0",
       "command": ["pnpm", "test:integration"],
       "redState": "The previous layout overflowed at 320 CSS pixels with long success content.",

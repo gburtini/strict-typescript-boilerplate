@@ -8,14 +8,15 @@ independent approval of a change to that check.
 
 ## Required repository settings
 
-During initialization replace `.github/CODEOWNERS` with actual maintainers.
-Configure a ruleset for the default branch requiring pull requests, code owner
-approval, dismissal of stale approvals, approval of the latest push, and the
+Configure a ruleset for the default branch requiring pull requests, independent
+review, dismissal of stale approvals, approval of the latest push, and the
 `Repository acceptance` and `Trusted enforcement comparison` status checks.
 Disallow force pushes, branch deletion, and agent bypass of the ruleset. Grant
 agents branch write access without administration or approval authority.
-These server settings require a repository administrator; files alone do not
-activate them. Record the administrator and verification date when configured.
+These server settings require repository administration; files alone do not
+activate them. Record verification evidence and date when configured. The
+template assigns responsibility to roles and does not prescribe individuals or
+a CODEOWNERS file.
 
 `Enforcement Review` runs from the trusted base through `pull_request_target`.
 It fetches the proposed revision as Git data and produces a contract diff. It

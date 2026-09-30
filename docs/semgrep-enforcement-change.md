@@ -1,6 +1,6 @@
 # Initial Semgrep boundary enforcement
 
-Owner: @gburtini. Tracking: this change and `docs/policies/SECURITY.md`.
+Owner: repository-maintainers. Tracking: this change and `docs/policies/SECURITY.md`.
 
 The previous eight-rule configuration had no rule fixtures, permission registry,
 local acceptance command, or explicit suppression protection. The throw rule
@@ -28,7 +28,7 @@ until copied into a temporary project; no production ignore was added. The
 existing Semgrep engine version and image digest are preserved. Local and CI
 commands share the same runner, and `pnpm check` now includes it.
 
-CODEOWNERS and trusted enforcement comparison now include `.semgrep.yml` and
+Trusted enforcement comparison includes `.semgrep.yml` and
 `.semgrepignore`. The latter restores tests skipped by upstream defaults; the
 scan inventory must include every Git-visible JavaScript/TypeScript source file.
 These files provide review evidence; they do not constitute independent owner

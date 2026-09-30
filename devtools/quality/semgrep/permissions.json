@@ -5,7 +5,7 @@
       "rule": "no-raw-fetch",
       "scope": ["/apps/web/src/adapters/registration-client.ts"],
       "reason": "The browser transport adapter owns HTTP and decodes responses with responseSchema.",
-      "owner": "@gburtini",
+      "owner": "repository-maintainers",
       "tracking": "docs/policies/SECURITY.md",
       "evidence": "devtools/quality/semgrep/fixtures.json"
     },
@@ -24,7 +24,7 @@
         "/devtools/scripts/database/verify-database.ts"
       ],
       "reason": "Named runtime configuration, browser runner configuration, and database capture/planner tooling entry points own environment reads. This permission does not approve unvalidated configuration or grant application/domain code access.",
-      "owner": "@gburtini",
+      "owner": "repository-maintainers",
       "tracking": "docs/policies/SECURITY.md",
       "evidence": "devtools/quality/semgrep/fixtures.json"
     }

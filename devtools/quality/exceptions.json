@@ -7,7 +7,7 @@
       "scope": ["**"],
       "value": "off",
       "reason": "Canonical declaration and framework conventions documented in EXCEPTIONS.md.",
-      "owner": "@gburtini",
+      "owner": "repository-maintainers",
       "tracking": "docs/adr/0001-enforcement-model.md",
       "evidence": "docs/ENFORCEMENT-MANIFEST.md"
     },
@@ -17,7 +17,7 @@
       "scope": ["**"],
       "value": "off",
       "reason": "Canonical declaration and framework conventions documented in EXCEPTIONS.md.",
-      "owner": "@gburtini",
+      "owner": "repository-maintainers",
       "tracking": "docs/adr/0001-enforcement-model.md",
       "evidence": "docs/ENFORCEMENT-MANIFEST.md"
     },
@@ -27,7 +27,7 @@
       "scope": ["**"],
       "value": "off",
       "reason": "Canonical declaration and framework conventions documented in EXCEPTIONS.md.",
-      "owner": "@gburtini",
+      "owner": "repository-maintainers",
       "tracking": "docs/adr/0001-enforcement-model.md",
       "evidence": "docs/ENFORCEMENT-MANIFEST.md"
     },
@@ -37,7 +37,7 @@
       "scope": ["**"],
       "value": "off",
       "reason": "Canonical declaration and framework conventions documented in EXCEPTIONS.md.",
-      "owner": "@gburtini",
+      "owner": "repository-maintainers",
       "tracking": "docs/adr/0001-enforcement-model.md",
       "evidence": "docs/ENFORCEMENT-MANIFEST.md"
     },
@@ -47,7 +47,7 @@
       "scope": ["**"],
       "value": "off",
       "reason": "Canonical declaration and framework conventions documented in EXCEPTIONS.md.",
-      "owner": "@gburtini",
+      "owner": "repository-maintainers",
       "tracking": "docs/adr/0001-enforcement-model.md",
       "evidence": "docs/ENFORCEMENT-MANIFEST.md"
     },
@@ -57,7 +57,7 @@
       "scope": ["**"],
       "value": "off",
       "reason": "Canonical declaration and framework conventions documented in EXCEPTIONS.md.",
-      "owner": "@gburtini",
+      "owner": "repository-maintainers",
       "tracking": "docs/adr/0001-enforcement-model.md",
       "evidence": "docs/ENFORCEMENT-MANIFEST.md"
     },
@@ -67,7 +67,7 @@
       "scope": ["**"],
       "value": "off",
       "reason": "Canonical declaration and framework conventions documented in EXCEPTIONS.md.",
-      "owner": "@gburtini",
+      "owner": "repository-maintainers",
       "tracking": "docs/adr/0001-enforcement-model.md",
       "evidence": "docs/ENFORCEMENT-MANIFEST.md"
     },
@@ -77,7 +77,7 @@
       "scope": ["**"],
       "value": "off",
       "reason": "Canonical declaration and framework conventions documented in EXCEPTIONS.md.",
-      "owner": "@gburtini",
+      "owner": "repository-maintainers",
       "tracking": "docs/adr/0001-enforcement-model.md",
       "evidence": "docs/ENFORCEMENT-MANIFEST.md"
     },
@@ -87,7 +87,7 @@
       "scope": ["**"],
       "value": "off",
       "reason": "Canonical declaration and framework conventions documented in EXCEPTIONS.md.",
-      "owner": "@gburtini",
+      "owner": "repository-maintainers",
       "tracking": "docs/adr/0001-enforcement-model.md",
       "evidence": "docs/ENFORCEMENT-MANIFEST.md"
     },
@@ -97,7 +97,7 @@
       "scope": ["**"],
       "value": "off",
       "reason": "Canonical declaration and framework conventions documented in EXCEPTIONS.md.",
-      "owner": "@gburtini",
+      "owner": "repository-maintainers",
       "tracking": "docs/adr/0001-enforcement-model.md",
       "evidence": "docs/ENFORCEMENT-MANIFEST.md"
     },
@@ -107,7 +107,7 @@
       "scope": ["**"],
       "value": "off",
       "reason": "Canonical declaration and framework conventions documented in EXCEPTIONS.md.",
-      "owner": "@gburtini",
+      "owner": "repository-maintainers",
       "tracking": "docs/adr/0001-enforcement-model.md",
       "evidence": "docs/ENFORCEMENT-MANIFEST.md"
     },
@@ -117,7 +117,7 @@
       "scope": ["**"],
       "value": "off",
       "reason": "Canonical declaration and framework conventions documented in EXCEPTIONS.md.",
-      "owner": "@gburtini",
+      "owner": "repository-maintainers",
       "tracking": "docs/adr/0001-enforcement-model.md",
       "evidence": "docs/ENFORCEMENT-MANIFEST.md"
     },
@@ -127,7 +127,7 @@
       "scope": ["**"],
       "value": "off",
       "reason": "Canonical declaration and framework conventions documented in EXCEPTIONS.md.",
-      "owner": "@gburtini",
+      "owner": "repository-maintainers",
       "tracking": "docs/adr/0001-enforcement-model.md",
       "evidence": "docs/ENFORCEMENT-MANIFEST.md"
     },
@@ -137,7 +137,7 @@
       "scope": ["**"],
       "value": "off",
       "reason": "Canonical declaration and framework conventions documented in EXCEPTIONS.md.",
-      "owner": "@gburtini",
+      "owner": "repository-maintainers",
       "tracking": "docs/adr/0001-enforcement-model.md",
       "evidence": "docs/ENFORCEMENT-MANIFEST.md"
     },
@@ -147,7 +147,7 @@
       "scope": ["**"],
       "value": "off",
       "reason": "Canonical declaration and framework conventions documented in EXCEPTIONS.md.",
-      "owner": "@gburtini",
+      "owner": "repository-maintainers",
       "tracking": "docs/adr/0001-enforcement-model.md",
       "evidence": "docs/ENFORCEMENT-MANIFEST.md"
     },
@@ -157,7 +157,7 @@
       "scope": ["**"],
       "value": "off",
       "reason": "Canonical declaration and framework conventions documented in EXCEPTIONS.md.",
-      "owner": "@gburtini",
+      "owner": "repository-maintainers",
       "tracking": "docs/adr/0001-enforcement-model.md",
       "evidence": "docs/ENFORCEMENT-MANIFEST.md"
     },
@@ -167,7 +167,7 @@
       "scope": ["**"],
       "value": "off",
       "reason": "Canonical declaration and framework conventions documented in EXCEPTIONS.md.",
-      "owner": "@gburtini",
+      "owner": "repository-maintainers",
       "tracking": "docs/adr/0001-enforcement-model.md",
       "evidence": "docs/ENFORCEMENT-MANIFEST.md"
     },
@@ -177,7 +177,7 @@
       "scope": ["**"],
       "value": "off",
       "reason": "Canonical declaration and framework conventions documented in EXCEPTIONS.md.",
-      "owner": "@gburtini",
+      "owner": "repository-maintainers",
       "tracking": "docs/adr/0001-enforcement-model.md",
       "evidence": "docs/ENFORCEMENT-MANIFEST.md"
     },
@@ -187,7 +187,7 @@
       "scope": ["**"],
       "value": "off",
       "reason": "Canonical declaration and framework conventions documented in EXCEPTIONS.md.",
-      "owner": "@gburtini",
+      "owner": "repository-maintainers",
       "tracking": "docs/adr/0001-enforcement-model.md",
       "evidence": "docs/ENFORCEMENT-MANIFEST.md"
     },
@@ -197,7 +197,7 @@
       "scope": ["**"],
       "value": "off",
       "reason": "Canonical declaration and framework conventions documented in EXCEPTIONS.md.",
-      "owner": "@gburtini",
+      "owner": "repository-maintainers",
       "tracking": "docs/adr/0001-enforcement-model.md",
       "evidence": "docs/ENFORCEMENT-MANIFEST.md"
     },
@@ -207,7 +207,7 @@
       "scope": ["**"],
       "value": "off",
       "reason": "Canonical declaration and framework conventions documented in EXCEPTIONS.md.",
-      "owner": "@gburtini",
+      "owner": "repository-maintainers",
       "tracking": "docs/adr/0001-enforcement-model.md",
       "evidence": "docs/ENFORCEMENT-MANIFEST.md"
     },
@@ -217,7 +217,7 @@
       "scope": ["**"],
       "value": "off",
       "reason": "Canonical declaration and framework conventions documented in EXCEPTIONS.md.",
-      "owner": "@gburtini",
+      "owner": "repository-maintainers",
       "tracking": "docs/adr/0001-enforcement-model.md",
       "evidence": "docs/ENFORCEMENT-MANIFEST.md"
     },
@@ -227,7 +227,7 @@
       "scope": ["**"],
       "value": "off",
       "reason": "Canonical declaration and framework conventions documented in EXCEPTIONS.md.",
-      "owner": "@gburtini",
+      "owner": "repository-maintainers",
       "tracking": "docs/adr/0001-enforcement-model.md",
       "evidence": "docs/ENFORCEMENT-MANIFEST.md"
     },
@@ -237,7 +237,7 @@
       "scope": ["**"],
       "value": "off",
       "reason": "Canonical declaration and framework conventions documented in EXCEPTIONS.md.",
-      "owner": "@gburtini",
+      "owner": "repository-maintainers",
       "tracking": "docs/adr/0001-enforcement-model.md",
       "evidence": "docs/ENFORCEMENT-MANIFEST.md"
     },
@@ -247,7 +247,7 @@
       "scope": ["**"],
       "value": "off",
       "reason": "Canonical declaration and framework conventions documented in EXCEPTIONS.md.",
-      "owner": "@gburtini",
+      "owner": "repository-maintainers",
       "tracking": "docs/adr/0001-enforcement-model.md",
       "evidence": "docs/ENFORCEMENT-MANIFEST.md"
     },
@@ -257,7 +257,7 @@
       "scope": ["**"],
       "value": "off",
       "reason": "Canonical declaration and framework conventions documented in EXCEPTIONS.md.",
-      "owner": "@gburtini",
+      "owner": "repository-maintainers",
       "tracking": "docs/adr/0001-enforcement-model.md",
       "evidence": "docs/ENFORCEMENT-MANIFEST.md"
     },
@@ -267,7 +267,7 @@
       "scope": ["**"],
       "value": "off",
       "reason": "Canonical declaration and framework conventions documented in EXCEPTIONS.md.",
-      "owner": "@gburtini",
+      "owner": "repository-maintainers",
       "tracking": "docs/adr/0001-enforcement-model.md",
       "evidence": "docs/ENFORCEMENT-MANIFEST.md"
     },
@@ -277,7 +277,7 @@
       "scope": ["packages/ui/**"],
       "value": "off",
       "reason": "Existing scoped contract documented in EXCEPTIONS.md; preserve production checks outside this scope.",
-      "owner": "@gburtini",
+      "owner": "repository-maintainers",
       "tracking": "docs/adr/0001-enforcement-model.md",
       "evidence": "docs/ENFORCEMENT-MANIFEST.md"
     },
@@ -287,7 +287,7 @@
       "scope": ["packages/ui/**"],
       "value": "off",
       "reason": "Existing scoped contract documented in EXCEPTIONS.md; preserve production checks outside this scope.",
-      "owner": "@gburtini",
+      "owner": "repository-maintainers",
       "tracking": "docs/adr/0001-enforcement-model.md",
       "evidence": "docs/ENFORCEMENT-MANIFEST.md"
     },
@@ -297,7 +297,7 @@
       "scope": ["packages/ui/**"],
       "value": "off",
       "reason": "Existing scoped contract documented in EXCEPTIONS.md; preserve production checks outside this scope.",
-      "owner": "@gburtini",
+      "owner": "repository-maintainers",
       "tracking": "docs/adr/0001-enforcement-model.md",
       "evidence": "docs/ENFORCEMENT-MANIFEST.md"
     },
@@ -307,7 +307,7 @@
       "scope": ["packages/ui/**"],
       "value": "off",
       "reason": "Existing scoped contract documented in EXCEPTIONS.md; preserve production checks outside this scope.",
-      "owner": "@gburtini",
+      "owner": "repository-maintainers",
       "tracking": "docs/adr/0001-enforcement-model.md",
       "evidence": "docs/ENFORCEMENT-MANIFEST.md"
     },
@@ -317,7 +317,7 @@
       "scope": ["packages/ui/**"],
       "value": "off",
       "reason": "Existing scoped contract documented in EXCEPTIONS.md; preserve production checks outside this scope.",
-      "owner": "@gburtini",
+      "owner": "repository-maintainers",
       "tracking": "docs/adr/0001-enforcement-model.md",
       "evidence": "docs/ENFORCEMENT-MANIFEST.md"
     },
@@ -327,7 +327,7 @@
       "scope": ["packages/ui/src/components/ui/label.tsx"],
       "value": "off",
       "reason": "Existing scoped contract documented in EXCEPTIONS.md; preserve production checks outside this scope.",
-      "owner": "@gburtini",
+      "owner": "repository-maintainers",
       "tracking": "docs/adr/0001-enforcement-model.md",
       "evidence": "docs/ENFORCEMENT-MANIFEST.md"
     },
@@ -337,7 +337,7 @@
       "scope": ["packages/db/src/**"],
       "value": "off",
       "reason": "Existing scoped contract documented in EXCEPTIONS.md; preserve production checks outside this scope.",
-      "owner": "@gburtini",
+      "owner": "repository-maintainers",
       "tracking": "docs/adr/0001-enforcement-model.md",
       "evidence": "docs/ENFORCEMENT-MANIFEST.md"
     },
@@ -347,7 +347,7 @@
       "scope": ["packages/db/src/**"],
       "value": "off",
       "reason": "Existing scoped contract documented in EXCEPTIONS.md; preserve production checks outside this scope.",
-      "owner": "@gburtini",
+      "owner": "repository-maintainers",
       "tracking": "docs/adr/0001-enforcement-model.md",
       "evidence": "docs/ENFORCEMENT-MANIFEST.md"
     },
@@ -357,7 +357,7 @@
       "scope": ["packages/db/src/**"],
       "value": "off",
       "reason": "Existing scoped contract documented in EXCEPTIONS.md; preserve production checks outside this scope.",
-      "owner": "@gburtini",
+      "owner": "repository-maintainers",
       "tracking": "docs/adr/0001-enforcement-model.md",
       "evidence": "docs/ENFORCEMENT-MANIFEST.md"
     },
@@ -371,7 +371,7 @@
       ],
       "value": "off",
       "reason": "Existing scoped contract documented in EXCEPTIONS.md; preserve production checks outside this scope.",
-      "owner": "@gburtini",
+      "owner": "repository-maintainers",
       "tracking": "docs/adr/0001-enforcement-model.md",
       "evidence": "docs/ENFORCEMENT-MANIFEST.md"
     },
@@ -381,7 +381,7 @@
       "scope": ["**/*.config.*"],
       "value": "off",
       "reason": "Existing scoped contract documented in EXCEPTIONS.md; preserve production checks outside this scope.",
-      "owner": "@gburtini",
+      "owner": "repository-maintainers",
       "tracking": "docs/adr/0001-enforcement-model.md",
       "evidence": "docs/ENFORCEMENT-MANIFEST.md"
     },
@@ -391,7 +391,7 @@
       "scope": ["**/*.test.*", "**/*.spec.*", "test/**", "tests/**"],
       "value": "error",
       "reason": "Existing scoped contract documented in EXCEPTIONS.md; preserve production checks outside this scope.",
-      "owner": "@gburtini",
+      "owner": "repository-maintainers",
       "tracking": "docs/adr/0001-enforcement-model.md",
       "evidence": "docs/ENFORCEMENT-MANIFEST.md"
     },
@@ -401,7 +401,7 @@
       "scope": ["**/*.test.*", "**/*.spec.*", "test/**", "tests/**"],
       "value": "off",
       "reason": "Existing scoped contract documented in EXCEPTIONS.md; preserve production checks outside this scope.",
-      "owner": "@gburtini",
+      "owner": "repository-maintainers",
       "tracking": "docs/adr/0001-enforcement-model.md",
       "evidence": "docs/ENFORCEMENT-MANIFEST.md"
     },
@@ -411,7 +411,7 @@
       "scope": ["**/*.test.*", "**/*.spec.*", "test/**", "tests/**"],
       "value": "off",
       "reason": "Existing scoped contract documented in EXCEPTIONS.md; preserve production checks outside this scope.",
-      "owner": "@gburtini",
+      "owner": "repository-maintainers",
       "tracking": "docs/adr/0001-enforcement-model.md",
       "evidence": "docs/ENFORCEMENT-MANIFEST.md"
     },
@@ -421,7 +421,7 @@
       "scope": ["**/*.test.*", "**/*.spec.*", "test/**", "tests/**"],
       "value": "error",
       "reason": "Existing scoped contract documented in EXCEPTIONS.md; preserve production checks outside this scope.",
-      "owner": "@gburtini",
+      "owner": "repository-maintainers",
       "tracking": "docs/adr/0001-enforcement-model.md",
       "evidence": "docs/ENFORCEMENT-MANIFEST.md"
     },
@@ -438,7 +438,7 @@
         }
       ],
       "reason": "Existing scoped contract documented in EXCEPTIONS.md; preserve production checks outside this scope.",
-      "owner": "@gburtini",
+      "owner": "repository-maintainers",
       "tracking": "docs/adr/0001-enforcement-model.md",
       "evidence": "docs/ENFORCEMENT-MANIFEST.md"
     },
@@ -455,7 +455,7 @@
         }
       ],
       "reason": "Existing scoped contract documented in EXCEPTIONS.md; preserve production checks outside this scope.",
-      "owner": "@gburtini",
+      "owner": "repository-maintainers",
       "tracking": "docs/adr/0001-enforcement-model.md",
       "evidence": "docs/ENFORCEMENT-MANIFEST.md"
     },
@@ -465,7 +465,7 @@
       "scope": ["**/*.test.*", "**/*.spec.*", "test/**", "tests/**"],
       "value": ["error", 80],
       "reason": "Existing scoped contract documented in EXCEPTIONS.md; preserve production checks outside this scope.",
-      "owner": "@gburtini",
+      "owner": "repository-maintainers",
       "tracking": "docs/adr/0001-enforcement-model.md",
       "evidence": "docs/ENFORCEMENT-MANIFEST.md"
     },
@@ -475,7 +475,7 @@
       "scope": ["**/*.test.*", "**/*.spec.*", "test/**", "tests/**"],
       "value": "off",
       "reason": "Existing scoped contract documented in EXCEPTIONS.md; preserve production checks outside this scope.",
-      "owner": "@gburtini",
+      "owner": "repository-maintainers",
       "tracking": "docs/adr/0001-enforcement-model.md",
       "evidence": "docs/ENFORCEMENT-MANIFEST.md"
     },
@@ -485,7 +485,7 @@
       "scope": ["**/*.test.*", "**/*.spec.*", "test/**", "tests/**"],
       "value": "off",
       "reason": "Existing scoped contract documented in EXCEPTIONS.md; preserve production checks outside this scope.",
-      "owner": "@gburtini",
+      "owner": "repository-maintainers",
       "tracking": "docs/adr/0001-enforcement-model.md",
       "evidence": "docs/ENFORCEMENT-MANIFEST.md"
     },
@@ -495,7 +495,7 @@
       "scope": ["**/*.test.*", "**/*.spec.*", "test/**", "tests/**"],
       "value": "off",
       "reason": "Existing scoped contract documented in EXCEPTIONS.md; preserve production checks outside this scope.",
-      "owner": "@gburtini",
+      "owner": "repository-maintainers",
       "tracking": "docs/adr/0001-enforcement-model.md",
       "evidence": "docs/ENFORCEMENT-MANIFEST.md"
     },
@@ -505,7 +505,7 @@
       "scope": ["**/test-setup.*"],
       "value": "off",
       "reason": "Existing scoped contract documented in EXCEPTIONS.md; preserve production checks outside this scope.",
-      "owner": "@gburtini",
+      "owner": "repository-maintainers",
       "tracking": "docs/adr/0001-enforcement-model.md",
       "evidence": "docs/ENFORCEMENT-MANIFEST.md"
     },
@@ -515,7 +515,7 @@
       "scope": ["**/test-setup.*"],
       "value": "off",
       "reason": "Existing scoped contract documented in EXCEPTIONS.md; preserve production checks outside this scope.",
-      "owner": "@gburtini",
+      "owner": "repository-maintainers",
       "tracking": "docs/adr/0001-enforcement-model.md",
       "evidence": "docs/ENFORCEMENT-MANIFEST.md"
     },
@@ -525,7 +525,7 @@
       "scope": ["**/test-setup.*"],
       "value": "off",
       "reason": "Existing scoped contract documented in EXCEPTIONS.md; preserve production checks outside this scope.",
-      "owner": "@gburtini",
+      "owner": "repository-maintainers",
       "tracking": "docs/adr/0001-enforcement-model.md",
       "evidence": "docs/ENFORCEMENT-MANIFEST.md"
     },
@@ -535,7 +535,7 @@
       "scope": ["**/test-setup.*"],
       "value": "off",
       "reason": "Existing scoped contract documented in EXCEPTIONS.md; preserve production checks outside this scope.",
-      "owner": "@gburtini",
+      "owner": "repository-maintainers",
       "tracking": "docs/adr/0001-enforcement-model.md",
       "evidence": "docs/ENFORCEMENT-MANIFEST.md"
     },
@@ -545,7 +545,7 @@
       "scope": ["**/e2e/**"],
       "value": "off",
       "reason": "Existing scoped contract documented in EXCEPTIONS.md; preserve production checks outside this scope.",
-      "owner": "@gburtini",
+      "owner": "repository-maintainers",
       "tracking": "docs/adr/0001-enforcement-model.md",
       "evidence": "docs/ENFORCEMENT-MANIFEST.md"
     },
@@ -555,7 +555,7 @@
       "scope": ["packages/core/src/api/router.ts"],
       "value": "off",
       "reason": "Existing scoped contract documented in EXCEPTIONS.md; preserve production checks outside this scope.",
-      "owner": "@gburtini",
+      "owner": "repository-maintainers",
       "tracking": "docs/adr/0001-enforcement-model.md",
       "evidence": "docs/ENFORCEMENT-MANIFEST.md"
     },
@@ -565,7 +565,7 @@
       "scope": ["packages/core/src/api/router.ts"],
       "value": "off",
       "reason": "Existing scoped contract documented in EXCEPTIONS.md; preserve production checks outside this scope.",
-      "owner": "@gburtini",
+      "owner": "repository-maintainers",
       "tracking": "docs/adr/0001-enforcement-model.md",
       "evidence": "docs/ENFORCEMENT-MANIFEST.md"
     },
@@ -575,7 +575,7 @@
       "scope": ["packages/db/src/query-capture.ts"],
       "value": "off",
       "reason": "Existing scoped contract documented in EXCEPTIONS.md; preserve production checks outside this scope.",
-      "owner": "@gburtini",
+      "owner": "repository-maintainers",
       "tracking": "docs/adr/0001-enforcement-model.md",
       "evidence": "docs/ENFORCEMENT-MANIFEST.md"
     },
@@ -585,7 +585,7 @@
       "scope": ["packages/db/src/query-capture.ts"],
       "value": "off",
       "reason": "Existing scoped contract documented in EXCEPTIONS.md; preserve production checks outside this scope.",
-      "owner": "@gburtini",
+      "owner": "repository-maintainers",
       "tracking": "docs/adr/0001-enforcement-model.md",
       "evidence": "docs/ENFORCEMENT-MANIFEST.md"
     },
@@ -595,7 +595,7 @@
       "scope": ["packages/db/src/query-capture.ts"],
       "value": "off",
       "reason": "Existing scoped contract documented in EXCEPTIONS.md; preserve production checks outside this scope.",
-      "owner": "@gburtini",
+      "owner": "repository-maintainers",
       "tracking": "docs/adr/0001-enforcement-model.md",
       "evidence": "docs/ENFORCEMENT-MANIFEST.md"
     },
@@ -605,7 +605,7 @@
       "scope": ["packages/core/src/telemetry-node.ts"],
       "value": "off",
       "reason": "Existing scoped contract documented in EXCEPTIONS.md; preserve production checks outside this scope.",
-      "owner": "@gburtini",
+      "owner": "repository-maintainers",
       "tracking": "docs/adr/0001-enforcement-model.md",
       "evidence": "docs/ENFORCEMENT-MANIFEST.md"
     },
@@ -625,7 +625,7 @@
         }
       ],
       "reason": "Existing scoped contract documented in EXCEPTIONS.md; preserve production checks outside this scope.",
-      "owner": "@gburtini",
+      "owner": "repository-maintainers",
       "tracking": "docs/adr/0001-enforcement-model.md",
       "evidence": "docs/ENFORCEMENT-MANIFEST.md"
     },
@@ -635,7 +635,7 @@
       "scope": ["**"],
       "value": "dist",
       "reason": "Dependency or generated output only; production source must not use these paths.",
-      "owner": "@gburtini",
+      "owner": "repository-maintainers",
       "tracking": "docs/adr/0001-enforcement-model.md",
       "evidence": "docs/ENFORCEMENT-MANIFEST.md"
     },
@@ -645,7 +645,7 @@
       "scope": ["**"],
       "value": "coverage",
       "reason": "Dependency or generated output only; production source must not use these paths.",
-      "owner": "@gburtini",
+      "owner": "repository-maintainers",
       "tracking": "docs/adr/0001-enforcement-model.md",
       "evidence": "docs/ENFORCEMENT-MANIFEST.md"
     },
@@ -655,7 +655,7 @@
       "scope": ["**"],
       "value": "node_modules",
       "reason": "Dependency or generated output only; production source must not use these paths.",
-      "owner": "@gburtini",
+      "owner": "repository-maintainers",
       "tracking": "docs/adr/0001-enforcement-model.md",
       "evidence": "docs/ENFORCEMENT-MANIFEST.md"
     }
