@@ -21,8 +21,10 @@
   },
   "dependencies": {
     "@t3-oss/env-core": "0.13.11",
+    "@template/core": "workspace:*",
     "drizzle-orm": "0.45.2",
     "drizzle-zod": "0.8.3",
+    "effect": "3.22.2",
     "postgres": "3.4.9",
     "zod": "4.1.13"
   },

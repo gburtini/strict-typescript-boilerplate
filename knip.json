@@ -22,32 +22,38 @@
       "project": ["*.cjs"]
     },
     "apps/web": {
-      "entry": ["index.html", "src/env.ts"],
-      "project": ["src/**/*.{ts,tsx,css}"],
+      "entry": [
+        "index.html",
+        "src/env.ts",
+        "server/main.ts!",
+        "scripts/check-react-compiler.ts"
+      ],
+      "project": ["src/**/*.{ts,tsx,css}", "server/**/*.ts", "scripts/**/*.ts"],
       "ignoreDependencies": ["@template/ui", "@t3-oss/env-core", "zod"]
     },
     "packages/ui": {
-      "entry": ["src/components/ui/*.tsx"],
+      "entry": ["src/components/ui/*.tsx!"],
       "project": ["src/**/*.{ts,tsx}"]
     },
     "packages/core": {
       "entry": [
-        "src/index.ts",
-        "src/api/index.ts",
-        "src/api/contract.ts",
-        "src/api/router.ts",
-        "src/telemetry-node.ts"
+        "src/index.ts!",
+        "src/api/index.ts!",
+        "src/api/contract.ts!",
+        "src/api/router.ts!",
+        "src/telemetry-node.ts!"
       ],
       "project": ["src/**/*.ts"],
       "ignoreDependencies": ["@orpc/contract", "@orpc/server", "zod"]
     },
     "packages/db": {
       "entry": [
-        "src/index.ts",
+        "src/index.ts!",
         "drizzle.config.ts",
-        "src/tests/integration/**/*.integration.test.ts"
+        "src/tests/integration/**/*.integration.test.ts",
+        "src/tests/**/*.test.ts"
       ],
-      "project": ["src/**/*.ts"],
+      "project": ["src/**/*.ts!"],
       "ignoreDependencies": ["@t3-oss/env-core", "drizzle-zod", "zod"]
     }
   }
