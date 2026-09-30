@@ -19,6 +19,7 @@ minimumReleaseAgeExclude:
 # explicit freshness exception is deliberate: this is a compiler/toolchain
 # compatibility update, not a general dependency-age bypass.
 overrides:
+  brace-expansion@5.0.9: 5.0.12
   esbuild@0.18.20: 0.25.12
 
 # dependency-cruiser loads its compiler from its own package boundary. Keep
