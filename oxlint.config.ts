@@ -153,4 +153,5 @@ const reactQualityRules = Object.fromEntries(
     ],
   };
 
+export { config };
 export default config;

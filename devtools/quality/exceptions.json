@@ -1,0 +1,663 @@
+{
+  "schemaVersion": 1,
+  "exceptions": [
+    {
+      "kind": "rule",
+      "rule": "eslint/func-style",
+      "scope": ["**"],
+      "value": "off",
+      "reason": "Canonical declaration and framework conventions documented in EXCEPTIONS.md.",
+      "owner": "@gburtini",
+      "tracking": "docs/adr/0001-enforcement-model.md",
+      "evidence": "docs/ENFORCEMENT-MANIFEST.md"
+    },
+    {
+      "kind": "rule",
+      "rule": "eslint/no-magic-numbers",
+      "scope": ["**"],
+      "value": "off",
+      "reason": "Canonical declaration and framework conventions documented in EXCEPTIONS.md.",
+      "owner": "@gburtini",
+      "tracking": "docs/adr/0001-enforcement-model.md",
+      "evidence": "docs/ENFORCEMENT-MANIFEST.md"
+    },
+    {
+      "kind": "rule",
+      "rule": "eslint/one-var",
+      "scope": ["**"],
+      "value": "off",
+      "reason": "Canonical declaration and framework conventions documented in EXCEPTIONS.md.",
+      "owner": "@gburtini",
+      "tracking": "docs/adr/0001-enforcement-model.md",
+      "evidence": "docs/ENFORCEMENT-MANIFEST.md"
+    },
+    {
+      "kind": "rule",
+      "rule": "eslint/sort-imports",
+      "scope": ["**"],
+      "value": "off",
+      "reason": "Canonical declaration and framework conventions documented in EXCEPTIONS.md.",
+      "owner": "@gburtini",
+      "tracking": "docs/adr/0001-enforcement-model.md",
+      "evidence": "docs/ENFORCEMENT-MANIFEST.md"
+    },
+    {
+      "kind": "rule",
+      "rule": "eslint/sort-vars",
+      "scope": ["**"],
+      "value": "off",
+      "reason": "Canonical declaration and framework conventions documented in EXCEPTIONS.md.",
+      "owner": "@gburtini",
+      "tracking": "docs/adr/0001-enforcement-model.md",
+      "evidence": "docs/ENFORCEMENT-MANIFEST.md"
+    },
+    {
+      "kind": "rule",
+      "rule": "eslint/sort-keys",
+      "scope": ["**"],
+      "value": "off",
+      "reason": "Canonical declaration and framework conventions documented in EXCEPTIONS.md.",
+      "owner": "@gburtini",
+      "tracking": "docs/adr/0001-enforcement-model.md",
+      "evidence": "docs/ENFORCEMENT-MANIFEST.md"
+    },
+    {
+      "kind": "rule",
+      "rule": "import/no-relative-parent-imports",
+      "scope": ["**"],
+      "value": "off",
+      "reason": "Canonical declaration and framework conventions documented in EXCEPTIONS.md.",
+      "owner": "@gburtini",
+      "tracking": "docs/adr/0001-enforcement-model.md",
+      "evidence": "docs/ENFORCEMENT-MANIFEST.md"
+    },
+    {
+      "kind": "rule",
+      "rule": "import/no-named-export",
+      "scope": ["**"],
+      "value": "off",
+      "reason": "Canonical declaration and framework conventions documented in EXCEPTIONS.md.",
+      "owner": "@gburtini",
+      "tracking": "docs/adr/0001-enforcement-model.md",
+      "evidence": "docs/ENFORCEMENT-MANIFEST.md"
+    },
+    {
+      "kind": "rule",
+      "rule": "import/prefer-default-export",
+      "scope": ["**"],
+      "value": "off",
+      "reason": "Canonical declaration and framework conventions documented in EXCEPTIONS.md.",
+      "owner": "@gburtini",
+      "tracking": "docs/adr/0001-enforcement-model.md",
+      "evidence": "docs/ENFORCEMENT-MANIFEST.md"
+    },
+    {
+      "kind": "rule",
+      "rule": "react/exhaustive-deps",
+      "scope": ["**"],
+      "value": "off",
+      "reason": "Canonical declaration and framework conventions documented in EXCEPTIONS.md.",
+      "owner": "@gburtini",
+      "tracking": "docs/adr/0001-enforcement-model.md",
+      "evidence": "docs/ENFORCEMENT-MANIFEST.md"
+    },
+    {
+      "kind": "rule",
+      "rule": "react/react-in-jsx-scope",
+      "scope": ["**"],
+      "value": "off",
+      "reason": "Canonical declaration and framework conventions documented in EXCEPTIONS.md.",
+      "owner": "@gburtini",
+      "tracking": "docs/adr/0001-enforcement-model.md",
+      "evidence": "docs/ENFORCEMENT-MANIFEST.md"
+    },
+    {
+      "kind": "rule",
+      "rule": "react/forbid-component-props",
+      "scope": ["**"],
+      "value": "off",
+      "reason": "Canonical declaration and framework conventions documented in EXCEPTIONS.md.",
+      "owner": "@gburtini",
+      "tracking": "docs/adr/0001-enforcement-model.md",
+      "evidence": "docs/ENFORCEMENT-MANIFEST.md"
+    },
+    {
+      "kind": "rule",
+      "rule": "react/jsx-filename-extension",
+      "scope": ["**"],
+      "value": "off",
+      "reason": "Canonical declaration and framework conventions documented in EXCEPTIONS.md.",
+      "owner": "@gburtini",
+      "tracking": "docs/adr/0001-enforcement-model.md",
+      "evidence": "docs/ENFORCEMENT-MANIFEST.md"
+    },
+    {
+      "kind": "rule",
+      "rule": "react/jsx-no-literals",
+      "scope": ["**"],
+      "value": "off",
+      "reason": "Canonical declaration and framework conventions documented in EXCEPTIONS.md.",
+      "owner": "@gburtini",
+      "tracking": "docs/adr/0001-enforcement-model.md",
+      "evidence": "docs/ENFORCEMENT-MANIFEST.md"
+    },
+    {
+      "kind": "rule",
+      "rule": "react/jsx-max-depth",
+      "scope": ["**"],
+      "value": "off",
+      "reason": "Canonical declaration and framework conventions documented in EXCEPTIONS.md.",
+      "owner": "@gburtini",
+      "tracking": "docs/adr/0001-enforcement-model.md",
+      "evidence": "docs/ENFORCEMENT-MANIFEST.md"
+    },
+    {
+      "kind": "rule",
+      "rule": "react/jsx-props-no-spreading",
+      "scope": ["**"],
+      "value": "off",
+      "reason": "Canonical declaration and framework conventions documented in EXCEPTIONS.md.",
+      "owner": "@gburtini",
+      "tracking": "docs/adr/0001-enforcement-model.md",
+      "evidence": "docs/ENFORCEMENT-MANIFEST.md"
+    },
+    {
+      "kind": "rule",
+      "rule": "typescript/prefer-readonly-parameter-types",
+      "scope": ["**"],
+      "value": "off",
+      "reason": "Canonical declaration and framework conventions documented in EXCEPTIONS.md.",
+      "owner": "@gburtini",
+      "tracking": "docs/adr/0001-enforcement-model.md",
+      "evidence": "docs/ENFORCEMENT-MANIFEST.md"
+    },
+    {
+      "kind": "rule",
+      "rule": "vitest/no-importing-vitest-globals",
+      "scope": ["**"],
+      "value": "off",
+      "reason": "Canonical declaration and framework conventions documented in EXCEPTIONS.md.",
+      "owner": "@gburtini",
+      "tracking": "docs/adr/0001-enforcement-model.md",
+      "evidence": "docs/ENFORCEMENT-MANIFEST.md"
+    },
+    {
+      "kind": "rule",
+      "rule": "vitest/require-test-timeout",
+      "scope": ["**"],
+      "value": "off",
+      "reason": "Canonical declaration and framework conventions documented in EXCEPTIONS.md.",
+      "owner": "@gburtini",
+      "tracking": "docs/adr/0001-enforcement-model.md",
+      "evidence": "docs/ENFORCEMENT-MANIFEST.md"
+    },
+    {
+      "kind": "rule",
+      "rule": "@rikalabs/no-unlisted-external-imports",
+      "scope": ["**"],
+      "value": "off",
+      "reason": "Canonical declaration and framework conventions documented in EXCEPTIONS.md.",
+      "owner": "@gburtini",
+      "tracking": "docs/adr/0001-enforcement-model.md",
+      "evidence": "docs/ENFORCEMENT-MANIFEST.md"
+    },
+    {
+      "kind": "rule",
+      "rule": "@rikalabs/no-generic-module-names",
+      "scope": ["**"],
+      "value": "off",
+      "reason": "Canonical declaration and framework conventions documented in EXCEPTIONS.md.",
+      "owner": "@gburtini",
+      "tracking": "docs/adr/0001-enforcement-model.md",
+      "evidence": "docs/ENFORCEMENT-MANIFEST.md"
+    },
+    {
+      "kind": "rule",
+      "rule": "@rikalabs/no-placeholder-implementation",
+      "scope": ["**"],
+      "value": "off",
+      "reason": "Canonical declaration and framework conventions documented in EXCEPTIONS.md.",
+      "owner": "@gburtini",
+      "tracking": "docs/adr/0001-enforcement-model.md",
+      "evidence": "docs/ENFORCEMENT-MANIFEST.md"
+    },
+    {
+      "kind": "rule",
+      "rule": "vitest/require-hook",
+      "scope": ["**"],
+      "value": "off",
+      "reason": "Canonical declaration and framework conventions documented in EXCEPTIONS.md.",
+      "owner": "@gburtini",
+      "tracking": "docs/adr/0001-enforcement-model.md",
+      "evidence": "docs/ENFORCEMENT-MANIFEST.md"
+    },
+    {
+      "kind": "rule",
+      "rule": "react/rules-of-hooks",
+      "scope": ["**"],
+      "value": "off",
+      "reason": "Canonical declaration and framework conventions documented in EXCEPTIONS.md.",
+      "owner": "@gburtini",
+      "tracking": "docs/adr/0001-enforcement-model.md",
+      "evidence": "docs/ENFORCEMENT-MANIFEST.md"
+    },
+    {
+      "kind": "rule",
+      "rule": "react-quality/jsx-props-no-spreading",
+      "scope": ["**"],
+      "value": "off",
+      "reason": "Canonical declaration and framework conventions documented in EXCEPTIONS.md.",
+      "owner": "@gburtini",
+      "tracking": "docs/adr/0001-enforcement-model.md",
+      "evidence": "docs/ENFORCEMENT-MANIFEST.md"
+    },
+    {
+      "kind": "rule",
+      "rule": "react-quality/react-in-jsx-scope",
+      "scope": ["**"],
+      "value": "off",
+      "reason": "Canonical declaration and framework conventions documented in EXCEPTIONS.md.",
+      "owner": "@gburtini",
+      "tracking": "docs/adr/0001-enforcement-model.md",
+      "evidence": "docs/ENFORCEMENT-MANIFEST.md"
+    },
+    {
+      "kind": "rule",
+      "rule": "unicorn/max-nested-calls",
+      "scope": ["**"],
+      "value": "off",
+      "reason": "Canonical declaration and framework conventions documented in EXCEPTIONS.md.",
+      "owner": "@gburtini",
+      "tracking": "docs/adr/0001-enforcement-model.md",
+      "evidence": "docs/ENFORCEMENT-MANIFEST.md"
+    },
+    {
+      "kind": "rule",
+      "rule": "react-quality/forbid-component-props",
+      "scope": ["packages/ui/**"],
+      "value": "off",
+      "reason": "Existing scoped contract documented in EXCEPTIONS.md; preserve production checks outside this scope.",
+      "owner": "@gburtini",
+      "tracking": "docs/adr/0001-enforcement-model.md",
+      "evidence": "docs/ENFORCEMENT-MANIFEST.md"
+    },
+    {
+      "kind": "rule",
+      "rule": "react-quality/jsx-props-no-spreading",
+      "scope": ["packages/ui/**"],
+      "value": "off",
+      "reason": "Existing scoped contract documented in EXCEPTIONS.md; preserve production checks outside this scope.",
+      "owner": "@gburtini",
+      "tracking": "docs/adr/0001-enforcement-model.md",
+      "evidence": "docs/ENFORCEMENT-MANIFEST.md"
+    },
+    {
+      "kind": "rule",
+      "rule": "react-quality/react-in-jsx-scope",
+      "scope": ["packages/ui/**"],
+      "value": "off",
+      "reason": "Existing scoped contract documented in EXCEPTIONS.md; preserve production checks outside this scope.",
+      "owner": "@gburtini",
+      "tracking": "docs/adr/0001-enforcement-model.md",
+      "evidence": "docs/ENFORCEMENT-MANIFEST.md"
+    },
+    {
+      "kind": "rule",
+      "rule": "react/button-has-type",
+      "scope": ["packages/ui/**"],
+      "value": "off",
+      "reason": "Existing scoped contract documented in EXCEPTIONS.md; preserve production checks outside this scope.",
+      "owner": "@gburtini",
+      "tracking": "docs/adr/0001-enforcement-model.md",
+      "evidence": "docs/ENFORCEMENT-MANIFEST.md"
+    },
+    {
+      "kind": "rule",
+      "rule": "shadcn/no-restyle",
+      "scope": ["packages/ui/**"],
+      "value": "off",
+      "reason": "Existing scoped contract documented in EXCEPTIONS.md; preserve production checks outside this scope.",
+      "owner": "@gburtini",
+      "tracking": "docs/adr/0001-enforcement-model.md",
+      "evidence": "docs/ENFORCEMENT-MANIFEST.md"
+    },
+    {
+      "kind": "rule",
+      "rule": "jsx-a11y/label-has-associated-control",
+      "scope": ["packages/ui/src/components/ui/label.tsx"],
+      "value": "off",
+      "reason": "Existing scoped contract documented in EXCEPTIONS.md; preserve production checks outside this scope.",
+      "owner": "@gburtini",
+      "tracking": "docs/adr/0001-enforcement-model.md",
+      "evidence": "docs/ENFORCEMENT-MANIFEST.md"
+    },
+    {
+      "kind": "rule",
+      "rule": "eslint/no-restricted-imports",
+      "scope": ["packages/db/src/**"],
+      "value": "off",
+      "reason": "Existing scoped contract documented in EXCEPTIONS.md; preserve production checks outside this scope.",
+      "owner": "@gburtini",
+      "tracking": "docs/adr/0001-enforcement-model.md",
+      "evidence": "docs/ENFORCEMENT-MANIFEST.md"
+    },
+    {
+      "kind": "rule",
+      "rule": "import/group-exports",
+      "scope": ["packages/db/src/**"],
+      "value": "off",
+      "reason": "Existing scoped contract documented in EXCEPTIONS.md; preserve production checks outside this scope.",
+      "owner": "@gburtini",
+      "tracking": "docs/adr/0001-enforcement-model.md",
+      "evidence": "docs/ENFORCEMENT-MANIFEST.md"
+    },
+    {
+      "kind": "rule",
+      "rule": "import/no-namespace",
+      "scope": ["packages/db/src/**"],
+      "value": "off",
+      "reason": "Existing scoped contract documented in EXCEPTIONS.md; preserve production checks outside this scope.",
+      "owner": "@gburtini",
+      "tracking": "docs/adr/0001-enforcement-model.md",
+      "evidence": "docs/ENFORCEMENT-MANIFEST.md"
+    },
+    {
+      "kind": "rule",
+      "rule": "eslint/no-restricted-properties",
+      "scope": [
+        "**/src/db/migrations/**",
+        "**/src/db/internal/**",
+        "packages/db/drizzle/**"
+      ],
+      "value": "off",
+      "reason": "Existing scoped contract documented in EXCEPTIONS.md; preserve production checks outside this scope.",
+      "owner": "@gburtini",
+      "tracking": "docs/adr/0001-enforcement-model.md",
+      "evidence": "docs/ENFORCEMENT-MANIFEST.md"
+    },
+    {
+      "kind": "rule",
+      "rule": "import/no-default-export",
+      "scope": ["**/*.config.*"],
+      "value": "off",
+      "reason": "Existing scoped contract documented in EXCEPTIONS.md; preserve production checks outside this scope.",
+      "owner": "@gburtini",
+      "tracking": "docs/adr/0001-enforcement-model.md",
+      "evidence": "docs/ENFORCEMENT-MANIFEST.md"
+    },
+    {
+      "kind": "rule",
+      "rule": "vitest/prefer-strict-boolean-matchers",
+      "scope": ["**/*.test.*", "**/*.spec.*", "test/**", "tests/**"],
+      "value": "error",
+      "reason": "Existing scoped contract documented in EXCEPTIONS.md; preserve production checks outside this scope.",
+      "owner": "@gburtini",
+      "tracking": "docs/adr/0001-enforcement-model.md",
+      "evidence": "docs/ENFORCEMENT-MANIFEST.md"
+    },
+    {
+      "kind": "rule",
+      "rule": "vitest/prefer-to-be-falsy",
+      "scope": ["**/*.test.*", "**/*.spec.*", "test/**", "tests/**"],
+      "value": "off",
+      "reason": "Existing scoped contract documented in EXCEPTIONS.md; preserve production checks outside this scope.",
+      "owner": "@gburtini",
+      "tracking": "docs/adr/0001-enforcement-model.md",
+      "evidence": "docs/ENFORCEMENT-MANIFEST.md"
+    },
+    {
+      "kind": "rule",
+      "rule": "vitest/prefer-to-be-truthy",
+      "scope": ["**/*.test.*", "**/*.spec.*", "test/**", "tests/**"],
+      "value": "off",
+      "reason": "Existing scoped contract documented in EXCEPTIONS.md; preserve production checks outside this scope.",
+      "owner": "@gburtini",
+      "tracking": "docs/adr/0001-enforcement-model.md",
+      "evidence": "docs/ENFORCEMENT-MANIFEST.md"
+    },
+    {
+      "kind": "rule",
+      "rule": "vitest/require-hook",
+      "scope": ["**/*.test.*", "**/*.spec.*", "test/**", "tests/**"],
+      "value": "error",
+      "reason": "Existing scoped contract documented in EXCEPTIONS.md; preserve production checks outside this scope.",
+      "owner": "@gburtini",
+      "tracking": "docs/adr/0001-enforcement-model.md",
+      "evidence": "docs/ENFORCEMENT-MANIFEST.md"
+    },
+    {
+      "kind": "rule",
+      "rule": "eslint/max-lines",
+      "scope": ["**/*.test.*", "**/*.spec.*", "test/**", "tests/**"],
+      "value": [
+        "error",
+        {
+          "max": 1000,
+          "skipBlankLines": true,
+          "skipComments": true
+        }
+      ],
+      "reason": "Existing scoped contract documented in EXCEPTIONS.md; preserve production checks outside this scope.",
+      "owner": "@gburtini",
+      "tracking": "docs/adr/0001-enforcement-model.md",
+      "evidence": "docs/ENFORCEMENT-MANIFEST.md"
+    },
+    {
+      "kind": "rule",
+      "rule": "eslint/max-lines-per-function",
+      "scope": ["**/*.test.*", "**/*.spec.*", "test/**", "tests/**"],
+      "value": [
+        "error",
+        {
+          "max": 120,
+          "skipBlankLines": true,
+          "skipComments": true
+        }
+      ],
+      "reason": "Existing scoped contract documented in EXCEPTIONS.md; preserve production checks outside this scope.",
+      "owner": "@gburtini",
+      "tracking": "docs/adr/0001-enforcement-model.md",
+      "evidence": "docs/ENFORCEMENT-MANIFEST.md"
+    },
+    {
+      "kind": "rule",
+      "rule": "eslint/max-statements",
+      "scope": ["**/*.test.*", "**/*.spec.*", "test/**", "tests/**"],
+      "value": ["error", 80],
+      "reason": "Existing scoped contract documented in EXCEPTIONS.md; preserve production checks outside this scope.",
+      "owner": "@gburtini",
+      "tracking": "docs/adr/0001-enforcement-model.md",
+      "evidence": "docs/ENFORCEMENT-MANIFEST.md"
+    },
+    {
+      "kind": "rule",
+      "rule": "react/no-multi-comp",
+      "scope": ["**/*.test.*", "**/*.spec.*", "test/**", "tests/**"],
+      "value": "off",
+      "reason": "Existing scoped contract documented in EXCEPTIONS.md; preserve production checks outside this scope.",
+      "owner": "@gburtini",
+      "tracking": "docs/adr/0001-enforcement-model.md",
+      "evidence": "docs/ENFORCEMENT-MANIFEST.md"
+    },
+    {
+      "kind": "rule",
+      "rule": "react-quality/no-giant-component",
+      "scope": ["**/*.test.*", "**/*.spec.*", "test/**", "tests/**"],
+      "value": "off",
+      "reason": "Existing scoped contract documented in EXCEPTIONS.md; preserve production checks outside this scope.",
+      "owner": "@gburtini",
+      "tracking": "docs/adr/0001-enforcement-model.md",
+      "evidence": "docs/ENFORCEMENT-MANIFEST.md"
+    },
+    {
+      "kind": "rule",
+      "rule": "react-quality/no-multi-component-file",
+      "scope": ["**/*.test.*", "**/*.spec.*", "test/**", "tests/**"],
+      "value": "off",
+      "reason": "Existing scoped contract documented in EXCEPTIONS.md; preserve production checks outside this scope.",
+      "owner": "@gburtini",
+      "tracking": "docs/adr/0001-enforcement-model.md",
+      "evidence": "docs/ENFORCEMENT-MANIFEST.md"
+    },
+    {
+      "kind": "rule",
+      "rule": "eslint/require-await",
+      "scope": ["**/test-setup.*"],
+      "value": "off",
+      "reason": "Existing scoped contract documented in EXCEPTIONS.md; preserve production checks outside this scope.",
+      "owner": "@gburtini",
+      "tracking": "docs/adr/0001-enforcement-model.md",
+      "evidence": "docs/ENFORCEMENT-MANIFEST.md"
+    },
+    {
+      "kind": "rule",
+      "rule": "typescript/require-await",
+      "scope": ["**/test-setup.*"],
+      "value": "off",
+      "reason": "Existing scoped contract documented in EXCEPTIONS.md; preserve production checks outside this scope.",
+      "owner": "@gburtini",
+      "tracking": "docs/adr/0001-enforcement-model.md",
+      "evidence": "docs/ENFORCEMENT-MANIFEST.md"
+    },
+    {
+      "kind": "rule",
+      "rule": "vitest/no-hooks",
+      "scope": ["**/test-setup.*"],
+      "value": "off",
+      "reason": "Existing scoped contract documented in EXCEPTIONS.md; preserve production checks outside this scope.",
+      "owner": "@gburtini",
+      "tracking": "docs/adr/0001-enforcement-model.md",
+      "evidence": "docs/ENFORCEMENT-MANIFEST.md"
+    },
+    {
+      "kind": "rule",
+      "rule": "vitest/require-top-level-describe",
+      "scope": ["**/test-setup.*"],
+      "value": "off",
+      "reason": "Existing scoped contract documented in EXCEPTIONS.md; preserve production checks outside this scope.",
+      "owner": "@gburtini",
+      "tracking": "docs/adr/0001-enforcement-model.md",
+      "evidence": "docs/ENFORCEMENT-MANIFEST.md"
+    },
+    {
+      "kind": "rule",
+      "rule": "vitest/prefer-importing-vitest-globals",
+      "scope": ["**/e2e/**"],
+      "value": "off",
+      "reason": "Existing scoped contract documented in EXCEPTIONS.md; preserve production checks outside this scope.",
+      "owner": "@gburtini",
+      "tracking": "docs/adr/0001-enforcement-model.md",
+      "evidence": "docs/ENFORCEMENT-MANIFEST.md"
+    },
+    {
+      "kind": "rule",
+      "rule": "@rikalabs/effect-no-async-await",
+      "scope": ["packages/core/src/api/router.ts"],
+      "value": "off",
+      "reason": "Existing scoped contract documented in EXCEPTIONS.md; preserve production checks outside this scope.",
+      "owner": "@gburtini",
+      "tracking": "docs/adr/0001-enforcement-model.md",
+      "evidence": "docs/ENFORCEMENT-MANIFEST.md"
+    },
+    {
+      "kind": "rule",
+      "rule": "@rikalabs/effect-no-terminal-runners",
+      "scope": ["packages/core/src/api/router.ts"],
+      "value": "off",
+      "reason": "Existing scoped contract documented in EXCEPTIONS.md; preserve production checks outside this scope.",
+      "owner": "@gburtini",
+      "tracking": "docs/adr/0001-enforcement-model.md",
+      "evidence": "docs/ENFORCEMENT-MANIFEST.md"
+    },
+    {
+      "kind": "rule",
+      "rule": "@rikalabs/no-trivial-runtime-guard-helpers",
+      "scope": ["packages/db/src/query-capture.ts"],
+      "value": "off",
+      "reason": "Existing scoped contract documented in EXCEPTIONS.md; preserve production checks outside this scope.",
+      "owner": "@gburtini",
+      "tracking": "docs/adr/0001-enforcement-model.md",
+      "evidence": "docs/ENFORCEMENT-MANIFEST.md"
+    },
+    {
+      "kind": "rule",
+      "rule": "import/no-nodejs-modules",
+      "scope": ["packages/db/src/query-capture.ts"],
+      "value": "off",
+      "reason": "Existing scoped contract documented in EXCEPTIONS.md; preserve production checks outside this scope.",
+      "owner": "@gburtini",
+      "tracking": "docs/adr/0001-enforcement-model.md",
+      "evidence": "docs/ENFORCEMENT-MANIFEST.md"
+    },
+    {
+      "kind": "rule",
+      "rule": "unicorn/no-null",
+      "scope": ["packages/db/src/query-capture.ts"],
+      "value": "off",
+      "reason": "Existing scoped contract documented in EXCEPTIONS.md; preserve production checks outside this scope.",
+      "owner": "@gburtini",
+      "tracking": "docs/adr/0001-enforcement-model.md",
+      "evidence": "docs/ENFORCEMENT-MANIFEST.md"
+    },
+    {
+      "kind": "rule",
+      "rule": "@rikalabs/effect-no-layer-in-leaf-modules",
+      "scope": ["packages/core/src/telemetry-node.ts"],
+      "value": "off",
+      "reason": "Existing scoped contract documented in EXCEPTIONS.md; preserve production checks outside this scope.",
+      "owner": "@gburtini",
+      "tracking": "docs/adr/0001-enforcement-model.md",
+      "evidence": "docs/ENFORCEMENT-MANIFEST.md"
+    },
+    {
+      "kind": "rule",
+      "rule": "eslint/no-restricted-imports",
+      "scope": ["apps/**", "packages/core/**", "packages/ui/**"],
+      "value": [
+        "error",
+        {
+          "message": "Database implementation belongs in @template/db adapters; inject a repository or port instead.",
+          "patterns": ["drizzle-orm", "drizzle-orm/**"]
+        },
+        {
+          "message": "The Postgres driver belongs in @template/db; inject a database port instead.",
+          "name": "postgres"
+        }
+      ],
+      "reason": "Existing scoped contract documented in EXCEPTIONS.md; preserve production checks outside this scope.",
+      "owner": "@gburtini",
+      "tracking": "docs/adr/0001-enforcement-model.md",
+      "evidence": "docs/ENFORCEMENT-MANIFEST.md"
+    },
+    {
+      "kind": "ignore",
+      "rule": "dist",
+      "scope": ["**"],
+      "value": "dist",
+      "reason": "Dependency or generated output only; production source must not use these paths.",
+      "owner": "@gburtini",
+      "tracking": "docs/adr/0001-enforcement-model.md",
+      "evidence": "docs/ENFORCEMENT-MANIFEST.md"
+    },
+    {
+      "kind": "ignore",
+      "rule": "coverage",
+      "scope": ["**"],
+      "value": "coverage",
+      "reason": "Dependency or generated output only; production source must not use these paths.",
+      "owner": "@gburtini",
+      "tracking": "docs/adr/0001-enforcement-model.md",
+      "evidence": "docs/ENFORCEMENT-MANIFEST.md"
+    },
+    {
+      "kind": "ignore",
+      "rule": "node_modules",
+      "scope": ["**"],
+      "value": "node_modules",
+      "reason": "Dependency or generated output only; production source must not use these paths.",
+      "owner": "@gburtini",
+      "tracking": "docs/adr/0001-enforcement-model.md",
+      "evidence": "docs/ENFORCEMENT-MANIFEST.md"
+    }
+  ]
+}

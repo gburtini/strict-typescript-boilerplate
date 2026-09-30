@@ -8,7 +8,7 @@
     "architecture:fixtures": "node --experimental-strip-types devtools/scripts/repository/check-architecture-fixtures.ts",
     "ci:policy": "node --experimental-strip-types devtools/scripts/repository/check-ci-policy.ts",
     "build": "pnpm --filter @template/web build",
-    "check": "pnpm check:runtime && pnpm toolchain:check && pnpm format:check && pnpm api:check && pnpm db:migrations:check && pnpm typecheck && pnpm lint && pnpm semantic:check && pnpm exceptions:check && pnpm enforcement:fixtures && pnpm architecture:fixtures && pnpm ci:policy && pnpm generated:check && pnpm test:evidence && pnpm enforcement:manifest:check && pnpm deadcode && pnpm deps && pnpm packages && pnpm test",
+    "check": "pnpm check:runtime && pnpm toolchain:check && pnpm format:check && pnpm api:check && pnpm db:migrations:check && pnpm typecheck && pnpm lint && pnpm semantic:check && pnpm exceptions:check && pnpm enforcement:fixtures && pnpm architecture:fixtures && pnpm ci:policy && pnpm governance:fixtures && pnpm generated:check && pnpm test:evidence && pnpm enforcement:manifest:check && pnpm deadcode && pnpm deps && pnpm packages && pnpm test",
     "check:all": "pnpm check && pnpm build && pnpm test:e2e",
     "check:runtime": "node --experimental-strip-types devtools/scripts/repository/check-runtime.ts",
     "db:check": "drizzle-kit check --config packages/db/drizzle.config.ts",
@@ -47,7 +47,8 @@
     "test:evidence": "node --experimental-strip-types devtools/scripts/repository/check-test-evidence.ts",
     "test:e2e": "pnpm --filter @template/web test:e2e",
     "toolchain:check": "node --experimental-strip-types devtools/scripts/repository/check-toolchain.ts",
-    "typecheck": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p devtools/tsconfig.json && tsc --noEmit -p apps/web/tsconfig.json && tsc --noEmit -p packages/ui/tsconfig.json && tsc --noEmit -p packages/core/tsconfig.json && tsc --noEmit -p packages/db/tsconfig.json"
+    "typecheck": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p devtools/tsconfig.json && tsc --noEmit -p apps/web/tsconfig.json && tsc --noEmit -p packages/ui/tsconfig.json && tsc --noEmit -p packages/core/tsconfig.json && tsc --noEmit -p packages/db/tsconfig.json",
+    "governance:fixtures": "node --experimental-strip-types devtools/scripts/repository/check-governance-fixtures.ts"
   },
   "devDependencies": {
     "@effect/tsgo": "0.45.0",
