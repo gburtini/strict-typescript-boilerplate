@@ -1,2 +1,2 @@
 export { apiContract, healthContract } from "./contract";
-export { apiRouter } from "./router";
+export { apiRouter, createApiRouter } from "./router";

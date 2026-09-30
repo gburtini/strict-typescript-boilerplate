@@ -19,3 +19,4 @@ export type {
 } from "./query-capture";
 export { insertUserSchema, selectUserSchema, users } from "./schema";
 export type { NewUser, User } from "./schema";
+export { createUserRepository } from "./adapters/user-repository";
