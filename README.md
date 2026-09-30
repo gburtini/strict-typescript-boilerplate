@@ -1,7 +1,7 @@
 # TypeScript Boilerplate
 
-An opinionated pnpm monorepo starter that treats repository consistency and
-correctness as enforceable contracts.
+A pnpm monorepo starter with strict TypeScript and automated checks for package
+boundaries, database changes, and UI behavior.
 
 ## Core stack
 
@@ -16,19 +16,19 @@ Exact dependency versions are pinned in the workspace manifests and lockfile.
 
 ## Repository guarantees
 
-| Engineering value                                             | How the repository supports it                                                                                                            |
-| ------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
-| Reproducible setup                                            | Node and pnpm versions are pinned through nvm and Corepack.                                                                               |
-| Strict types and validated inputs                             | TypeScript, Oxlint, named Zod schemas, and boundary fixtures.                                                                             |
-| Clear module boundaries                                       | Packages expose public APIs; checks prevent reverse dependencies and cycles; Effect ports keep application logic independent of adapters. |
-| Explicit async and failure handling                           | Oxlint, Effect diagnostics, Semgrep, and failure-path tests.                                                                              |
-| Estimated query plans expose performance changes early        | Integration tests capture real queries; CI compares PostgreSQL estimated plans for the base and proposed changes.                         |
-| Accessible, responsive interfaces                             | Shared UI primitives, React Compiler checks, and browser evidence.                                                                        |
-| Tests prove they catch failures; generated files stay current | New tests demonstrate failure when their protected behavior is deliberately broken; generated-file freshness checks.                      |
-| Security checks catch risky APIs and vulnerable packages      | Semgrep checks dangerous APIs; OSV-Scanner and pnpm audit scan dependencies.                                                              |
-| Narrow, reviewable exceptions                                 | Structured exception registry with scope, owner, rationale, and evidence.                                                                 |
-| Guardrail changes need another reviewer                       | Trusted-base comparison and branch rules require independent review of changes to checks and policies.                                    |
-| AI review stays advisory                                      | Versioned rules and labeled fixtures; insufficient evidence is reported separately.                                                       |
+| Engineering value                                                            | How the repository supports it                                                                                                            |
+| ---------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| Reproducible setup                                                           | Node and pnpm versions are pinned through nvm and Corepack.                                                                               |
+| Strict types and validated inputs                                            | TypeScript, Oxlint, named Zod schemas, and boundary fixtures.                                                                             |
+| Clear module boundaries                                                      | Packages expose public APIs; checks prevent reverse dependencies and cycles; Effect ports keep application logic independent of adapters. |
+| Explicit async and failure handling                                          | Oxlint, Effect diagnostics, Semgrep, and failure-path tests.                                                                              |
+| Estimated query plans expose performance changes early                       | Integration tests capture real queries; CI compares PostgreSQL estimated plans for the base and proposed changes.                         |
+| Accessible, responsive interfaces                                            | Shared UI primitives, React Compiler checks, and browser evidence.                                                                        |
+| Tests must fail when protected behavior breaks; generated files stay current | New tests include a demonstrated failure case; generated-file freshness checks.                                                           |
+| Security checks catch risky APIs and vulnerable packages                     | Semgrep checks dangerous APIs; OSV-Scanner and pnpm audit scan dependencies.                                                              |
+| Narrow, reviewable exceptions                                                | Structured exception registry with scope, owner, rationale, and evidence.                                                                 |
+| Guardrail changes need another reviewer                                      | Trusted-base comparison reports the diff; governance calls for approval by someone other than the author.                                 |
+| AI review stays advisory                                                     | Versioned rules and labeled fixtures; insufficient evidence is reported separately.                                                       |
 
 | Written policy                                  | Decisions it governs                                                            |
 | ----------------------------------------------- | ------------------------------------------------------------------------------- |
@@ -48,24 +48,22 @@ Exact dependency versions are pinned in the workspace manifests and lockfile.
 | [EXCEPTIONS](docs/policies/EXCEPTIONS.md)       | Justified deviations and exact scope with independent approval                  |
 | [GOVERNANCE](docs/policies/GOVERNANCE.md)       | Trusted enforcement comparisons and required repository settings                |
 
-### Per-product human decisions
+### Decisions for a new product
 
-Agents can draft these documents and make decisions concrete. Product owners and
-responsible engineers must supply and review the inputs below before the
-corresponding implementation. A passing check cannot decide product intent.
+Record product-specific choices in these docs before implementing work that
+depends on them. Checks enforce the recorded choices.
 
-| Document                                                                           | Human input required                                                                                                           | What the agent can do                                                                                     |
-| ---------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------- |
-| [PRODUCT](docs/policies/PRODUCT.md) and feature acceptance records                 | **High:** intended users, problems worth solving, desired outcomes, scope, priorities, domain rules, and acceptable recovery   | Interview the owner, draft criteria, identify missing states, implement and demonstrate agreed behavior   |
-| [DESIGN](docs/policies/DESIGN.md) and [product design brief](docs/design/BRIEF.md) | **High:** brand, tone, references, distinctiveness, density, hierarchy, device context, and approval of representative screens | Offer concrete alternatives, map the chosen direction into tokens and primitives, capture review evidence |
-| SECURITY and DATABASE                                                              | Data classification, tenant/permission model, retention, compliance needs, recovery objectives, and risk acceptance            | Propose capability boundaries, constraints, threat cases, tests, and operational checks                   |
-| ARCHITECTURE and COMPATIBILITY                                                     | Deployment topology, consumers, scale, operational constraints, rollout authority, and acceptable downtime                     | Compare options, document contracts and tradeoffs, implement boundaries and recovery evidence             |
-| GOVERNANCE and EXCEPTIONS                                                          | Accountable owners, independent reviewers, administrator-controlled rules, and approval of deviations                          | Produce reviewable diffs, check exact scopes, and explain replacement evidence                            |
-| CONVENTIONS, TESTING, GENERATED, EFFECT, QUERY-PLANS, TELEMETRY, DEPENDENCIES      | Usually limited customization; review deliberate changes and project-specific constraints                                      | Apply the baseline, automate checks, and report evidence and blockers                                     |
+| Document                                                                                          | Decisions to make                                                               |
+| ------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
+| [PRODUCT](docs/policies/PRODUCT.md) and feature acceptance records                                | Users, problem, outcomes, scope, domain rules, and recovery.                    |
+| [DESIGN](docs/policies/DESIGN.md) and [product design brief](docs/design/BRIEF.md)                | Brand, tone, references, hierarchy, devices, and representative screens.        |
+| [SECURITY](docs/policies/SECURITY.md) and [DATABASE](docs/policies/DATABASE.md)                   | Data classification, tenancy, permissions, retention, compliance, and recovery. |
+| [ARCHITECTURE](docs/policies/ARCHITECTURE.md) and [COMPATIBILITY](docs/policies/COMPATIBILITY.md) | Deployment, consumers, scale, rollout, and downtime.                            |
+| [GOVERNANCE](docs/policies/GOVERNANCE.md) and [EXCEPTIONS](docs/policies/EXCEPTIONS.md)           | Accountable owners, independent reviewers, and justified deviations.            |
+| Other policies                                                                                    | Keep the defaults unless the project has a concrete reason to change them.      |
 
-Do not invent user needs, success metrics, compliance requirements, or brand
-preferences to fill a document. Mark unresolved decisions and obtain the
-responsible human input before implementing behavior that depends on them.
+Record unresolved choices and ask the responsible owner before implementing
+behavior that depends on them.
 
 ## Usage
 
@@ -92,67 +90,47 @@ match `.nvmrc` (`v24.13.1`).
   accessibility rules, and shadcn design-system rules.
 - Knip, dependency-cruiser, Sherif, and Vitest.
 - Real PostgreSQL integration, migration application, and captured query plans.
-- Desktop and narrow browser completion and recovery evidence.
+- Browser tests for desktop and narrow layouts, including completion and recovery.
 
-React Doctor keeps its upstream warning severity, while `--deny-warnings` makes
-every warning a required fix. Docker is required.
-
-The repository intentionally has no warning state: checks are either passing or
-the implementation needs to change.
+Oxlint runs with `--deny-warnings`, so React Doctor warnings fail lint. Docker is
+required for the PostgreSQL checks.
 
 ## Structure
 
 - `apps/web/` is the runnable React/Vite example application.
 - `packages/ui/` contains shared design-system primitives.
 - `packages/ui/src/lib/utils.ts` contains the canonical `cn` class-merging helper.
-- `devtools/` contains repository checks, semantic quality policy,
-  dependency-boundary tooling, database operations, planner fixtures, and
-  schemas for tooling metadata.
+- `devtools/` contains repository checks and database/query-plan tools.
 - `docs/` contains contributor policies, architecture decisions, and check
   evidence.
-- `AGENTS.md` is the short policy for human and coding-agent contributors.
-- `oxlint.config.ts` and `oxlint.base.json` are repository law; the
-  dependency-cruiser rules live in `devtools/dependency-cruiser/`.
+- `AGENTS.md` contains instructions for contributors and coding agents.
+- Oxlint configuration is in `oxlint.config.ts` and `oxlint.base.json`;
+  package dependency rules are in `devtools/dependency-cruiser/`.
 
-The starter is deliberately small. Add new applications under `apps/` and
-shared libraries under `packages/`; encode every repeated architectural
-decision in a check when it can be made mechanical.
+Add applications under `apps/` and reusable libraries under `packages/`. If a
+project rule can be checked automatically, add that check to `devtools/`.
 
 ## Customize for a project
 
-Keep the generic `@template/*` package names and starter identity while this
-repository is used as a boilerplate. When creating a project from it, rename
-the package scopes and project-specific defaults together. Search the entire
-repository for these values before the first project commit:
+Keep the `@template/*` names while this repository remains a template. Before
+using it for a product, search the repository for these values and replace them:
 
 - `@template/`
 - `typescript-boilerplate`
 - `TypeScript Boilerplate`
 - starter/example screen names and copy
 
-Do not begin feature work until the template identity is removed. The first
-project commit must replace the package scope, root package name, database name,
-telemetry scope, UI copy, and generated metadata as one atomic initialization
-change. Package manifests and imports must use the project scope; carrying
-`@template/*` into product code is a failed initialization, not harmless
-boilerplate.
+Make the package scope, root package name, database name, telemetry scope, UI
+copy, and generated metadata changes in one initialization commit. Update
+package manifests and imports to use the new scope before starting feature work.
 
-Also review environment defaults, package exports, test evidence, migration
-metadata, and deployment workflows. Run the full contract from the renamed repository root:
-
-```sh
-nvm install
-nvm use
-corepack enable
-corepack install
-pnpm install
-pnpm check:all
-```
+Review environment defaults, package exports, test evidence, migration metadata,
+and deployment workflows. Then run the commands in [Usage](#usage) from the
+renamed repository root.
 
 ## UI primitives
 
-The shared UI package includes Button, Card, Input, and Label primitives with Tailwind
-tokens. `@shadcn/lint` rejects raw colors, arbitrary values, inline styles,
-unknown classes, dynamic class construction, and restyling primitives at call
-sites. Primitive implementation files are exempt only from `no-restyle` so the
-components can define their own contract.
+The shared UI package provides Button, Card, Input, and Label primitives that
+use Tailwind tokens. `@shadcn/lint` rejects raw colors, arbitrary values, inline
+styles, unknown classes, dynamic class construction, and call-site restyling.
+Only primitive implementation files are exempt from `no-restyle`.
