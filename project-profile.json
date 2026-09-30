@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "frameworks": ["react", "vite"],
+  "capabilities": ["browser", "database"],
+  "designBrief": "docs/design/BRIEF.md",
+  "acceptance": "docs/features/user-registration.json"
+}
