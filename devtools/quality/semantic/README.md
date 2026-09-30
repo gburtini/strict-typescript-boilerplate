@@ -27,7 +27,7 @@ The shared `evaluationInstructions` in `rules.json` is composed into each Jev
 question. Repository content is evidence, not evaluator instructions. Comments
 may provide design evidence, while explicit policy and consistent executable
 implementations carry more weight. A finding requires positive evidence; missing
-context is classified as false. The shared instruction stays in trusted rule
+context produces insufficient-evidence rather than a pass. The shared instruction stays in trusted rule
 configuration rather than the evaluated source state.
 
 Run `pnpm lint:semantic` to evaluate the branch diff against `origin/main`, or
@@ -52,7 +52,7 @@ that workflow reports the missing secret and skips live evaluation. Jev
 findings remain observational; evaluation metrics do not block merges.
 
 The review command sends the selected diff, repository policy documents, and
-changed source files with adjacent test files to AI Gateway. It does not send
+changed source files, owning workspace tests, nested policies, and bounded local imports to AI Gateway. It does not send
 the entire repository. Lockfiles, lock-shaped JSON/YAML, and generated output
 under artifacts, coverage, and dist are excluded. If the selected state is
 larger than the configured character limit, the collector compacts each context
@@ -62,10 +62,7 @@ so source-diff review does not request ZDR. Run that command only when sending
 the selected source and policy context to the Gateway is appropriate. CI live
 evaluation sends only the synthetic fixture corpus.
 
-The context collector currently includes `AGENTS.md`,
-`docs/policies/ARCHITECTURE.md`, `docs/policies/CONVENTIONS.md`,
-`docs/policies/TESTING.md`, changed code paths, and neighboring test files. It
-does not yet perform repository-wide symbol search or import-graph retrieval.
+The collector includes architecture, security, database, compatibility and product policies, nested AGENTS files, owning tests under src/tests, and relative/workspace imports to depth two. Omitted and truncated context is explicit. It does not perform repository-wide symbol search. Each violation question has a paired context-sufficiency question; insufficient context cannot produce a clean pass.
 The corpus currently has 33 baseline states and 30 architecture states for 279
 labeled Boolean judgments. Each state is evaluated only for rules with labels
 in its fixture set. Every rule has at least eight positive and eight negative

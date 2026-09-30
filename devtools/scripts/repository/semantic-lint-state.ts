@@ -3,6 +3,7 @@ import { existsSync, readFileSync, realpathSync } from "node:fs";
 import pathModule from "node:path";
 import { z } from "zod";
 import type { SemanticCase } from "./semantic-lint-core.ts";
+import { nestedPolicyPaths, relatedSourcePaths } from "./semantic-context-paths.ts";
 
 const changedPathsSchema = z.array(z.string().min(1).max(4096)),
   sourceDiffPaths = [
@@ -59,44 +60,27 @@ function addRelatedTestPaths(path: string, root: string, selected: Set<string>):
   }
   const extension = pathModule.extname(path),
     stem = path.slice(0, -extension.length);
+  const sourceRoot = path.slice(0, path.indexOf("/src/") + 5);
+  const candidates = readChangedPaths([
+    "ls-files",
+    "--cached",
+    "--others",
+    "--exclude-standard",
+  ]);
+  for (const candidate of candidates) {
+    if (
+      candidate.startsWith(`${sourceRoot}tests/`) &&
+      pathModule.basename(candidate).startsWith(`${pathModule.basename(stem)}.`)
+    ) {
+      selected.add(candidate);
+    }
+  }
   for (const testExtension of [".test.ts", ".test.tsx", ".spec.ts"]) {
     const testPath = `${stem}${testExtension}`;
     if (isSafeRepositoryFile(testPath, root)) {
       selected.add(testPath);
     }
   }
-}
-
-function readSourceContext(
-  paths: readonly string[],
-  root: string,
-  maximumCharacters: number,
-): string {
-  const selected = new Set<string>(),
-    sourceExtensions = new Set([".ts", ".tsx", ".js", ".jsx"]);
-  for (const path of paths) {
-    if (sourceExtensions.has(pathModule.extname(path))) {
-      selected.add(path);
-      addRelatedTestPaths(path, root, selected);
-    }
-  }
-  const sections: string[] = [];
-  let remaining = maximumCharacters;
-  for (const path of selected) {
-    if (isSafeRepositoryFile(path, root)) {
-      const content = readFileSync(pathModule.resolve(root, path), "utf8").slice(
-          0,
-          12_000,
-        ),
-        section = `\n--- ${path} ---\n${content}`;
-      if (section.length > remaining) {
-        break;
-      }
-      sections.push(section);
-      remaining -= section.length;
-    }
-  }
-  return sections.join("");
 }
 
 function truncateStateText(text: string, maximumCharacters: number): string {
@@ -108,6 +92,41 @@ function truncateStateText(text: string, maximumCharacters: number): string {
     return text.slice(0, maximumCharacters);
   }
   return `${text.slice(0, maximumCharacters - marker.length)}${marker}`;
+}
+
+function readSourceContext(
+  paths: readonly string[],
+  root: string,
+  maximumCharacters: number,
+): string {
+  const selected = new Set<string>(nestedPolicyPaths(paths)),
+    sourceExtensions = new Set([".ts", ".tsx", ".js", ".jsx"]);
+  for (const path of relatedSourcePaths(paths, root)) {
+    if (sourceExtensions.has(pathModule.extname(path))) {
+      selected.add(path);
+      addRelatedTestPaths(path, root, selected);
+    }
+  }
+  const sections: string[] = [];
+  let remaining = maximumCharacters;
+  for (const path of selected) {
+    if (isSafeRepositoryFile(path, root)) {
+      const content = truncateStateText(
+          readFileSync(pathModule.resolve(root, path), "utf8"),
+          12_000,
+        ),
+        section = `\n--- ${path} ---\n${content}`;
+      if (section.length > remaining) {
+        sections.push(
+          "[semantic review context truncated: remaining selected files omitted]",
+        );
+        break;
+      }
+      sections.push(section);
+      remaining -= section.length;
+    }
+  }
+  return sections.join("");
 }
 
 function compactState(
@@ -156,6 +175,10 @@ function readRepositoryPolicy(root: string): string {
     "docs/policies/ARCHITECTURE.md",
     "docs/policies/CONVENTIONS.md",
     "docs/policies/TESTING.md",
+    "docs/policies/SECURITY.md",
+    "docs/policies/DATABASE.md",
+    "docs/policies/COMPATIBILITY.md",
+    "docs/policies/PRODUCT.md",
   ]
     .filter((path) => isSafeRepositoryFile(path, root))
     .map(

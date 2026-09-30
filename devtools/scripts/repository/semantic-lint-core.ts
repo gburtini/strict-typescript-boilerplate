@@ -80,7 +80,7 @@ interface RuleOutcome {
   rule: string;
   expected: boolean;
   probability: number;
-  decision: "finding" | "abstain" | "pass";
+  decision: "finding" | "abstain" | "pass" | "insufficient-evidence";
 }
 interface RuleSummary {
   rule: string;
@@ -191,7 +191,11 @@ function parseCorpus(
 function decisionFor(
   probability: number,
   thresholds: SemanticConfig["rules"][number]["thresholds"],
-): "finding" | "abstain" | "pass" {
+  contextProbability = 1,
+): RuleOutcome["decision"] {
+  if (contextProbability < 0.9) {
+    return "insufficient-evidence";
+  }
   if (probability >= thresholds.finding) {
     return "finding";
   }
@@ -213,7 +217,11 @@ function summarizeOutcomes(outcomes: RuleOutcome[], ruleIds: string[]): RuleSumm
     const ruleOutcomes = outcomes.filter((outcome) => outcome.rule === rule),
       findings = ruleOutcomes.filter((outcome) => outcome.decision === "finding"),
       passes = ruleOutcomes.filter((outcome) => outcome.decision === "pass"),
-      abstentions = ruleOutcomes.filter((outcome) => outcome.decision === "abstain"),
+      abstentions = ruleOutcomes.filter(
+        (outcome) =>
+          outcome.decision === "abstain" ||
+          outcome.decision === "insufficient-evidence",
+      ),
       truePositive = ruleOutcomes.filter(
         (outcome) => outcome.expected && outcome.decision === "finding",
       ).length,
