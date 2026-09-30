@@ -1,3 +1,15 @@
+import { readFileSync } from "node:fs";
+
+const pinnedVersion = readFileSync(".nvmrc", "utf8").trim();
+if (readFileSync(".node-version", "utf8").trim() !== pinnedVersion) {
+  throw new Error(".node-version must match .nvmrc");
+}
+if (process.versions.node !== pinnedVersion) {
+  throw new Error(
+    `Use nvm to select Node ${pinnedVersion}; found ${process.versions.node}`,
+  );
+}
+
 const maximumMajor = 25;
 const minimumNode = { major: 24, minor: 13, patch: 1 } as const;
 const [major = 0, minor = 0, patch = 0] = process.versions.node.split(".").map(Number);
