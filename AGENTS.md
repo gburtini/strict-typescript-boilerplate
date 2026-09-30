@@ -6,6 +6,9 @@ a valid repository state. `pnpm check` is the fast static/unit subset.
 Read the relevant policy in `docs/policies/`:
 
 - `ARCHITECTURE.md` — workspace boundaries and dependency direction
+- `GOVERNANCE.md` — trusted enforcement review and repository settings
+- `PRODUCT.md` — interaction acceptance and design evidence
+- `DATABASE.md` — persistence, tenancy, concurrency, and operations
 - `CONVENTIONS.md` — canonical code forms
 - `DESIGN.md` — UI composition and styling ownership
 - `TESTING.md` — required evidence and test boundaries
@@ -81,14 +84,14 @@ focused-test rules remain enforced.
 Place tests under the owning workspace's `src/tests/` directory. Keep unit,
 integration, and contract tests there, with names that identify their level
 where useful. Integration tests that require a local service use an
-`.integration.ts` suffix so the default unit command does not discover them;
+`.integration.test.ts` suffix so the default unit command does not discover them;
 run them through the workspace's explicit integration command.
 
 ## Telemetry
 
 - Configure `TelemetryLive` from the runtime composition root with the deployed
   service name sourced from package metadata or typed runtime configuration.
-- Keep `@template/core` as the instrumentation scope; do not hard-code an
+- Keep the core package identity (`@template/core` in the starter) as the instrumentation scope; do not hard-code an
   application or repository name in reusable telemetry helpers.
 - Run oRPC procedures inside the request span and preserve the active context
   through application and Postgres/Drizzle work.

@@ -70,6 +70,55 @@ atomic, so those requirements remain mandatory review and test invariants.
 - `pnpm generated:check` remains required for the repository-wide generated-file
   contract.
 
+## Tenancy and authorization
+
+Derive authorized scope on the server. Require tenant identity in tenant-owned
+repository ports and every read, write, join, and uniqueness condition. Enforce
+same-tenant relationships with composite foreign keys where possible. Test
+cross-tenant reads, writes, and relationships against the real adapter. UUIDs,
+parsed schemas, and hidden controls are not permission. Document intentionally
+public/global tables. Test row-level security using the deployed non-owner role;
+verify pooled connections cannot retain a previous tenant's context.
+
+## Concurrency and atomicity
+
+Name the invariant and isolation requirement before choosing a transaction.
+Use database constraints for races; avoid read-then-write checks that can both
+pass concurrently. Use conditional updates or optimistic versions against lost
+updates. Bound transaction lifetime and acquire locks consistently. Retry only
+documented transient failures with bounded backoff and idempotent operations;
+an ambiguous commit cannot be blindly retried. Use an outbox and idempotent
+consumers for external delivery after a commit. Keep network calls outside
+transactions.
+
+## Data and query contracts
+
+Define pagination order with a unique tie-breaker; test duplicate sort values,
+inserts between pages, and end-of-list behavior. Cap page sizes on the server.
+Use half-open time ranges (`>= start`, `< end`). Represent currency and exact
+decimals deliberately across transport boundaries. Document rounding, precision,
+nullability, and timezone semantics. Validate JSONB through a versioned domain
+schema. Keep ORM models out of domain and public transport contracts. Review
+index write/storage cost as well as observed read plans.
+
+## Migration and operational evidence
+
+Record affected relations, expected scale, lock behavior, deployed reader/writer
+compatibility, rollout order, and recovery limits. Test from the previously
+deployed schema and from an empty database. Backfill in resumable bounded batches
+with progress and reconciliation, separately from startup and short migrations.
+Set deliberate lock/statement timeouts. Concurrent indexes require execution
+outside a transaction; verify index validity after interruption before retrying.
+Do not claim rollback recovers dropped data. Exercise restore procedures with
+sanitized backups and record recovery objectives and an accountable operator.
+
+Use least-privilege runtime roles, a separate migration role, verified transport
+encryption, bounded pools, and explicit shutdown. Monitor pool waits, query
+latency/failures, lock waits, replication lag where applicable, and vacuum health.
+Export query shapes rather than parameters. `EXPLAIN ANALYZE` executes statements;
+use disposable data and obtain authorization for production diagnostics. Generic
+plans do not prove parameter-skew behavior; provide representative skew evidence.
+
 ## Lifecycle
 
 `createDatabase` receives its URL and pool settings explicitly and returns a

@@ -1,5 +1,11 @@
 # Design System
 
+React products require React Compiler. The Vite compiler preset fails builds
+on compiler errors; `pnpm compiler:check` proves transformation of the
+application and interactive form. Framework applicability follows upstream
+metadata, including rules that do not apply with React Compiler. Applicable
+warnings still fail the repository gate.
+
 UI is composed from `@template/ui` primitives and the semantic Tailwind/shadcn
 tokens declared in `apps/web/src/styles.css`. This is a closed vocabulary:
 call sites must use the vocabulary below rather than inventing visual values.

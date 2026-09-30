@@ -28,11 +28,13 @@ pnpm test:e2e
 pnpm check:all
 ```
 
-`pnpm test:integration` starts the repository's Docker Postgres service,
-applies migrations, runs the integration suite, and removes the test container
-and volume on exit. It requires Docker. `pnpm check:all` intentionally runs
-unit and browser tests but not Docker-backed integration tests; integration
-tests must be run explicitly when an infrastructure boundary changes.
+`pnpm test:integration` creates a uniquely named disposable Docker Postgres
+service, applies migrations, prepares the pinned planner fixture, runs real
+integration and browser workflows, captures query shapes and analyzes plans.
+It removes only its own container and volume on exit. It requires Docker.
+`pnpm check:all` runs these obligations automatically for the database profile.
+Browser-only profiles still build and run browser evidence. Existing database
+or browser workspaces cannot opt out of their profile obligations.
 
 The command runs runtime preflight, formatting, package API checks, type checking,
 linting, enforcement fixtures, dead-code analysis, architecture checks, package
@@ -73,6 +75,11 @@ Bug fixes should normally include a regression test that exercises the failure
 mechanism.
 
 ## Proof that a test can fail
+
+`docs/test-evidence.json` covers every test file. Execution records reference
+an inspectable artifact, revision and exact command. Historical attestations
+remain explicitly labeled and require owner review; prose is not executed
+proof. Do not invent red states or replace execution evidence with attestation.
 
 Every new test must have a demonstrated failure mode. Before considering the
 test complete, actively break the assumption it is meant to protect and confirm
