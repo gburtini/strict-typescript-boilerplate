@@ -16,20 +16,19 @@ Exact dependency versions are pinned in the workspace manifests and lockfile.
 
 ## Repository guarantees
 
-| Engineering value                         | How the repository supports it                                                                                                            |
-| ----------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
-| Reproducible setup                        | Node and pnpm versions are pinned through nvm and Corepack.                                                                               |
-| Strict types and validated inputs         | TypeScript, Oxlint, named Zod schemas, and boundary fixtures.                                                                             |
-| Clear module boundaries                   | Packages expose public APIs; checks prevent reverse dependencies and cycles; Effect ports keep application logic independent of adapters. |
-| Explicit async and failure handling       | Oxlint, Effect diagnostics, Semgrep, and failure-path tests.                                                                              |
-| Safe, predictable database changes        | Typed Drizzle queries, migration checks, PostgreSQL integration tests, and query plans.                                                   |
-| Accessible, responsive interfaces         | Shared UI primitives, React Compiler checks, and browser evidence.                                                                        |
-| Reliable tests and generated output       | Vitest, Playwright, test-evidence checks, and generated-file freshness checks.                                                            |
-| Security and dependency hygiene           | Security policies, Semgrep, OSV-Scanner, and dependency audits.                                                                           |
-| Narrow, reviewable exceptions             | Structured exception registry with scope, owner, rationale, and evidence.                                                                 |
-| Independent review of enforcement changes | Trusted base comparison and repository ruleset requirements.                                                                              |
-| One command for the full local gate       | `pnpm check:all`; CI adds acceptance and security checks.                                                                                 |
-| AI review stays advisory                  | Versioned rules and labeled fixtures; insufficient evidence is reported separately.                                                       |
+| Engineering value                                             | How the repository supports it                                                                                                            |
+| ------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| Reproducible setup                                            | Node and pnpm versions are pinned through nvm and Corepack.                                                                               |
+| Strict types and validated inputs                             | TypeScript, Oxlint, named Zod schemas, and boundary fixtures.                                                                             |
+| Clear module boundaries                                       | Packages expose public APIs; checks prevent reverse dependencies and cycles; Effect ports keep application logic independent of adapters. |
+| Explicit async and failure handling                           | Oxlint, Effect diagnostics, Semgrep, and failure-path tests.                                                                              |
+| Estimated query plans expose performance changes early        | Integration tests capture real queries; CI compares PostgreSQL estimated plans for the base and proposed changes.                         |
+| Accessible, responsive interfaces                             | Shared UI primitives, React Compiler checks, and browser evidence.                                                                        |
+| Tests prove they catch failures; generated files stay current | New tests demonstrate failure when their protected behavior is deliberately broken; generated-file freshness checks.                      |
+| Security checks catch risky APIs and vulnerable packages      | Semgrep checks dangerous APIs; OSV-Scanner and pnpm audit scan dependencies.                                                              |
+| Narrow, reviewable exceptions                                 | Structured exception registry with scope, owner, rationale, and evidence.                                                                 |
+| Guardrail changes need another reviewer                       | Trusted-base comparison and branch rules require independent review of changes to checks and policies.                                    |
+| AI review stays advisory                                      | Versioned rules and labeled fixtures; insufficient evidence is reported separately.                                                       |
 
 | Written policy                                  | Decisions it governs                                                            |
 | ----------------------------------------------- | ------------------------------------------------------------------------------- |
@@ -86,14 +85,17 @@ version before running Node.js or pnpm commands; if `nvm` is not available,
 initialize/install it in your shell first. The `node --version` output should
 match `.nvmrc` (`v24.13.1`).
 
-`pnpm check:all` runs the complete repository gate: formatting, runtime preflight,
-strict type checking, Oxlint with type-aware
-rules, applicable React Doctor rules, React Compiler, React and
-accessibility rules, shadcn design-system rules, Knip, dependency-cruiser,
-Sherif, and Vitest. React Doctor keeps its upstream warning severity, while
-`--deny-warnings` makes every warning a required fix. The profile also requires
-real PostgreSQL integration, migration application, captured query plans, and
-desktop/narrow browser completion and recovery evidence. Docker is required.
+`pnpm check:all` runs the complete repository gate:
+
+- Formatting, runtime preflight, and strict type checking.
+- Type-aware Oxlint, applicable React Doctor rules, React Compiler, React and
+  accessibility rules, and shadcn design-system rules.
+- Knip, dependency-cruiser, Sherif, and Vitest.
+- Real PostgreSQL integration, migration application, and captured query plans.
+- Desktop and narrow browser completion and recovery evidence.
+
+React Doctor keeps its upstream warning severity, while `--deny-warnings` makes
+every warning a required fix. Docker is required.
 
 The repository intentionally has no warning state: checks are either passing or
 the implementation needs to change.
