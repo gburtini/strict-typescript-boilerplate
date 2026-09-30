@@ -3,74 +3,18 @@
 An opinionated pnpm monorepo starter that treats repository consistency and
 correctness as enforceable contracts.
 
-## Decisions
+## Core stack
 
-This inventory distinguishes executable guarantees from written requirements.
-Dependency versions are pinned in the workspace manifests and lockfile. Changes
-to enforcement or exceptions require independent owner review.
+Exact dependency versions are pinned in the workspace manifests and lockfile.
 
-| Dependency                                | Selection                                                 | Purpose and ownership                                                                                     |
-| ----------------------------------------- | --------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
-| `@axe-core/playwright`                    | `4.13.0`                                                  | Browser accessibility evidence; apps/web                                                                  |
-| `@babel/core`                             | `7.29.7`                                                  | React Compiler's Babel 7 AST integration; apps/web                                                        |
-| `@rolldown/plugin-babel`                  | `0.2.4`                                                   | Required compiler integration with Vite 8; apps/web                                                       |
-| `@types/babel__core`                      | `7.20.5`                                                  | Compiler integration types; apps/web                                                                      |
-| `babel-plugin-react-compiler`             | `1.0.0`                                                   | Required automatic memoization; apps/web                                                                  |
-| `@template/core`                          | `workspace:*`                                             | Domain schemas, application ports and telemetry; apps/web, packages/db                                    |
-| `@effect/opentelemetry`                   | `0.64.1`                                                  | Effect trace-context propagation; packages/core                                                           |
-| `@effect/tsgo`                            | `0.45.0`                                                  | Effect diagnostics integrated into the pinned TypeScript and lint toolchain; .                            |
-| `@opentelemetry/api`                      | `1.9.1`                                                   | Instrumentation interfaces; packages/core                                                                 |
-| `@opentelemetry/exporter-trace-otlp-http` | `0.222.0`                                                 | OTLP trace transport behind redaction; packages/core                                                      |
-| `@opentelemetry/resources`                | `2.11.0`                                                  | Service metadata; packages/core                                                                           |
-| `@opentelemetry/sdk-trace-base`           | `2.11.0`                                                  | Span processing; packages/core                                                                            |
-| `@opentelemetry/sdk-trace-node`           | `2.11.0`                                                  | Node telemetry runtime; packages/core                                                                     |
-| `@orpc/contract`                          | `1.14.15`                                                 | Runtime public API schemas; packages/core                                                                 |
-| `@orpc/server`                            | `1.14.15`                                                 | Typed transport implementation; packages/core, apps/web                                                   |
-| `@playwright/test`                        | `1.63.0`                                                  | Observable workflow, recovery, and screenshot evidence; apps/web                                          |
-| `@radix-ui/react-slot`                    | `1.3.3`                                                   | Workspace contract dependency; packages/ui                                                                |
-| `@rikalabs/oxlint-standards`              | `0.8.1`                                                   | Repository anti-shortcut, boundary, security, and Effect rules; .                                         |
-| `@shadcn/lint`                            | `0.1.1`                                                   | Semantic styling vocabulary and primitive ownership; .                                                    |
-| `@t3-oss/env-core`                        | `0.13.11`                                                 | Central validated runtime configuration; apps/web, packages/db                                            |
-| `@tailwindcss/vite`                       | `4.3.3`                                                   | Semantic Tailwind compilation; apps/web                                                                   |
-| `@template/db`                            | `workspace:*`                                             | Workspace-owned PostgreSQL adapter and planner tools; repository tooling, apps/web server                 |
-| `@template/ui`                            | `workspace:*`                                             | Shared accessible control contracts; apps/web                                                             |
-| `@testing-library/dom`                    | `10.4.1`                                                  | Accessible DOM queries; apps/web                                                                          |
-| `@testing-library/react`                  | `16.3.3`                                                  | Component behavior evidence; apps/web                                                                     |
-| `@types/node`                             | `24.13.4`                                                 | Node runtime types; .                                                                                     |
-| `@types/react`                            | `19.2.7`                                                  | React public types; apps/web, packages/ui                                                                 |
-| `@types/react-dom`                        | `19.2.3`                                                  | DOM renderer types; apps/web                                                                              |
-| `@typescript-eslint/utils`                | `8.70.0`                                                  | Typed lint-rule support; .                                                                                |
-| `@typescript/native`                      | `npm:typescript@7.0.2`                                    | Native TypeScript compiler integration; .                                                                 |
-| `@vitejs/plugin-react`                    | `6.0.3`                                                   | React compilation; apps/web                                                                               |
-| `@vitest/coverage-v8`                     | `4.1.11`                                                  | Coverage evidence and thresholds; apps/web                                                                |
-| `ai`                                      | `7.0.105`                                                 | Advisory Jev evaluation through AI Gateway; .                                                             |
-| `class-variance-authority`                | `0.7.1`                                                   | Workspace contract dependency; packages/ui                                                                |
-| `clsx`                                    | `2.1.1`                                                   | Workspace contract dependency; packages/ui                                                                |
-| `dependency-cruiser`                      | `18.3.0`                                                  | Dependency direction and cycle enforcement; devtools/dependency-cruiser                                   |
-| `drizzle-kit`                             | `0.31.10`                                                 | Generated migration ownership and metadata checks; .                                                      |
-| `drizzle-orm`                             | `0.45.2`                                                  | Typed PostgreSQL queries and schema definitions; packages/db                                              |
-| `drizzle-zod`                             | `0.8.3`                                                   | Persistence boundary schemas; packages/db                                                                 |
-| `effect`                                  | `3.22.2`                                                  | Typed failures, cancellation, retries, and application computations; apps/web, packages/core, packages/db |
-| `eslint`                                  | `10.10.0`                                                 | Plugin interoperability; .                                                                                |
-| `eslint-plugin-drizzle`                   | `0.2.3`                                                   | Reject unscoped update/delete operations; .                                                               |
-| `jsdom`                                   | `26.1.0`                                                  | Component test DOM; apps/web                                                                              |
-| `knip`                                    | `6.35.0`                                                  | Unused code and dependency checks; .                                                                      |
-| `oxfmt`                                   | `0.66.0`                                                  | Canonical formatting; .                                                                                   |
-| `oxlint`                                  | `1.81.0`                                                  | Type-aware linting; zero warnings; .                                                                      |
-| `oxlint-plugin-react-doctor`              | `0.9.12`                                                  | React correctness, accessibility, and performance checks; .                                               |
-| `oxlint-tsgolint`                         | `7.0.2001`                                                | Type-aware lint implementation; .                                                                         |
-| `postgres`                                | `3.4.9`                                                   | PostgreSQL driver inside the adapter/tooling boundary; ., packages/db                                     |
-| `react`                                   | `19.3.0`                                                  | UI runtime; apps/web, packages/ui                                                                         |
-| `react-dom`                               | `19.3.0`                                                  | Browser rendering; apps/web                                                                               |
-| `sherif`                                  | `1.13.0`                                                  | Workspace manifest consistency; .                                                                         |
-| `tailwind-merge`                          | `3.6.0`                                                   | Workspace contract dependency; packages/ui                                                                |
-| `tailwindcss`                             | `4.3.3`                                                   | Static semantic layout and styling vocabulary; apps/web                                                   |
-| `tw-animate-css`                          | `1.4.0`                                                   | Shared animation vocabulary; apps/web                                                                     |
-| `typescript`                              | `npm:@typescript/typescript6@6.0.2, npm:typescript@7.0.2` | Strict compiler authority; ., devtools/dependency-cruiser                                                 |
-| `vite`                                    | `8.2.2`                                                   | Browser development and production builds; apps/web                                                       |
-| `vitest`                                  | `4.1.11`                                                  | Unit, contract, and integration runner; apps/web, packages/core, packages/db                              |
-| `yaml`                                    | `2.9.1`                                                   | Validated workflow configuration parsing; .                                                               |
-| `zod`                                     | `4.1.13`                                                  | Zod 4 runtime decoding; ., apps/web, packages/core, packages/db                                           |
+| Technology   | Role                                                            |
+| ------------ | --------------------------------------------------------------- |
+| React        | User interface                                                  |
+| oRPC         | Typed API contracts and transport                               |
+| Effect       | Application computations, typed failures, and resource handling |
+| Tailwind CSS | Utility classes and design tokens                               |
+
+## Repository guarantees
 
 | Requirement or decision                                                         | Enforcement / source of truth                                                                          |
 | ------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
@@ -136,7 +80,7 @@ Do not invent user needs, success metrics, compliance requirements, or brand
 preferences to fill a document. Mark unresolved decisions and obtain the
 responsible human input before implementing behavior that depends on them.
 
-## The contract
+## Usage
 
 ```sh
 # Run these from the repository root in a shell where nvm is initialized.
