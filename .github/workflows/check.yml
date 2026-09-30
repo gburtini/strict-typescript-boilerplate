@@ -4,59 +4,14 @@ on:
   push:
     branches: [main]
   pull_request:
+  merge_group:
 
 permissions:
   contents: read
 
 jobs:
-  check:
-    name: Check (${{ matrix.name }})
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - name: runtime
-            script: check:runtime
-          - name: toolchain
-            script: toolchain:check
-          - name: format
-            script: format:check
-          - name: API exports
-            script: api:check
-          - name: database migrations
-            script: db:migrations:check
-          - name: typecheck
-            script: typecheck
-          - name: lint
-            script: lint
-          - name: exceptions
-            script: exceptions:check
-          - name: enforcement fixtures
-            script: enforcement:fixtures
-          - name: architecture fixtures
-            script: architecture:fixtures
-          - name: CI policy
-            script: ci:policy
-          - name: generated files
-            script: generated:check
-          - name: test evidence
-            script: test:evidence
-          - name: enforcement manifest
-            script: enforcement:manifest:check
-          - name: dead code
-            script: deadcode
-          - name: dependencies
-            script: deps
-          - name: packages
-            script: packages
-          - name: unit tests
-            script: test
-          - name: build
-            script: build
-          - name: end-to-end tests
-            script: test:e2e
-          - name: full repository gate
-            script: check:all
+  repository:
+    name: Local repository contract
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.0.0
@@ -65,18 +20,56 @@ jobs:
           version: 10.30.3
       - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
         with:
-          node-version-file: .node-version
+          node-version-file: .nvmrc
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - name: Install Playwright browsers
-        if: matrix.name == 'end-to-end tests' || matrix.name == 'full repository gate'
+      - name: Install browser runtime
         run: pnpm --filter @template/web exec playwright install --with-deps chromium
-      - name: Build application for E2E
-        if: matrix.name == 'end-to-end tests'
-        run: pnpm build
-      - name: Run check
-        if: matrix.name != 'full repository gate'
-        run: pnpm run ${{ matrix.script }}
-      - name: Run full repository gate
-        if: matrix.name == 'full repository gate'
-        run: pnpm check:all
+      - run: pnpm check:all
+      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        if: always()
+        with:
+          name: acceptance-evidence
+          path: |
+            apps/web/test-results
+            .artifacts
+          if-no-files-found: error
+          retention-days: 14
+  semgrep:
+    uses: ./.github/workflows/semgrep.yml
+  codeql:
+    uses: ./.github/workflows/codeql.yml
+    permissions:
+      contents: read
+      security-events: read
+  dependencies:
+    uses: ./.github/workflows/dependency-review.yml
+  plans:
+    if: github.event_name == 'pull_request'
+    uses: ./.github/workflows/query-plans.yml
+  actionlint:
+    uses: ./.github/workflows/actionlint.yml
+  osv:
+    if: github.event_name == 'pull_request' || github.event_name == 'merge_group'
+    uses: ./.github/workflows/osv-scanner.yml
+    permissions:
+      contents: read
+      actions: read
+      security-events: write
+  acceptance:
+    name: Repository acceptance
+    if: always()
+    needs: [repository, semgrep, codeql, dependencies, plans, actionlint, osv]
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Require every applicable gate
+        env:
+          RESULTS: ${{ toJSON(needs) }}
+          EVENT_NAME: ${{ github.event_name }}
+        run: |
+          set -euo pipefail
+          echo "$RESULTS" | jq -e --arg event "$EVENT_NAME" '
+            to_entries | all(.[];
+              .value.result == "success" or
+              (.key == "plans" and $event != "pull_request" and .value.result == "skipped") or
+              (.key == "osv" and $event != "pull_request" and $event != "merge_group" and .value.result == "skipped"))'

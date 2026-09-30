@@ -1,11 +1,11 @@
 name: Query Plans
 
 on:
+  workflow_call:
   pull_request:
 
 permissions:
   contents: read
-  pull-requests: write
 
 jobs:
   query-plans:
@@ -41,7 +41,7 @@ jobs:
           version: 10.30.3
       - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
         with:
-          node-version-file: proposed/.node-version
+          node-version-file: proposed/.nvmrc
           cache: pnpm
           cache-dependency-path: |
             base/pnpm-lock.yaml
@@ -63,6 +63,12 @@ jobs:
       - name: Capture base query corpus
         working-directory: base
         run: pnpm test
+        env:
+          QUERY_PLAN_CAPTURE: "1"
+          QUERY_PLAN_CORPUS_DIR: .artifacts
+      - name: Capture base integration query corpus
+        working-directory: base
+        run: pnpm --filter @template/db test:integration
         env:
           QUERY_PLAN_CAPTURE: "1"
           QUERY_PLAN_CORPUS_DIR: .artifacts
@@ -115,35 +121,9 @@ jobs:
           else
             printf 'Query plan report was not generated.\n' >> "$GITHUB_STEP_SUMMARY"
           fi
-      - name: Comment planner report on pull request
-        if: >-
-          always() &&
-          github.event.pull_request.head.repo.full_name == github.repository
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          comment_marker='<!-- query-plan-report -->'
-          comments_endpoint="repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments"
-          existing_comment_id="$(gh api --paginate --slurp "$comments_endpoint?per_page=100" \
-            --jq "add[] | select(.body | contains(\"$comment_marker\")) | .id" | tail -n 1)"
-
-          if [[ -f .artifacts/query-plans.md ]]; then
-            report_body_file="$(mktemp)"
-            trap 'rm -f "$report_body_file"' EXIT
-            {
-              printf '%s\n' "$comment_marker"
-              cat .artifacts/query-plans.md
-            } > "$report_body_file"
-
-            if [[ -n "$existing_comment_id" ]]; then
-              gh api --method PATCH \
-                "repos/${{ github.repository }}/issues/comments/$existing_comment_id" \
-                --field "body=$(cat "$report_body_file")"
-            else
-              gh pr comment "${{ github.event.pull_request.number }}" \
-                --body-file "$report_body_file"
-            fi
-          elif [[ -n "$existing_comment_id" ]]; then
-            gh api --method DELETE \
-              "repos/${{ github.repository }}/issues/comments/$existing_comment_id"
-          fi
+      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        if: always()
+        with:
+          name: query-plan-comparison
+          path: .artifacts
+          if-no-files-found: error

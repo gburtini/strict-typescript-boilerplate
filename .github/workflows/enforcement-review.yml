@@ -14,7 +14,6 @@ jobs:
       - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.0.0
         with:
           ref: ${{ github.event.pull_request.base.sha }}
-          persist-credentials: false
       - name: Fetch proposed revision as data
         env:
           PR_NUMBER: ${{ github.event.pull_request.number }}
@@ -24,20 +23,22 @@ jobs:
         run: |
           set -euo pipefail
           git -c core.quotePath=true diff --no-ext-diff --no-textconv --stat HEAD origin/proposed -- \
-            .github AGENTS.md ':(glob)**/AGENTS.md' docs devtools \
+            .semgrep.yml .semgrepignore .nvmrc .node-version knip.json .github AGENTS.md ':(glob)**/AGENTS.md' docs devtools apps/web/scripts \
             ':(glob)**/*config*' ':(glob)**/package.json' package.json pnpm-workspace.yaml \
             pnpm-lock.yaml oxlint.base.json oxlint.config.ts project-profile.json \
             generated-files.json ':(glob)**/coverage-baseline.json' > enforcement-review.txt
           {
             echo '## Trusted enforcement comparison'
-            echo 'The base workflow inspected the proposed revision as data. Owner approval is required by repository rules.'
+            echo 'The base workflow inspected the proposed revision as data. Independent review is required by repository rules.'
             echo '````'
             cat enforcement-review.txt
             echo '````'
           } >> "$GITHUB_STEP_SUMMARY"
           git diff --no-ext-diff --no-textconv HEAD origin/proposed -- \
-            .github docs devtools oxlint.base.json oxlint.config.ts package.json \
-            project-profile.json generated-files.json > enforcement-contract.diff
+            .semgrep.yml .semgrepignore .nvmrc .node-version knip.json .github AGENTS.md ':(glob)**/AGENTS.md' docs devtools apps/web/scripts \
+            ':(glob)**/*config*' ':(glob)**/package.json' package.json pnpm-workspace.yaml \
+            pnpm-lock.yaml oxlint.base.json oxlint.config.ts project-profile.json \
+            generated-files.json ':(glob)**/coverage-baseline.json' > enforcement-contract.diff
       - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
           name: enforcement-comparison

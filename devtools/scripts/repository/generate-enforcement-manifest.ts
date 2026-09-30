@@ -105,11 +105,11 @@ for (const match of dynamicConfig.matchAll(dynamicRulePattern)) {
     });
   }
 }
-if (dynamicConfig.includes("ALL_REACT_DOCTOR_RULES")) {
+if (dynamicConfig.includes("REACT_DOCTOR_RULES")) {
   rows.push({
     invariant: "react-quality/*",
-    owner: "React Doctor registry",
-    scope: "all linted files; explicit overrides recorded above",
+    owner: "React Doctor registry for selected frameworks",
+    scope: "global and project-profile frameworks; explicit overrides recorded above",
     severity: "warn (denied)",
     source: "oxlint.config.ts",
   });

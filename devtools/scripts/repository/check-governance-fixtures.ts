@@ -3,7 +3,13 @@ import { config } from "../../../oxlint.config.ts";
 import { expectRejection } from "../shared/expect-rejection.ts";
 import { validateExceptionRegistry } from "./lint-exceptions.ts";
 import { parseTestEvidence } from "./test-evidence.ts";
-import { requireWorkflowCommand, validateSemanticWorkflow } from "./ci-contracts.ts";
+import {
+  requireWorkflowCommand,
+  validateSemanticWorkflow,
+  validateAcceptanceWorkflow,
+} from "./ci-contracts.ts";
+import { parse } from "yaml";
+import { readProjectProfile, validateAcceptance } from "./check-project-profile.ts";
 
 const registry: unknown = JSON.parse(
   readFileSync("devtools/quality/exceptions.json", "utf8"),
@@ -92,4 +98,34 @@ expectRejection(
   () => requireWorkflowCommand({ on: {}, jobs: {} }, "pnpm check:all"),
   "permissions",
 );
+validateAcceptanceWorkflow(parse(readFileSync(".github/workflows/check.yml", "utf8")));
+expectRejection(() => validateAcceptanceWorkflow(workflow), "every applicable gate");
+readProjectProfile();
+const acceptance: unknown = JSON.parse(
+  readFileSync("docs/features/user-registration.json", "utf8"),
+);
+validateAcceptance(acceptance);
+expectRejection(
+  () =>
+    validateAcceptance({
+      schemaVersion: 1,
+      feature: "Negative fixture",
+      owner: "fixture-owner",
+      manualReview: "Independent review",
+      concerns: [],
+    }),
+  "every concern",
+);
+if (
+  Object.hasOwn(config.rules, "react-quality/preact-no-react-hooks") ||
+  !Object.entries(config.rules).some(
+    ([rule, severity]) =>
+      rule === "react-quality/react-compiler-no-manual-memoization" &&
+      severity === "warn",
+  )
+) {
+  throw new Error(
+    "Framework applicability must retain React Compiler and reject Preact-only advice",
+  );
+}
 process.stdout.write("Governance positive and negative fixtures passed.\n");

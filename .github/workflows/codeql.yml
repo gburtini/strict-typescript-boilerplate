@@ -1,6 +1,7 @@
 name: CodeQL
 
 on:
+  workflow_call:
   push:
     branches: [main]
   pull_request:
@@ -66,6 +67,13 @@ jobs:
               jq -r '.runs[]?.results[]? | [(.ruleId // "unknown"), (.message.text // "" | gsub("\\n"; " ")), ((.locations[0].physicalLocation.artifactLocation.uri // "unknown") + ":" + ((.locations[0].physicalLocation.region.startLine // 0) | tostring))] | "| " + join(" | ") + " |"' "${sarif}"
             fi
           } >> "${GITHUB_STEP_SUMMARY}"
+      - name: Require clean CodeQL results
+        shell: bash
+        run: |
+          set -euo pipefail
+          sarif="${RUNNER_TEMP}/codeql-results/javascript.sarif"
+          test -s "$sarif"
+          jq -e '[.runs[]?.results[]? | select((.level // "warning") != "note" and (.level // "warning") != "none")] | length == 0' "$sarif"
       - name: Upload CodeQL results
         if: always()
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0

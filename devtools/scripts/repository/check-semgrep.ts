@@ -64,7 +64,10 @@ function runSemgrep(root: string, arguments_: readonly string[]): string {
   return result.stdout;
 }
 
-function scan(root: string): z.infer<typeof scanSchema> {
+function scan(
+  root: string,
+  targets: readonly string[] = ["."],
+): z.infer<typeof scanSchema> {
   return scanSchema.parse(
     JSON.parse(
       runSemgrep(root, [
@@ -75,7 +78,7 @@ function scan(root: string): z.infer<typeof scanSchema> {
         "--disable-nosem",
         "--metrics=off",
         "--json",
-        ".",
+        ...targets,
       ]),
     ),
   );
@@ -152,14 +155,11 @@ function checkRepository(): void {
       cause: files.error,
     });
   }
-  const report = scan(process.cwd());
-  const missing = files.stdout
+  const sourcePaths = files.stdout
     .split("\n")
-    .filter(
-      (path) =>
-        /\.(?:[cm]?js|jsx|[cm]?ts|tsx)$/u.test(path) &&
-        !report.paths.scanned.includes(path),
-    );
+    .filter((path) => /\.(?:[cm]?js|jsx|[cm]?ts|tsx)$/u.test(path));
+  const report = scan(process.cwd(), sourcePaths);
+  const missing = sourcePaths.filter((path) => !report.paths.scanned.includes(path));
   if (report.errors.length > 0 || report.results.length > 0 || missing.length > 0) {
     throw new Error(
       `Semgrep repository scan failed: ${JSON.stringify({ errors: report.errors, findings: report.results, missing })}`,

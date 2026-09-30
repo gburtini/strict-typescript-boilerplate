@@ -2,7 +2,11 @@ import { readdirSync, readFileSync } from "node:fs";
 import nodePath from "node:path";
 import { parse } from "yaml";
 import { z } from "zod";
-import { requireWorkflowCommand, validateSemanticWorkflow } from "./ci-contracts.ts";
+import {
+  requireWorkflowCommand,
+  validateSemanticWorkflow,
+  validateAcceptanceWorkflow,
+} from "./ci-contracts.ts";
 
 type Permission = "read" | "write" | "none";
 type PermissionSet = Record<string, Permission>;
@@ -21,7 +25,13 @@ const permissionSetSchema = z.record(z.string(), z.enum(["read", "write", "none"
     { workflow: PermissionSet; jobs: Record<string, PermissionSet> }
   > = {
     "actionlint.yml": { workflow: { contents: "read" }, jobs: {} },
-    "check.yml": { workflow: { contents: "read" }, jobs: {} },
+    "check.yml": {
+      workflow: { contents: "read" },
+      jobs: {
+        codeql: { contents: "read", "security-events": "read" },
+        osv: { contents: "read", actions: "read", "security-events": "write" },
+      },
+    },
     "enforcement-review.yml": { workflow: { contents: "read" }, jobs: {} },
     "jev-eval.yml": {
       workflow: { contents: "read" },
@@ -154,7 +164,12 @@ if (packageJson.success) {
 if (!hasSemanticCheck) {
   failures.push("package.json: check must run deterministic semantic validation");
 }
+validateAcceptanceWorkflow(parse(ciWorkflow));
 requireWorkflowCommand(parse(ciWorkflow), "pnpm check:all");
+requireWorkflowCommand(
+  parse(readFileSync(".github/workflows/semgrep.yml", "utf8")),
+  "pnpm semgrep:check",
+);
 validateSemanticWorkflow(parse(readFileSync(".github/workflows/jev-eval.yml", "utf8")));
 
 if (failures.length > 0) {

@@ -14,9 +14,34 @@ const workflowContractSchema = z.looseObject({
       steps: z.array(stepSchema).optional(),
       uses: z.string().optional(),
       if: z.string().optional(),
+      needs: z.array(z.string()).optional(),
     }),
   ),
 });
+
+function validateAcceptanceWorkflow(input: unknown): void {
+  const workflow = workflowContractSchema.parse(input);
+  const required = [
+    "repository",
+    "semgrep",
+    "codeql",
+    "dependencies",
+    "plans",
+    "actionlint",
+    "osv",
+  ];
+  const { acceptance } = workflow.jobs;
+  if (
+    acceptance?.if !== "always()" ||
+    required.some(
+      (gate) =>
+        acceptance.needs?.includes(gate) !== true ||
+        !Object.hasOwn(workflow.jobs, gate),
+    )
+  ) {
+    throw new TypeError("Acceptance must depend on every applicable gate");
+  }
+}
 
 function requireWorkflowCommand(input: unknown, command: string): void {
   const workflow = workflowContractSchema.parse(input);
@@ -47,4 +72,4 @@ function validateSemanticWorkflow(input: unknown): void {
   }
 }
 
-export { requireWorkflowCommand, validateSemanticWorkflow };
+export { requireWorkflowCommand, validateSemanticWorkflow, validateAcceptanceWorkflow };
