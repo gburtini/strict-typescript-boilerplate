@@ -16,32 +16,20 @@ Exact dependency versions are pinned in the workspace manifests and lockfile.
 
 ## Repository guarantees
 
-| Requirement or decision                                                         | Enforcement / source of truth                                                                          |
-| ------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
-| Node 24.13.1 through nvm; pnpm 10.30.3 through Corepack; ESM                    | `.nvmrc`, runtime check, `packageManager`, import rules                                                |
-| Strict types; no unsafe escape hatches; explicit boundary types                 | TypeScript, type-aware Oxlint, negative enforcement fixtures                                           |
-| Parse untrusted data once with named Zod 4 schemas                              | Boundary rules plus contract tests; semantic validation needs review                                   |
-| Explicit Promise handling and intentional failures                              | Oxlint, Effect diagnostics, Semgrep, failure-path tests                                                |
-| Canonical named imports/exports and formatting                                  | Oxlint and Oxfmt; framework configuration exceptions are scoped                                        |
-| Application/domain computations use Effect; I/O uses injected ports             | Architecture policy, Effect lint, dependency rules, integration tests                                  |
-| Packages cannot import applications; no cycles or private cross-package imports | Dependency-cruiser, public exports, Knip, fixtures                                                     |
-| Database queries are typed, bounded, authorized, and atomic where required      | Drizzle lint plus DATABASE policy and real adapter evidence                                            |
-| Migrations are generated and compatible with deployed consumers                 | Migration freshness, real PostgreSQL tests, COMPATIBILITY review                                       |
-| Queries and indexes need representative planner evidence                        | Captured test corpus, pinned PostgreSQL fixture, base/proposed comparison                              |
-| Controls own appearance; callers own layout                                     | shadcn lint, semantic theme, shared UI variants                                                        |
-| React Compiler is required for React products; compiler failures block builds   | Vite compiler preset, all-errors diagnostics, `pnpm compiler:check` actual transformation evidence     |
-| Framework rules follow selected frameworks and declared compiler applicability  | `project-profile.json`, upstream rule metadata, governance fixtures; applicable warnings remain denied |
-| UX states, recovery, keyboard use, responsiveness, and aesthetics               | PRODUCT acceptance records, design brief, browser evidence, owner review                               |
-| Every test file has failure evidence with explicit provenance                   | Evidence checker distinguishes execution artifacts from attestations                                   |
-| Tests are deterministic and behavior focused                                    | Vitest/Playwright policy and lint; browser and real database suites                                    |
-| Generated output has an authoritative source and freshness command              | `generated-files.json`, generators, freshness checks                                                   |
-| Exceptions have exact scope, value, owner, rationale, tracking, and evidence    | Structured exception registry and effective-config comparison                                          |
-| Dependency age, lifecycle, and vulnerability management                         | pnpm release age, lockfile review, OSV/audit, DEPENDENCIES policy                                      |
-| Security boundaries, secrets, uploads, outbound HTTP, and tenant scope          | SECURITY policy; lint/scanners and application-specific negative tests                                 |
-| Stable telemetry scope; runtime service identity; no query parameters exported  | TELEMETRY policy and exporter tests                                                                    |
-| Enforcement changes need independent approval                                   | Independent review, trusted base comparison, administrator-configured ruleset                          |
-| `pnpm check:all` is the local profile gate; CI adds security comparisons        | Project profile and required `Repository acceptance` result                                            |
-| Semantic model review is advisory, with insufficiency reported separately       | Versioned rules, labeled fixtures; synthetic evaluation on reviewed main                               |
+| Engineering value                         | How the repository supports it                                                          |
+| ----------------------------------------- | --------------------------------------------------------------------------------------- |
+| Reproducible setup                        | Node and pnpm versions are pinned through nvm and Corepack.                             |
+| Strict types and validated inputs         | TypeScript, Oxlint, named Zod schemas, and boundary fixtures.                           |
+| Clear ownership and dependency direction  | Effect ports, public package APIs, dependency-cruiser, and architecture checks.         |
+| Explicit async and failure handling       | Oxlint, Effect diagnostics, Semgrep, and failure-path tests.                            |
+| Safe, predictable database changes        | Typed Drizzle queries, migration checks, PostgreSQL integration tests, and query plans. |
+| Accessible, responsive interfaces         | Shared UI primitives, React Compiler checks, and browser evidence.                      |
+| Reliable tests and generated output       | Vitest, Playwright, test-evidence checks, and generated-file freshness checks.          |
+| Security and dependency hygiene           | Security policies, Semgrep, OSV-Scanner, and dependency audits.                         |
+| Narrow, reviewable exceptions             | Structured exception registry with scope, owner, rationale, and evidence.               |
+| Independent review of enforcement changes | Trusted base comparison and repository ruleset requirements.                            |
+| One command for the full local gate       | `pnpm check:all`; CI adds acceptance and security checks.                               |
+| AI review stays advisory                  | Versioned rules and labeled fixtures; insufficient evidence is reported separately.     |
 
 | Written policy                                  | Decisions it governs                                                            |
 | ----------------------------------------------- | ------------------------------------------------------------------------------- |
