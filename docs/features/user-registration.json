@@ -1,0 +1,74 @@
+{
+  "schemaVersion": 1,
+  "feature": "Reference registration",
+  "owner": "@gburtini",
+  "concerns": [
+    {
+      "concern": "loading",
+      "behavior": "Browser workflow assertions and design brief describe this state",
+      "tests": ["apps/web/e2e/registration.browser.ts"],
+      "notApplicable": false
+    },
+    {
+      "concern": "empty",
+      "behavior": "Browser workflow assertions and design brief describe this state",
+      "tests": ["apps/web/e2e/registration.browser.ts"],
+      "notApplicable": false
+    },
+    {
+      "concern": "success",
+      "behavior": "Browser workflow assertions and design brief describe this state",
+      "tests": ["apps/web/e2e/registration.browser.ts"],
+      "notApplicable": false
+    },
+    {
+      "concern": "validation",
+      "behavior": "Browser workflow assertions and design brief describe this state",
+      "tests": ["apps/web/e2e/registration.browser.ts"],
+      "notApplicable": false
+    },
+    {
+      "concern": "failure",
+      "behavior": "Browser workflow assertions and design brief describe this state",
+      "tests": ["apps/web/e2e/registration.browser.ts"],
+      "notApplicable": false
+    },
+    {
+      "concern": "permission",
+      "behavior": "Public local demonstration; no authentication or tenant claims",
+      "tests": [],
+      "notApplicable": true
+    },
+    {
+      "concern": "duplicate-submission",
+      "behavior": "Browser workflow assertions and design brief describe this state",
+      "tests": ["apps/web/e2e/registration.browser.ts"],
+      "notApplicable": false
+    },
+    {
+      "concern": "keyboard-focus",
+      "behavior": "Browser workflow assertions and design brief describe this state",
+      "tests": ["apps/web/e2e/registration.browser.ts"],
+      "notApplicable": false
+    },
+    {
+      "concern": "destructive-action",
+      "behavior": "No destructive action exists",
+      "tests": [],
+      "notApplicable": true
+    },
+    {
+      "concern": "responsive-long-content",
+      "behavior": "Browser workflow assertions and design brief describe this state",
+      "tests": ["apps/web/e2e/registration.browser.ts"],
+      "notApplicable": false
+    },
+    {
+      "concern": "reduced-motion",
+      "behavior": "Browser workflow assertions and design brief describe this state",
+      "tests": ["apps/web/e2e/registration.browser.ts"],
+      "notApplicable": false
+    }
+  ],
+  "manualReview": "Review desktop and narrow screenshots before adopting this design for a product."
+}

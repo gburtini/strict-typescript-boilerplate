@@ -1,8 +1,14 @@
-import { Button, Card, Input, Label } from "@template/ui";
+import { Card } from "@template/ui";
 import type { ReactElement } from "react";
 import { env } from "../env";
+import { RegistrationForm } from "./registration-form";
+import type { RegistrationPort } from "../application/registration";
 
-export function StarterCard(): ReactElement {
+interface StarterCardProps {
+  readonly register: RegistrationPort;
+}
+
+export function StarterCard({ register }: StarterCardProps): ReactElement {
   return (
     <Card aria-labelledby="app-title">
       <p className="mb-3 text-xs font-bold uppercase tracking-widest text-primary">
@@ -22,9 +28,12 @@ export function StarterCard(): ReactElement {
         </code>
         .
       </p>
-      <Label htmlFor="example-input">Primitive input</Label>
-      <Input id="example-input" placeholder="Use a design-system primitive" />
-      <Button type="button">A typed design-system primitive</Button>
+      <h2 className="text-xl font-semibold">Registration reference</h2>
+      <p className="text-base text-muted-foreground">
+        A local example of validation, persistence, and recovery. Do not enter personal
+        information.
+      </p>
+      <RegistrationForm register={register} />
     </Card>
   );
 }

@@ -7,7 +7,7 @@ export function Card({ className, ...props }: CardProps): ReactElement {
   return (
     <div
       className={cn(
-        "w-full max-w-2xl space-y-6 rounded-xl border border-border bg-card p-12 text-card-foreground shadow-xl",
+        "min-w-0 w-full max-w-2xl space-y-6 rounded-xl border border-border bg-card p-6 text-card-foreground shadow-xl sm:p-12",
         className,
       )}
       data-slot="card"

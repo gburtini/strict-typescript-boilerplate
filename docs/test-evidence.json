@@ -72,6 +72,66 @@
       "revision": "52935042f2fcdf42097a78a20a99c4ebf2062c1a",
       "command": ["pnpm", "test:unit"],
       "redState": "Historical test retained; prior failure demonstration needs independent owner review."
+    },
+    {
+      "test": "packages/core/src/tests/registration.test.ts",
+      "method": "execution",
+      "owner": "@gburtini",
+      "revision": "5c2a1f9e750471deb943d0de5170cbf1a1767de0",
+      "command": [
+        "pnpm",
+        "--filter",
+        "@template/core",
+        "exec",
+        "vitest",
+        "run",
+        "src/tests/registration.test.ts"
+      ],
+      "redState": "Normalization removal breaks the normalized registration contract.",
+      "artifact": "docs/evidence/registration-domain-red.txt"
+    },
+    {
+      "test": "apps/web/src/tests/registration-form.test.tsx",
+      "method": "execution",
+      "owner": "@gburtini",
+      "revision": "5c2a1f9e750471deb943d0de5170cbf1a1767de0",
+      "command": [
+        "pnpm",
+        "--filter",
+        "@template/web",
+        "exec",
+        "vitest",
+        "run",
+        "src/tests/registration-form.test.tsx"
+      ],
+      "redState": "Changing the invalid-input explanation breaks the visible validation contract.",
+      "artifact": "docs/evidence/registration-form-red.txt"
+    },
+    {
+      "test": "apps/web/src/tests/registration-client.test.ts",
+      "method": "execution",
+      "owner": "@gburtini",
+      "revision": "5c2a1f9e750471deb943d0de5170cbf1a1767de0",
+      "command": [
+        "pnpm",
+        "--filter",
+        "@template/web",
+        "exec",
+        "vitest",
+        "run",
+        "src/tests/registration-client.test.ts"
+      ],
+      "redState": "Replacing the external payload with an empty object breaks successful decoding.",
+      "artifact": "docs/evidence/registration-client-red.txt"
+    },
+    {
+      "test": "apps/web/e2e/registration.browser.ts",
+      "method": "execution",
+      "owner": "@gburtini",
+      "revision": "5c2a1f9e750471deb943d0de5170cbf1a1767de0",
+      "command": ["pnpm", "test:integration"],
+      "redState": "The previous layout overflowed at 320 CSS pixels with long success content.",
+      "artifact": "docs/evidence/registration-reflow-red.md"
     }
   ]
 }

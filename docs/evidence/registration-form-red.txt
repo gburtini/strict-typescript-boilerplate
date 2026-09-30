@@ -1,0 +1,288 @@
+Command: pnpm --filter @template/web exec vitest run src/tests/registration-form.test.tsx
+Mutation: Enter a valid email address. => Invalid input.
+Exit: 1
+
+ RUN  v4.1.11 /Users/gburt/Code/toys/strict-typescript-boilerplate/apps/web
+
+ ❯ src/tests/registration-form.test.tsx (2 tests | 2 failed) 1074ms
+     × explains invalid input and focuses the field 1050ms
+     × preserves input after failure and lets the user recover 23ms
+
+ Test Files  1 failed (1)
+      Tests  2 failed (2)
+   Start at  12:43:35
+   Duration  1.68s (transform 45ms, setup 11ms, import 302ms, tests 1.07s, environment 224ms)
+
+undefined
+/Users/gburt/Code/toys/strict-typescript-boilerplate/apps/web:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run src/tests/registration-form.test.tsx
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/tests/registration-form.test.tsx > registration form > explains invalid input and focuses the field
+AssertionError: promise rejected "TestingLibraryElementError: Unable to fin…" instead of resolving
+ ❯ src/tests/registration-form.test.tsx:26:6
+     24|     await expect(
+     25|       screen.findByText("Enter a valid email address."),
+     26|     ).resolves.toBeDefined();
+       |      ^
+     27|     expect(document.activeElement).toBe(
+     28|       screen.getByRole("textbox", { name: "Email address" }),
+
+Caused by: TestingLibraryElementError: Unable to find an element with the text: Enter a valid email address.. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<form[39m
+      [33maction[39m=[32m"javascript:throw new Error('A React form was unexpectedly submitted. If you called form.submit() manually, consider using form.requestSubmit() instead. If you\\'re trying to use event.stopPropagation() in a submit event handler, consider also calling event.preventDefault().')"[39m
+      [33mclass[39m=[32m"flex flex-col gap-4"[39m
+      [33mnovalidate[39m=[32m""[39m
+    [36m>[39m
+      [36m<label[39m
+        [33mclass[39m=[32m"text-sm font-medium leading-none"[39m
+        [33mdata-slot[39m=[32m"label"[39m
+        [33mfor[39m=[32m"registration-email"[39m
+      [36m>[39m
+        [0mEmail address[0m
+      [36m</label>[39m
+      [36m<input[39m
+        [33maria-describedby[39m=[32m"registration-status"[39m
+        [33maria-invalid[39m=[32m"true"[39m
+        [33mautocomplete[39m=[32m"email"[39m
+        [33mclass[39m=[32m"flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"[39m
+        [33mdata-slot[39m=[32m"input"[39m
+        [33mid[39m=[32m"registration-email"[39m
+        [33mname[39m=[32m"email"[39m
+        [33mtype[39m=[32m"email"[39m
+        [33mvalue[39m=[32m"invalid"[39m
+      [36m/>[39m
+      [36m<output[39m
+        [33mclass[39m=[32m"break-words text-sm text-muted-foreground"[39m
+        [33mid[39m=[32m"registration-status"[39m
+      [36m>[39m
+        [0mInvalid input.[0m
+      [36m</output>[39m
+      [36m<button[39m
+        [33mclass[39m=[32m"inline-flex items-center justify-center gap-2 rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"[39m
+        [33mtype[39m=[32m"submit"[39m
+      [36m>[39m
+        [0mSave registration[0m
+      [36m</button>[39m
+    [36m</form>[39m
+  [36m</div>[39m
+[36m</body>[39m
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<form[39m
+      [33maction[39m=[32m"javascript:throw new Error('A React form was unexpectedly submitted. If you called form.submit() manually, consider using form.requestSubmit() instead. If you\\'re trying to use event.stopPropagation() in a submit event handler, consider also calling event.preventDefault().')"[39m
+      [33mclass[39m=[32m"flex flex-col gap-4"[39m
+      [33mnovalidate[39m=[32m""[39m
+    [36m>[39m
+      [36m<label[39m
+        [33mclass[39m=[32m"text-sm font-medium leading-none"[39m
+        [33mdata-slot[39m=[32m"label"[39m
+        [33mfor[39m=[32m"registration-email"[39m
+      [36m>[39m
+        [0mEmail address[0m
+      [36m</label>[39m
+      [36m<input[39m
+        [33maria-describedby[39m=[32m"registration-status"[39m
+        [33maria-invalid[39m=[32m"true"[39m
+        [33mautocomplete[39m=[32m"email"[39m
+        [33mclass[39m=[32m"flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"[39m
+        [33mdata-slot[39m=[32m"input"[39m
+        [33mid[39m=[32m"registration-email"[39m
+        [33mname[39m=[32m"email"[39m
+        [33mtype[39m=[32m"email"[39m
+        [33mvalue[39m=[32m"invalid"[39m
+      [36m/>[39m
+      [36m<output[39m
+        [33mclass[39m=[32m"break-words text-sm text-muted-foreground"[39m
+        [33mid[39m=[32m"registration-status"[39m
+      [36m>[39m
+        [0mInvalid input.[0m
+      [36m</output>[39m
+      [36m<button[39m
+        [33mclass[39m=[32m"inline-flex items-center justify-center gap-2 rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"[39m
+        [33mtype[39m=[32m"submit"[39m
+      [36m>[39m
+        [0mSave registration[0m
+      [36m</button>[39m
+    [36m</form>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ ❯ waitForWrapper ../../node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ ../../node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/query-helpers.js:86:33
+ ❯ src/tests/registration-form.test.tsx:25:14
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/tests/registration-form.test.tsx > registration form > preserves input after failure and lets the user recover
+TestingLibraryElementError: Unable to find an accessible element with the role "textbox" and name "Email address"
+
+Here are the accessible roles:
+
+  textbox:
+
+  Name "Email address Email address":
+  [36m<input[39m
+    [33maria-describedby[39m=[32m"registration-status"[39m
+    [33maria-invalid[39m=[32m"true"[39m
+    [33mautocomplete[39m=[32m"email"[39m
+    [33mclass[39m=[32m"flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"[39m
+    [33mdata-slot[39m=[32m"input"[39m
+    [33mid[39m=[32m"registration-email"[39m
+    [33mname[39m=[32m"email"[39m
+    [33mtype[39m=[32m"email"[39m
+    [33mvalue[39m=[32m"invalid"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  status:
+
+  Name "":
+  [36m<output[39m
+    [33mclass[39m=[32m"break-words text-sm text-muted-foreground"[39m
+    [33mid[39m=[32m"registration-status"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  button:
+
+  Name "Save registration":
+  [36m<button[39m
+    [33mclass[39m=[32m"inline-flex items-center justify-center gap-2 rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"[39m
+    [33mtype[39m=[32m"submit"[39m
+  [36m/>[39m
+
+  --------------------------------------------------textbox:
+
+  Name "":
+  [36m<input[39m
+    [33maria-describedby[39m=[32m"registration-status"[39m
+    [33maria-invalid[39m=[32m"false"[39m
+    [33mautocomplete[39m=[32m"email"[39m
+    [33mclass[39m=[32m"flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"[39m
+    [33mdata-slot[39m=[32m"input"[39m
+    [33mid[39m=[32m"registration-email"[39m
+    [33mname[39m=[32m"email"[39m
+    [33mtype[39m=[32m"email"[39m
+    [33mvalue[39m=[32m""[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  status:
+
+  Name "":
+  [36m<output[39m
+    [33mclass[39m=[32m"break-words text-sm text-muted-foreground"[39m
+    [33mid[39m=[32m"registration-status"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  button:
+
+  Name "Save registration":
+  [36m<button[39m
+    [33mclass[39m=[32m"inline-flex items-center justify-center gap-2 rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"[39m
+    [33mtype[39m=[32m"submit"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<form[39m
+      [33maction[39m=[32m"javascript:throw new Error('A React form was unexpectedly submitted. If you called form.submit() manually, consider using form.requestSubmit() instead. If you\\'re trying to use event.stopPropagation() in a submit event handler, consider also calling event.preventDefault().')"[39m
+      [33mclass[39m=[32m"flex flex-col gap-4"[39m
+      [33mnovalidate[39m=[32m""[39m
+    [36m>[39m
+      [36m<label[39m
+        [33mclass[39m=[32m"text-sm font-medium leading-none"[39m
+        [33mdata-slot[39m=[32m"label"[39m
+        [33mfor[39m=[32m"registration-email"[39m
+      [36m>[39m
+        [0mEmail address[0m
+      [36m</label>[39m
+      [36m<input[39m
+        [33maria-describedby[39m=[32m"registration-status"[39m
+        [33maria-invalid[39m=[32m"true"[39m
+        [33mautocomplete[39m=[32m"email"[39m
+        [33mclass[39m=[32m"flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"[39m
+        [33mdata-slot[39m=[32m"input"[39m
+        [33mid[39m=[32m"registration-email"[39m
+        [33mname[39m=[32m"email"[39m
+        [33mtype[39m=[32m"email"[39m
+        [33mvalue[39m=[32m"invalid"[39m
+      [36m/>[39m
+      [36m<output[39m
+        [33mclass[39m=[32m"break-words text-sm text-muted-foreground"[39m
+        [33mid[39m=[32m"registration-status"[39m
+      [36m>[39m
+        [0mInvalid input.[0m
+      [36m</output>[39m
+      [36m<button[39m
+        [33mclass[39m=[32m"inline-flex items-center justify-center gap-2 rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"[39m
+        [33mtype[39m=[32m"submit"[39m
+      [36m>[39m
+        [0mSave registration[0m
+      [36m</button>[39m
+    [36m</form>[39m
+  [36m</div>[39m
+  [36m<div>[39m
+    [36m<form[39m
+      [33maction[39m=[32m"javascript:throw new Error('A React form was unexpectedly submitted. If you called form.submit() manually, consider using form.requestSubmit() instead. If you\\'re trying to use event.stopPropagation() in a submit event handler, consider also calling event.preventDefault().')"[39m
+      [33mclass[39m=[32m"flex flex-col gap-4"[39m
+      [33mnovalidate[39m=[32m""[39m
+    [36m>[39m
+      [36m<label[39m
+        [33mclass[39m=[32m"text-sm font-medium leading-none"[39m
+        [33mdata-slot[39m=[32m"label"[39m
+        [33mfor[39m=[32m"registration-email"[39m
+      [36m>[39m
+        [0mEmail address[0m
+      [36m</label>[39m
+      [36m<input[39m
+        [33maria-describedby[39m=[32m"registration-status"[39m
+        [33maria-invalid[39m=[32m"false"[39m
+        [33mautocomplete[39m=[32m"email"[39m
+        [33mclass[39m=[32m"flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"[39m
+        [33mdata-slot[39m=[32m"input"[39m
+        [33mid[39m=[32m"registration-email"[39m
+        [33mname[39m=[32m"email"[39m
+        [33mtype[39m=[32m"email"[39m
+        [33mvalue[39m=[32m""[39m
+      [36m/>[39m
+      [36m<output[39m
+        [33mclass[39m=[32m"break-words text-sm text-muted-foreground"[39m
+        [33mid[39m=[32m"registration-status"[39m
+      [36m>[39m
+        [0mUse a test email. Repeat registration returns the same saved user.[0m
+      [36m</output>[39m
+      [36m<button[39m
+        [33mclass[39m=[32m"inline-flex items-center justify-center gap-2 rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"[39m
+        [33mtype[39m=[32m"submit"[39m
+      [36m>[39m
+        [0mSave registration[0m
+      [36m</button>[39m
+    [36m</form>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ ❯ Object.getElementError ../../node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/config.js:37:19
+ ❯ ../../node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+ ❯ ../../node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ ❯ ../../node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ❯ src/tests/registration-form.test.tsx:36:29
+     34|     expect.hasAssertions();
+     35|     const view = render(<RegistrationForm register={unavailableRegistr…
+     36|     fireEvent.change(screen.getByRole("textbox", { name: "Email addres…
+       |                             ^
+     37|       target: { value: "test@example.test" },
+     38|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+

@@ -13,8 +13,19 @@ export default defineConfig({
   },
   webServer: {
     command: "pnpm preview --host 127.0.0.1 --port 4173",
-    reuseExistingServer: process.env.CI !== "true",
+    reuseExistingServer: false,
     url: "http://127.0.0.1:4173",
+    gracefulShutdown: { signal: "SIGTERM", timeout: 5000 },
   },
-  projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"] } }],
+  projects: [
+    { name: "chromium", use: { ...devices["Desktop Chrome"] } },
+    {
+      name: "narrow-reduced-motion",
+      use: {
+        ...devices["Desktop Chrome"],
+        viewport: { width: 320, height: 720 },
+        reducedMotion: "reduce",
+      },
+    },
+  ],
 });
