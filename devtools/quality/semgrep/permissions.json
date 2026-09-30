@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "permissions": [
+    {
+      "rule": "no-raw-fetch",
+      "scope": ["/apps/web/src/adapters/registration-client.ts"],
+      "reason": "The browser transport adapter owns HTTP and decodes responses with responseSchema.",
+      "owner": "@gburtini",
+      "tracking": "docs/policies/SECURITY.md",
+      "evidence": "devtools/quality/semgrep/fixtures.json"
+    },
+    {
+      "rule": "no-direct-process-env",
+      "scope": [
+        "/apps/web/server/env.ts",
+        "/apps/web/playwright.config.ts",
+        "/packages/db/src/env.ts",
+        "/packages/db/src/client.ts",
+        "/packages/db/src/query-capture.ts",
+        "/devtools/scripts/database/prepare-query-plans.ts",
+        "/devtools/scripts/database/reset-query-plan-database.ts",
+        "/devtools/scripts/database/run-query-plans.ts",
+        "/devtools/scripts/database/export-query-plan-stats.ts",
+        "/devtools/scripts/database/verify-database.ts"
+      ],
+      "reason": "Named runtime configuration, browser runner configuration, and database capture/planner tooling entry points own environment reads. This permission does not approve unvalidated configuration or grant application/domain code access.",
+      "owner": "@gburtini",
+      "tracking": "docs/policies/SECURITY.md",
+      "evidence": "devtools/quality/semgrep/fixtures.json"
+    }
+  ]
+}

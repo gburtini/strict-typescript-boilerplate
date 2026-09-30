@@ -1,0 +1,3 @@
+# Restore source tests excluded by Semgrep default patterns.
+!**/src/tests/**
+!**/e2e/**

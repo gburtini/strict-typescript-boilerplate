@@ -8,6 +8,7 @@ rules:
     patterns:
       - pattern-either:
           - pattern: eval(...)
+          - pattern: Function(...)
           - pattern: new Function(...)
 
   - id: no-hardcoded-credential-assignment
@@ -32,8 +33,86 @@ rules:
     message: Avoid shell interpolation in child-process calls; pass arguments separately.
     severity: ERROR
     pattern-either:
-      - pattern: child_process.exec($COMMAND, ...)
-      - pattern: exec($COMMAND, ...)
+      - patterns:
+          - pattern-inside: |
+              import { exec as $CALL } from "node:child_process";
+              ...
+          - pattern: $CALL(...)
+      - patterns:
+          - pattern-inside: |
+              import { exec } from "node:child_process";
+              ...
+          - pattern: exec(...)
+      - patterns:
+          - pattern-inside: |
+              import * as $PROCESS from "node:child_process";
+              ...
+          - pattern: $PROCESS.exec(...)
+      - patterns:
+          - pattern-inside: |
+              import $PROCESS from "node:child_process";
+              ...
+          - pattern: $PROCESS.exec(...)
+      - patterns:
+          - pattern-inside: |
+              import { execSync as $CALL } from "node:child_process";
+              ...
+          - pattern: $CALL(...)
+      - patterns:
+          - pattern-inside: |
+              import { execSync } from "node:child_process";
+              ...
+          - pattern: execSync(...)
+      - patterns:
+          - pattern-inside: |
+              import * as $PROCESS from "node:child_process";
+              ...
+          - pattern: $PROCESS.execSync(...)
+      - patterns:
+          - pattern-inside: |
+              import $PROCESS from "node:child_process";
+              ...
+          - pattern: $PROCESS.execSync(...)
+      - patterns:
+          - pattern-inside: |
+              import { exec as $CALL } from "child_process";
+              ...
+          - pattern: $CALL(...)
+      - patterns:
+          - pattern-inside: |
+              import { exec } from "child_process";
+              ...
+          - pattern: exec(...)
+      - patterns:
+          - pattern-inside: |
+              import * as $PROCESS from "child_process";
+              ...
+          - pattern: $PROCESS.exec(...)
+      - patterns:
+          - pattern-inside: |
+              import $PROCESS from "child_process";
+              ...
+          - pattern: $PROCESS.exec(...)
+      - patterns:
+          - pattern-inside: |
+              import { execSync as $CALL } from "child_process";
+              ...
+          - pattern: $CALL(...)
+      - patterns:
+          - pattern-inside: |
+              import { execSync } from "child_process";
+              ...
+          - pattern: execSync(...)
+      - patterns:
+          - pattern-inside: |
+              import * as $PROCESS from "child_process";
+              ...
+          - pattern: $PROCESS.execSync(...)
+      - patterns:
+          - pattern-inside: |
+              import $PROCESS from "child_process";
+              ...
+          - pattern: $PROCESS.execSync(...)
 
   - id: no-empty-catch
     languages:
@@ -41,11 +120,11 @@ rules:
       - typescript
     message: Catch blocks must report, translate, or rethrow the failure.
     severity: ERROR
-    pattern: |
-      try {
-        ...
-      } catch ($ERROR) {
-      }
+    pattern-either:
+      - pattern: |
+          try { ... } catch ($ERROR) {}
+      - pattern: |
+          try { ... } catch {}
 
   - id: throw-error-values
     languages:
@@ -53,27 +132,40 @@ rules:
       - typescript
     message: Throw an Error or a typed application failure, never a string or arbitrary value.
     severity: ERROR
-    patterns:
-      - pattern: throw $VALUE
-      - pattern-not: throw new $ERROR(...)
-      - pattern-not: throw $ERROR
+    pattern-either:
+      - pattern: throw "..."
+      - pattern: throw true
+      - pattern: throw false
+      - pattern: throw null
+      - pattern: throw undefined
+      - pattern: "throw { ... }"
+      - pattern: "throw [ ... ]"
+      - patterns:
+          - pattern: throw $NUMBER
+          - metavariable-regex:
+              metavariable: $NUMBER
+              regex: '^[+-]?(?:\d+(?:\.\d+)?|\.\d+)$'
 
   - id: catch-wrapping-preserves-cause
     languages:
       - javascript
       - typescript
-    message: "Wrapped errors must preserve the original failure with { cause: $ERROR }."
+    message: "Wrapped errors must preserve an enclosing caught failure as their cause."
     severity: ERROR
-    patterns:
-      - pattern-inside: |
-          try {
-            ...
-          } catch ($ERROR) {
-            ...
-          }
-      - pattern: throw new $WRAPPER(...)
-      - pattern-not: |
-          throw new $WRAPPER(..., { cause: $CAUSE }, ...)
+    pattern-either:
+      - patterns:
+          - pattern-inside: |
+              try { ... } catch ($CAUGHT) { ... }
+          - pattern: throw new $WRAPPER(...)
+          - pattern-not: "throw new $WRAPPER(..., { ..., cause: $CAUSE, ... }, ...)"
+      - patterns:
+          - pattern-inside: |
+              try { ... } catch ($CAUGHT) { ... }
+          - pattern: "throw new $WRAPPER(..., { ..., cause: $CAUSE, ... }, ...)"
+          - pattern-not-inside: |
+              try { ... } catch ($CAUSE) { ... }
+          - pattern-not-inside: |
+              try { ... } catch ($CAUSE: $TYPE) { ... }
 
   - id: no-raw-fetch
     languages:
@@ -81,14 +173,234 @@ rules:
       - typescript
     message: Use an injected HTTP adapter; raw fetch is forbidden in application and domain code.
     severity: ERROR
-    pattern: fetch(...)
+    metadata:
+      enforcement: boundary
+    paths:
+      exclude:
+        - /apps/web/src/adapters/registration-client.ts
+    pattern-either:
+      - pattern: fetch(...)
+      - pattern: globalThis.fetch(...)
+      - pattern: window.fetch(...)
 
   - id: no-unbounded-promise-all-map
     languages:
       - javascript
       - typescript
-    message: Promise collection over an unbounded map requires an explicit concurrency limiter.
+    message: Use an explicit bounded collection helper rather than Promise collection directly over map.
     severity: ERROR
     pattern-either:
       - pattern: Promise.all($ITEMS.map($CALLBACK))
       - pattern: Promise.allSettled($ITEMS.map($CALLBACK))
+
+  - id: no-string-timers
+    languages: [javascript, typescript]
+    message: Timer callbacks must be functions, never strings.
+    severity: ERROR
+    pattern-either:
+      - pattern: setTimeout("...", ...)
+      - pattern: setInterval("...", ...)
+      - pattern: globalThis.setTimeout("...", ...)
+      - pattern: globalThis.setInterval("...", ...)
+      - pattern: window.setTimeout("...", ...)
+      - pattern: window.setInterval("...", ...)
+
+  - id: no-child-process-shell
+    languages: [javascript, typescript]
+    message: Subprocess options must not enable a shell; omit shell or set it to false.
+    severity: ERROR
+    patterns:
+      - pattern-either:
+          - patterns:
+              - pattern-inside: |
+                  import { spawn as $CALL } from "node:child_process";
+                  ...
+              - pattern: "$CALL(..., { ..., shell: $SHELL, ... }, ...)"
+          - patterns:
+              - pattern-inside: |
+                  import { spawn } from "node:child_process";
+                  ...
+              - pattern: "spawn(..., { ..., shell: $SHELL, ... }, ...)"
+          - patterns:
+              - pattern-inside: |
+                  import * as $PROCESS from "node:child_process";
+                  ...
+              - pattern: "$PROCESS.spawn(..., { ..., shell: $SHELL, ... }, ...)"
+          - patterns:
+              - pattern-inside: |
+                  import $PROCESS from "node:child_process";
+                  ...
+              - pattern: "$PROCESS.spawn(..., { ..., shell: $SHELL, ... }, ...)"
+          - patterns:
+              - pattern-inside: |
+                  import { spawnSync as $CALL } from "node:child_process";
+                  ...
+              - pattern: "$CALL(..., { ..., shell: $SHELL, ... }, ...)"
+          - patterns:
+              - pattern-inside: |
+                  import { spawnSync } from "node:child_process";
+                  ...
+              - pattern: "spawnSync(..., { ..., shell: $SHELL, ... }, ...)"
+          - patterns:
+              - pattern-inside: |
+                  import * as $PROCESS from "node:child_process";
+                  ...
+              - pattern: "$PROCESS.spawnSync(..., { ..., shell: $SHELL, ... }, ...)"
+          - patterns:
+              - pattern-inside: |
+                  import $PROCESS from "node:child_process";
+                  ...
+              - pattern: "$PROCESS.spawnSync(..., { ..., shell: $SHELL, ... }, ...)"
+          - patterns:
+              - pattern-inside: |
+                  import { execFile as $CALL } from "node:child_process";
+                  ...
+              - pattern: "$CALL(..., { ..., shell: $SHELL, ... }, ...)"
+          - patterns:
+              - pattern-inside: |
+                  import { execFile } from "node:child_process";
+                  ...
+              - pattern: "execFile(..., { ..., shell: $SHELL, ... }, ...)"
+          - patterns:
+              - pattern-inside: |
+                  import * as $PROCESS from "node:child_process";
+                  ...
+              - pattern: "$PROCESS.execFile(..., { ..., shell: $SHELL, ... }, ...)"
+          - patterns:
+              - pattern-inside: |
+                  import $PROCESS from "node:child_process";
+                  ...
+              - pattern: "$PROCESS.execFile(..., { ..., shell: $SHELL, ... }, ...)"
+          - patterns:
+              - pattern-inside: |
+                  import { execFileSync as $CALL } from "node:child_process";
+                  ...
+              - pattern: "$CALL(..., { ..., shell: $SHELL, ... }, ...)"
+          - patterns:
+              - pattern-inside: |
+                  import { execFileSync } from "node:child_process";
+                  ...
+              - pattern: "execFileSync(..., { ..., shell: $SHELL, ... }, ...)"
+          - patterns:
+              - pattern-inside: |
+                  import * as $PROCESS from "node:child_process";
+                  ...
+              - pattern: "$PROCESS.execFileSync(..., { ..., shell: $SHELL, ... }, ...)"
+          - patterns:
+              - pattern-inside: |
+                  import $PROCESS from "node:child_process";
+                  ...
+              - pattern: "$PROCESS.execFileSync(..., { ..., shell: $SHELL, ... }, ...)"
+          - patterns:
+              - pattern-inside: |
+                  import { spawn as $CALL } from "child_process";
+                  ...
+              - pattern: "$CALL(..., { ..., shell: $SHELL, ... }, ...)"
+          - patterns:
+              - pattern-inside: |
+                  import { spawn } from "child_process";
+                  ...
+              - pattern: "spawn(..., { ..., shell: $SHELL, ... }, ...)"
+          - patterns:
+              - pattern-inside: |
+                  import * as $PROCESS from "child_process";
+                  ...
+              - pattern: "$PROCESS.spawn(..., { ..., shell: $SHELL, ... }, ...)"
+          - patterns:
+              - pattern-inside: |
+                  import $PROCESS from "child_process";
+                  ...
+              - pattern: "$PROCESS.spawn(..., { ..., shell: $SHELL, ... }, ...)"
+          - patterns:
+              - pattern-inside: |
+                  import { spawnSync as $CALL } from "child_process";
+                  ...
+              - pattern: "$CALL(..., { ..., shell: $SHELL, ... }, ...)"
+          - patterns:
+              - pattern-inside: |
+                  import { spawnSync } from "child_process";
+                  ...
+              - pattern: "spawnSync(..., { ..., shell: $SHELL, ... }, ...)"
+          - patterns:
+              - pattern-inside: |
+                  import * as $PROCESS from "child_process";
+                  ...
+              - pattern: "$PROCESS.spawnSync(..., { ..., shell: $SHELL, ... }, ...)"
+          - patterns:
+              - pattern-inside: |
+                  import $PROCESS from "child_process";
+                  ...
+              - pattern: "$PROCESS.spawnSync(..., { ..., shell: $SHELL, ... }, ...)"
+          - patterns:
+              - pattern-inside: |
+                  import { execFile as $CALL } from "child_process";
+                  ...
+              - pattern: "$CALL(..., { ..., shell: $SHELL, ... }, ...)"
+          - patterns:
+              - pattern-inside: |
+                  import { execFile } from "child_process";
+                  ...
+              - pattern: "execFile(..., { ..., shell: $SHELL, ... }, ...)"
+          - patterns:
+              - pattern-inside: |
+                  import * as $PROCESS from "child_process";
+                  ...
+              - pattern: "$PROCESS.execFile(..., { ..., shell: $SHELL, ... }, ...)"
+          - patterns:
+              - pattern-inside: |
+                  import $PROCESS from "child_process";
+                  ...
+              - pattern: "$PROCESS.execFile(..., { ..., shell: $SHELL, ... }, ...)"
+          - patterns:
+              - pattern-inside: |
+                  import { execFileSync as $CALL } from "child_process";
+                  ...
+              - pattern: "$CALL(..., { ..., shell: $SHELL, ... }, ...)"
+          - patterns:
+              - pattern-inside: |
+                  import { execFileSync } from "child_process";
+                  ...
+              - pattern: "execFileSync(..., { ..., shell: $SHELL, ... }, ...)"
+          - patterns:
+              - pattern-inside: |
+                  import * as $PROCESS from "child_process";
+                  ...
+              - pattern: "$PROCESS.execFileSync(..., { ..., shell: $SHELL, ... }, ...)"
+          - patterns:
+              - pattern-inside: |
+                  import $PROCESS from "child_process";
+                  ...
+              - pattern: "$PROCESS.execFileSync(..., { ..., shell: $SHELL, ... }, ...)"
+      - metavariable-pattern:
+          metavariable: $SHELL
+          patterns:
+            - pattern: $VALUE
+            - pattern-not: "false"
+
+  - id: no-disabled-tls-verification
+    languages: [javascript, typescript]
+    message: TLS certificate verification must not be disabled.
+    severity: ERROR
+    pattern-either:
+      - pattern: "{ ..., rejectUnauthorized: false, ... }"
+      - pattern: process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0"
+
+  - id: no-direct-process-env
+    languages: [javascript, typescript]
+    message: Read environment variables only in a reviewed configuration boundary.
+    severity: ERROR
+    metadata:
+      enforcement: boundary
+    paths:
+      exclude:
+        - /apps/web/server/env.ts
+        - /apps/web/playwright.config.ts
+        - /packages/db/src/env.ts
+        - /packages/db/src/client.ts
+        - /packages/db/src/query-capture.ts
+        - /devtools/scripts/database/prepare-query-plans.ts
+        - /devtools/scripts/database/reset-query-plan-database.ts
+        - /devtools/scripts/database/run-query-plans.ts
+        - /devtools/scripts/database/export-query-plan-stats.ts
+        - /devtools/scripts/database/verify-database.ts
+    pattern: process.env

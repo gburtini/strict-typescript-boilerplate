@@ -1,7 +1,9 @@
 import { readdirSync, readFileSync, statSync } from "node:fs";
 import nodePath from "node:path";
+import { parse } from "yaml";
 import { config } from "../../../oxlint.config.ts";
 import { validateExceptionRegistry } from "./lint-exceptions.ts";
+import { validateSemgrepPermissions } from "./semgrep-contracts.ts";
 
 const rationalePattern =
     /--\s*\S.+; owner: \S+; issue: \S+; expiry: \d{4}-\d{2}-\d{2}$/u,
@@ -68,4 +70,8 @@ if (violations.length > 0) {
 validateExceptionRegistry(
   config,
   JSON.parse(readFileSync("devtools/quality/exceptions.json", "utf8")),
+);
+validateSemgrepPermissions(
+  parse(readFileSync(".semgrep.yml", "utf8")),
+  JSON.parse(readFileSync("devtools/quality/semgrep/permissions.json", "utf8")),
 );

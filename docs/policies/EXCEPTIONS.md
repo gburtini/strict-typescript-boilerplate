@@ -33,10 +33,20 @@ the narrow scope. The comment must include a rationale after `--` or `:`.
 
 Anonymous suppressions, file-wide disables, unexplained ignore entries, and
 rule downgrades are invalid. `pnpm exceptions:check` checks source suppressions
-for a rationale; reviewers must still verify scope, owner, issue, and expiry.
+for rationale, owner, tracking and expiry fields. The machine registry at
+`devtools/quality/exceptions.json` must exactly match effective disabled rules,
+overrides and ignored paths. Reviewers verify the justification and scope.
 
 If a rule prevents a genuinely correct implementation, stop and document the
 conflict. Do not silently weaken the rule.
+
+Semgrep boundary permissions use `devtools/quality/semgrep/permissions.json`.
+They must match the rule's exact file exclusions and include reason, owner,
+tracking, and fixture evidence. Temporary permissions include an expiry date.
+`pnpm exceptions:check` validates this registry, and `pnpm semgrep:check` proves
+that each permitted operation fails when its permission is removed. Inline
+Semgrep suppressions do not disable enforcement. Universal rules cannot carry
+exclusions without an explicit, reviewed change to their boundary contract.
 
 ## Current configuration registry
 
@@ -126,8 +136,9 @@ currently required AI SDK transitive versions are individually listed in
 exempted. Owner: repository maintainers. Tracking task: branch
 `codex/jev-semantic-lint`. Expiry: 2026-09-30; remove the exact-version
 exclusions after review and once the releases have aged past the seven-day
-gate. Jev evaluates pull-request diffs and may also be run locally; inability
-to evaluate a pull-request diff is a failed check.
+gate. Jev evaluation is advisory. CI submits synthetic fixtures from reviewed
+main only; source evaluation requires explicit authorization. An unavailable
+evaluation cannot be reported as clean semantic evidence.
 
 Database tooling and governance scripts receive the same lint policy as
 application code. They must use the public package entry points, satisfy the

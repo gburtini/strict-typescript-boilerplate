@@ -76,3 +76,54 @@ response.
 
 Do not invent protocols or primitives. Use established platform or library APIs
 and preserve secure defaults.
+
+## Semgrep contract
+
+`pnpm semgrep:check` runs the digest-pinned Semgrep Community Edition container
+locally and in CI. Docker must be available. The scanner has no network access,
+the source mount is read-only, metrics are disabled, and inline `nosemgrep`
+suppression is disabled. Strict scan errors and findings fail acceptance.
+Git-visible JavaScript and
+TypeScript source paths must all appear in the scan inventory, including tests;
+`.semgrepignore` restores source tests omitted by the upstream defaults.
+
+`.semgrep.yml` distinguishes universal bans from boundary rules. Boundary rules
+declare `metadata.enforcement: boundary` and exclude exact root-anchored files;
+every exclusion must match `devtools/quality/semgrep/permissions.json` exactly.
+Directory permissions, glob permissions, duplicate records, missing files, and
+expired permissions are rejected. Permission for one operation never exempts
+the file from other rules. The registry records ownership, rationale, tracking,
+and evidence. Runtime environment modules, Playwright configuration, and the
+named database planner/capture entry points currently own environment reads;
+the browser registration adapter owns raw HTTP requests. These permissions do
+not prove configuration validation, authorization, or destination safety.
+
+Fixtures are stored as inert JSON source snippets in
+`devtools/quality/semgrep/fixtures.json`, then materialized in an isolated
+temporary project. No production source is excluded to accommodate negative
+fixtures. Every rule must have rejecting and accepting examples; finding
+multiplicities and fixture scan coverage are checked. Removing boundary
+permissions in the temporary configuration must expose the protected operation
+at every approved path. A suppression fixture proves inline suppression cannot
+hide a finding. Files with boundary permissions also contain a universal-ban
+fixture to prove the permissions remain rule-specific.
+
+The initial rules detect dynamic code construction, credential assignments,
+shell execution, empty catches, literal throws, lost causes in direct error
+wrapping, raw HTTP, direct Promise collection over map, string timers, shell
+options, disabled TLS verification, and environment access. Imported subprocess
+APIs are matched through their import declarations, with alias and unrelated-name
+fixtures. The collection rule enforces canonical syntax; it does not infer
+runtime collection size or recognize a limiter hidden in the callback.
+
+These are syntactic contracts, not a proof of all data flows. The wrapper rule
+requires a cause drawn from an enclosing catch, supports
+typed and nested catches, and rejects unrelated values. It does not establish
+that the selected enclosing failure is the correct business-level cause.
+Indirectly built subprocess options, arbitrary global aliases, transformed
+error causes, and
+cross-file validation require further evidence. Type-aware lint remains the
+owner of arbitrary thrown values and type escapes; dependency-cruiser remains
+the owner of import direction. New taint rules must identify concrete sources,
+sinks, and operation-specific sanitizers rather than treating every Zod parse
+as sanitization.

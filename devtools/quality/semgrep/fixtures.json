@@ -1,0 +1,303 @@
+{
+  "schemaVersion": 1,
+  "fixtures": [
+    {
+      "path": "/cases/no-eval-or-dynamic-function-bad.ts",
+      "code": "eval(input); Function(input); new Function(input);",
+      "expected": [
+        "no-eval-or-dynamic-function",
+        "no-eval-or-dynamic-function",
+        "no-eval-or-dynamic-function"
+      ]
+    },
+    {
+      "path": "/cases/no-eval-or-dynamic-function-good.ts",
+      "code": "const result = JSON.stringify(input);",
+      "expected": []
+    },
+    {
+      "path": "/cases/no-hardcoded-credential-assignment-bad.ts",
+      "code": "const password = \"real-credential-value\";",
+      "expected": ["no-hardcoded-credential-assignment"]
+    },
+    {
+      "path": "/cases/no-hardcoded-credential-assignment-good.ts",
+      "code": "const password = configuration.password;",
+      "expected": []
+    },
+    {
+      "path": "/cases/no-dangerous-child-process-shell-bad.ts",
+      "code": "import { exec as run, execSync } from \"node:child_process\"; run(command); execSync(command);",
+      "expected": [
+        "no-dangerous-child-process-shell",
+        "no-dangerous-child-process-shell"
+      ]
+    },
+    {
+      "path": "/cases/no-dangerous-child-process-shell-good.ts",
+      "code": "function exec(value) { return value; } exec(command);",
+      "expected": []
+    },
+    {
+      "path": "/cases/exec-namespace.ts",
+      "code": "import * as cp from \"child_process\"; cp.exec(command); cp.execSync(command);",
+      "expected": [
+        "no-dangerous-child-process-shell",
+        "no-dangerous-child-process-shell"
+      ]
+    },
+    {
+      "path": "/cases/no-empty-catch-bad.ts",
+      "code": "try { work(); } catch (error) {} try { work(); } catch {}",
+      "expected": ["no-empty-catch", "no-empty-catch"]
+    },
+    {
+      "path": "/cases/no-empty-catch-good.ts",
+      "code": "try { work(); } catch (error) { throw error; }",
+      "expected": []
+    },
+    {
+      "path": "/cases/throw-error-values-bad.ts",
+      "code": "throw \"bad\"; throw 42; throw true; throw false; throw null; throw undefined; throw {}; throw [];",
+      "expected": [
+        "throw-error-values",
+        "throw-error-values",
+        "throw-error-values",
+        "throw-error-values",
+        "throw-error-values",
+        "throw-error-values",
+        "throw-error-values",
+        "throw-error-values"
+      ]
+    },
+    {
+      "path": "/cases/throw-error-values-good.ts",
+      "code": "throw new Error(\"failure\"); throw error;",
+      "expected": []
+    },
+    {
+      "path": "/cases/catch-wrapping-preserves-cause-bad.ts",
+      "code": "try { work(); } catch (error) { throw new Error(\"failure\", {cause: unrelated}); }",
+      "expected": ["catch-wrapping-preserves-cause"]
+    },
+    {
+      "path": "/cases/catch-wrapping-preserves-cause-good.ts",
+      "code": "try { work(); } catch (error) { throw new Error(\"failure\", {cause: error, detail: \"context\"}); }",
+      "expected": []
+    },
+    {
+      "path": "/cases/cause-missing.ts",
+      "code": "try { work(); } catch (error) { throw new Error(\"failure\"); }",
+      "expected": ["catch-wrapping-preserves-cause"]
+    },
+    {
+      "path": "/cases/no-raw-fetch-bad.ts",
+      "code": "fetch(url); globalThis.fetch(url); window.fetch(url);",
+      "expected": ["no-raw-fetch", "no-raw-fetch", "no-raw-fetch"]
+    },
+    {
+      "path": "/cases/no-raw-fetch-good.ts",
+      "code": "http.request(url);",
+      "expected": []
+    },
+    {
+      "path": "/cases/no-unbounded-promise-all-map-bad.ts",
+      "code": "Promise.all(items.map(callback)); Promise.allSettled(items.map(callback));",
+      "expected": ["no-unbounded-promise-all-map", "no-unbounded-promise-all-map"]
+    },
+    {
+      "path": "/cases/no-unbounded-promise-all-map-good.ts",
+      "code": "Promise.all([first, second]); mapWithConcurrency(items, callback);",
+      "expected": []
+    },
+    {
+      "path": "/cases/no-string-timers-bad.ts",
+      "code": "setTimeout(\"work()\", 10); window.setInterval(\"work()\", 10); globalThis.setTimeout(\"work()\", 10);",
+      "expected": ["no-string-timers", "no-string-timers", "no-string-timers"]
+    },
+    {
+      "path": "/cases/no-string-timers-good.ts",
+      "code": "setTimeout(() => work(), 10);",
+      "expected": []
+    },
+    {
+      "path": "/cases/no-child-process-shell-bad.ts",
+      "code": "import { spawn as start, execFileSync } from \"node:child_process\"; start(command, args, {shell: true}); execFileSync(command, args, {shell: \"/bin/sh\"});",
+      "expected": ["no-child-process-shell", "no-child-process-shell"]
+    },
+    {
+      "path": "/cases/no-child-process-shell-good.ts",
+      "code": "import { spawn } from \"node:child_process\"; spawn(command, args, {shell: false}); spawn(command, args);",
+      "expected": []
+    },
+    {
+      "path": "/cases/shell-namespace.ts",
+      "code": "import * as cp from \"child_process\"; cp.spawnSync(command, args, {shell: true});",
+      "expected": ["no-child-process-shell"]
+    },
+    {
+      "path": "/cases/shell-unrelated.ts",
+      "code": "function spawn(command, args, options) { return options; } spawn(command, args, {shell: true});",
+      "expected": []
+    },
+    {
+      "path": "/cases/no-disabled-tls-verification-bad.ts",
+      "code": "connect({rejectUnauthorized: false});",
+      "expected": ["no-disabled-tls-verification"]
+    },
+    {
+      "path": "/cases/no-disabled-tls-verification-good.ts",
+      "code": "connect({rejectUnauthorized: true});",
+      "expected": []
+    },
+    {
+      "path": "/cases/no-direct-process-env-bad.ts",
+      "code": "const environment = process.env; const {CI} = process.env; const mode = process.env[\"MODE\"];",
+      "expected": [
+        "no-direct-process-env",
+        "no-direct-process-env",
+        "no-direct-process-env"
+      ]
+    },
+    {
+      "path": "/cases/no-direct-process-env-good.ts",
+      "code": "const mode = configuration.mode;",
+      "expected": []
+    },
+    {
+      "path": "/cases/suppression.ts",
+      "code": "// nosemgrep: no-eval-or-dynamic-function\neval(input);",
+      "expected": ["no-eval-or-dynamic-function"]
+    },
+    {
+      "path": "/apps/web/src/adapters/registration-client.ts",
+      "code": "fetch(url); eval(input);",
+      "expected": ["no-eval-or-dynamic-function"]
+    },
+    {
+      "path": "/apps/web/server/env.ts",
+      "code": "process.env.NODE_TLS_REJECT_UNAUTHORIZED = \"0\"; eval(input);",
+      "expected": ["no-disabled-tls-verification", "no-eval-or-dynamic-function"]
+    },
+    {
+      "path": "/apps/web/playwright.config.ts",
+      "code": "const environment = process.env; eval(input);",
+      "expected": ["no-eval-or-dynamic-function"]
+    },
+    {
+      "path": "/packages/db/src/env.ts",
+      "code": "const environment = process.env; eval(input);",
+      "expected": ["no-eval-or-dynamic-function"]
+    },
+    {
+      "path": "/packages/db/src/client.ts",
+      "code": "const environment = process.env; eval(input);",
+      "expected": ["no-eval-or-dynamic-function"]
+    },
+    {
+      "path": "/packages/db/src/query-capture.ts",
+      "code": "const environment = process.env; eval(input);",
+      "expected": ["no-eval-or-dynamic-function"]
+    },
+    {
+      "path": "/devtools/scripts/database/prepare-query-plans.ts",
+      "code": "const environment = process.env; eval(input);",
+      "expected": ["no-eval-or-dynamic-function"]
+    },
+    {
+      "path": "/devtools/scripts/database/reset-query-plan-database.ts",
+      "code": "const environment = process.env; eval(input);",
+      "expected": ["no-eval-or-dynamic-function"]
+    },
+    {
+      "path": "/devtools/scripts/database/run-query-plans.ts",
+      "code": "const environment = process.env; eval(input);",
+      "expected": ["no-eval-or-dynamic-function"]
+    },
+    {
+      "path": "/devtools/scripts/database/export-query-plan-stats.ts",
+      "code": "const environment = process.env; eval(input);",
+      "expected": ["no-eval-or-dynamic-function"]
+    },
+    {
+      "path": "/cases/typed-cause-good.ts",
+      "code": "try { work(); } catch (error: unknown) { throw new Error(\"failure\", {cause: error}); }",
+      "expected": []
+    },
+    {
+      "path": "/cases/typed-cause-bad.ts",
+      "code": "try { work(); } catch (error: unknown) { throw new Error(\"failure\"); }",
+      "expected": ["catch-wrapping-preserves-cause"]
+    },
+    {
+      "path": "/devtools/scripts/database/verify-database.ts",
+      "code": "const environment = process.env; eval(input);",
+      "expected": ["no-eval-or-dynamic-function"]
+    },
+    {
+      "path": "/cases/typed-cause-unrelated.ts",
+      "code": "try { work(); } catch (error: unknown) { throw new Error(\"failure\", {cause: unrelated}); }",
+      "expected": ["catch-wrapping-preserves-cause"]
+    },
+    {
+      "path": "/cases/typed-cause-spacing.ts",
+      "code": "try { work(); } catch (caught : unknown) { throw new Error(\"failure\", {cause: caught}); }",
+      "expected": []
+    },
+    {
+      "path": "/cases/cause-nested.ts",
+      "code": "try { work(); } catch (outer) { try { cleanup(); } catch (inner) { throw new Error(\"cleanup\", {cause: inner}); } throw new Error(\"failure\", {cause: outer}); }",
+      "expected": []
+    },
+    {
+      "path": "/cases/cause-nested-typed.ts",
+      "code": "try { work(); } catch (outer: unknown) { try { cleanup(); } catch (inner: unknown) { throw new Error(\"cleanup\", {cause: inner}); } throw new Error(\"failure\", {cause: outer}); }",
+      "expected": []
+    },
+    {
+      "path": "/cases/empty-typed-catch.ts",
+      "code": "try { work(); } catch (error: unknown) {}",
+      "expected": ["no-empty-catch"]
+    },
+    {
+      "path": "/cases/shell-options-variable.ts",
+      "code": "import { spawn } from \"node:child_process\"; spawn(command, args, {shell: selectedShell});",
+      "expected": ["no-child-process-shell"]
+    },
+    {
+      "path": "/cases/process-env-alias.ts",
+      "code": "const configuration = process.env; use(configuration.MODE);",
+      "expected": ["no-direct-process-env"]
+    },
+    {
+      "path": "/cases/exec-default-import.ts",
+      "code": "import cp from \"node:child_process\"; cp.exec(command);",
+      "expected": ["no-dangerous-child-process-shell"]
+    },
+    {
+      "path": "/cases/cause-conditional-missing.ts",
+      "code": "try { work(); } catch (error: unknown) { if (condition) { throw new Error(\"failure\"); } }",
+      "expected": ["catch-wrapping-preserves-cause"]
+    },
+    {
+      "path": "/cases/cause-mixed-catches.ts",
+      "code": "try { work(); } catch (outer: unknown) { try { cleanup(); } catch (inner) { throw new Error(\"cleanup\", {cause: inner}); } throw new Error(\"failure\", {cause: outer}); }",
+      "expected": []
+    },
+    {
+      "path": "/cases/cause-conditional-unrelated.ts",
+      "code": "try { work(); } catch (error: unknown) { if (condition) { throw new Error(\"failure\", {cause: unrelated}); } }",
+      "expected": ["catch-wrapping-preserves-cause"]
+    },
+    {
+      "path": "/cases/cause-nested-unrelated.ts",
+      "code": "try { work(); } catch (outer: unknown) { try { cleanup(); } catch (inner: unknown) { throw new Error(\"cleanup\", {cause: unrelated}); } throw new Error(\"failure\", {cause: outer}); }",
+      "expected": ["catch-wrapping-preserves-cause"]
+    },
+    {
+      "path": "/cases/cause-valid-and-invalid.ts",
+      "code": "try { work(); } catch (error) { if (condition) { throw new Error(\"first\", {cause: error}); } throw new Error(\"second\", {cause: unrelated}); }",
+      "expected": ["catch-wrapping-preserves-cause"]
+    }
+  ]
+}
