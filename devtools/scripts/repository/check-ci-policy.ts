@@ -10,8 +10,8 @@ const permissionSetSchema = z.record(z.string(), z.enum(["read", "write", "none"
     permissions: permissionSetSchema.optional(),
   }),
   workflowSchema = z.looseObject({
-    jobs: z.record(z.string(), jobSchema).optional(),
-    permissions: permissionSetSchema.optional(),
+    jobs: z.record(z.string(), jobSchema),
+    permissions: permissionSetSchema,
   }),
   shaPinnedAction = /uses:\s+[^\s@]+@[0-9a-f]{40}(?:\s|$)/u,
   mutableAction = /uses:\s+[^\s@]+@[^\s#]+/u,
@@ -21,6 +21,7 @@ const permissionSetSchema = z.record(z.string(), z.enum(["read", "write", "none"
   > = {
     "actionlint.yml": { workflow: { contents: "read" }, jobs: {} },
     "check.yml": { workflow: { contents: "read" }, jobs: {} },
+    "enforcement-review.yml": { workflow: { contents: "read" }, jobs: {} },
     "jev-eval.yml": {
       workflow: { contents: "read" },
       jobs: { evaluate: { contents: "read" } },
@@ -46,7 +47,7 @@ const permissionSetSchema = z.record(z.string(), z.enum(["read", "write", "none"
       jobs: {},
     },
     "semgrep.yml": {
-      workflow: { contents: "read", "security-events": "write" },
+      workflow: { contents: "read" },
       jobs: {},
     },
   },
@@ -63,10 +64,16 @@ function checkPermissionSet(
     failures.push(`${file}: ${scope} permissions must be an explicit mapping`);
     return;
   }
-  for (const [permission, level] of Object.entries(permissionSet.data)) {
+  for (const [permission, level] of Object.entries({
+    ...allowed,
+    ...permissionSet.data,
+  })) {
     if (!(permission in allowed)) {
       failures.push(`${file}: ${scope} permission is not allowlisted: ${permission}`);
-    } else if (level !== allowed[permission]) {
+    } else if (
+      level !== allowed[permission] ||
+      !Object.hasOwn(permissionSet.data, permission)
+    ) {
       failures.push(
         `${file}: ${scope} permission ${permission} must be ${allowed[permission]}`,
       );
@@ -111,12 +118,8 @@ function checkWorkflow(file: string): void {
   const documentResult = workflowSchema.safeParse(parse(contents));
   if (documentResult.success) {
     const document = documentResult.data;
-    if (document.permissions) {
-      checkPermissionSet(path, "workflow", document.permissions, policy.workflow);
-    }
-    if (document.jobs) {
-      checkJobPermissions(path, document.jobs, policy.jobs);
-    }
+    checkPermissionSet(path, "workflow", document.permissions, policy.workflow);
+    checkJobPermissions(path, document.jobs, policy.jobs);
   } else {
     failures.push(`${path}: workflow must parse as a mapping`);
   }

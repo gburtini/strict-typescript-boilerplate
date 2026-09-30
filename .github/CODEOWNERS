@@ -1,0 +1,18 @@
+# Require code owner review through the repository ruleset in GOVERNANCE.md.
+/.github/ @gburtini
+/AGENTS.md @gburtini
+/**/AGENTS.md @gburtini
+/docs/ @gburtini
+/devtools/ @gburtini
+/oxlint* @gburtini
+/*config* @gburtini
+/package.json @gburtini
+/pnpm-workspace.yaml @gburtini
+/pnpm-lock.yaml @gburtini
+/project-profile.json @gburtini
+/generated-files.json @gburtini
+/**/coverage-baseline.json @gburtini
+/**/vitest*.ts @gburtini
+/**/playwright.config.ts @gburtini
+/**/package.json @gburtini
+/**/tsconfig.json @gburtini
