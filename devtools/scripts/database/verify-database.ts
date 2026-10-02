@@ -70,6 +70,7 @@ try {
   process.stdout.write(
     `Verifying isolated database at ${parsed.host}:${parsed.port}\n`,
   );
+  run("pnpm", ["--filter", "@template/core", "test:integration"], environment);
   run("pnpm", ["db:migrate"], environment);
   run("pnpm", ["db:plans:prepare"], environment);
   run("pnpm", ["--filter", "@template/db", "test:integration"], environment);

@@ -41,7 +41,8 @@
         "src/api/index.ts!",
         "src/api/contract.ts!",
         "src/api/router.ts!",
-        "src/telemetry-node.ts!"
+        "src/telemetry-node.ts!",
+        "src/tests/integration/**/*.integration.test.ts"
       ],
       "project": ["src/**/*.ts"],
       "ignoreDependencies": ["@orpc/contract", "@orpc/server", "zod"]

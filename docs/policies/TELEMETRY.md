@@ -32,3 +32,11 @@ Telemetry must be best effort. An exporter outage must not turn a successful
 business operation into a failure. Adapter code still reports the failure to
 the configured observability mechanism and preserves the original cause for
 the application error path.
+
+## Export evidence
+
+Core integration tests run a loopback OTLP collector and assert shutdown flush,
+parent context, status, runtime identity and parameter redaction. Exported SDK
+spans preserve `spanContext()` and every required ReadableSpan field. Exception
+messages, stacks and status messages are replaced with safe descriptions because
+adapter errors can contain query parameters. Failure types and status remain.

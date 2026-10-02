@@ -9,7 +9,8 @@
     "./telemetry-node": "./src/telemetry-node.ts"
   },
   "scripts": {
-    "test": "vitest run"
+    "test": "vitest run --exclude src/tests/integration/**",
+    "test:integration": "vitest run --config vitest.integration.config.ts"
   },
   "dependencies": {
     "@effect/opentelemetry": "0.64.1",

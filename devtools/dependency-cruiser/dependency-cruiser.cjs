@@ -1,6 +1,12 @@
 /** @type {import("dependency-cruiser").IConfig} */
 module.exports = {
   forbidden: [
+    {
+      name: "http-listeners-belong-at-node-runtime-boundaries",
+      severity: "error",
+      from: { pathNot: "(^|/)(apps/[^/]+/(?:dist/)?server/|packages/core/src/tests/)" },
+      to: { path: "^(node:)?http$" },
+    },
     { name: "no-circular", severity: "error", from: {}, to: { circular: true } },
     {
       name: "no-tests-in-production",

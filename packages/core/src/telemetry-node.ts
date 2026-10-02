@@ -1,11 +1,12 @@
-import { layer as resourceLayer } from "@effect/opentelemetry/Resource";
-import { layerGlobal, type OtelTracer } from "@effect/opentelemetry/Tracer";
+import { layerWithoutOtelTracer, OtelTracer } from "@effect/opentelemetry/Tracer";
+import { trace } from "@opentelemetry/api";
 import { OTLPTraceExporter } from "@opentelemetry/exporter-trace-otlp-http";
 import { resourceFromAttributes } from "@opentelemetry/resources";
 import { BatchSpanProcessor } from "@opentelemetry/sdk-trace-base";
 import { NodeTracerProvider } from "@opentelemetry/sdk-trace-node";
 import { Effect, Layer } from "effect";
 import { redactDatabaseParameters } from "./telemetry-exporter";
+import { instrumentationName } from "./telemetry";
 
 interface TelemetryOptions {
   readonly endpoint?: string;
@@ -43,16 +44,16 @@ function createTelemetryLive(options: TelemetryOptions): Layer.Layer<OtelTracer>
       ),
     );
 
-  return Layer.provideMerge(
-    layerGlobal,
-    Layer.merge(
-      provider,
-      resourceLayer({
-        serviceName: configuration.serviceName,
-        serviceVersion: configuration.serviceVersion,
-      }),
+  const tracer = Layer.provide(
+    Layer.effect(
+      OtelTracer,
+      Effect.sync(() =>
+        trace.getTracer(instrumentationName, configuration.serviceVersion),
+      ),
     ),
+    provider,
   );
+  return Layer.provideMerge(layerWithoutOtelTracer, tracer);
 }
 
 const TelemetryLive = createTelemetryLive;

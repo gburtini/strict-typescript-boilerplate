@@ -7,6 +7,11 @@ const fixtureRoot = mkdtempSync(
 );
 const boundaries = [
   {
+    rule: "http-listeners-belong-at-node-runtime-boundaries",
+    from: "packages/core/src/application/listener.js",
+    to: "node:http",
+  },
+  {
     rule: "domain-does-not-import-node-builtins",
     from: "apps/reference/src/domain/policy.js",
     to: "node:crypto",

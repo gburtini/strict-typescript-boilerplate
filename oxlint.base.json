@@ -59,7 +59,9 @@
           "node:fs",
           "node:fs/promises",
           "node:os",
-          "node:path"
+          "node:path",
+          "node:http",
+          "node:events"
         ]
       }
     ],
@@ -67,7 +69,12 @@
       "error",
       "prefer-top-level-if-only-type-imports"
     ],
-    "import/no-unassigned-import": ["error", { "allow": ["**/*.css"] }],
+    "import/no-unassigned-import": [
+      "error",
+      {
+        "allow": ["**/*.css"]
+      }
+    ],
     "import/prefer-default-export": "off",
     "no-console": "error",
     "no-eval": "error",
@@ -85,11 +92,19 @@
     "max-depth": ["error", 4],
     "max-lines": [
       "error",
-      { "max": 500, "skipBlankLines": true, "skipComments": true }
+      {
+        "max": 500,
+        "skipBlankLines": true,
+        "skipComments": true
+      }
     ],
     "max-lines-per-function": [
       "error",
-      { "max": 80, "skipBlankLines": true, "skipComments": true }
+      {
+        "max": 80,
+        "skipBlankLines": true,
+        "skipComments": true
+      }
     ],
     "max-params": ["error", 5],
     "max-statements": ["error", 40],
@@ -144,7 +159,10 @@
     "typescript/await-thenable": "error",
     "typescript/consistent-type-imports": [
       "error",
-      { "fixStyle": "inline-type-imports", "prefer": "type-imports" }
+      {
+        "fixStyle": "inline-type-imports",
+        "prefer": "type-imports"
+      }
     ],
     "typescript/no-deprecated": "error",
     "typescript/no-floating-promises": "error",
@@ -173,7 +191,12 @@
         "ignoreVoidReturningFunctions": true
       }
     ],
-    "unicorn/filename-case": ["error", { "case": "kebabCase" }],
+    "unicorn/filename-case": [
+      "error",
+      {
+        "case": "kebabCase"
+      }
+    ],
     "unicorn/import-style": "error",
     "unicorn/no-abusive-eslint-disable": "error",
     "unicorn/no-invalid-fetch-options": "error",
@@ -267,11 +290,19 @@
         "vitest/require-hook": "error",
         "eslint/max-lines": [
           "error",
-          { "max": 1000, "skipBlankLines": true, "skipComments": true }
+          {
+            "max": 1000,
+            "skipBlankLines": true,
+            "skipComments": true
+          }
         ],
         "eslint/max-lines-per-function": [
           "error",
-          { "max": 120, "skipBlankLines": true, "skipComments": true }
+          {
+            "max": 120,
+            "skipBlankLines": true,
+            "skipComments": true
+          }
         ],
         "eslint/max-statements": ["error", 80],
         "react/no-multi-comp": "off",
