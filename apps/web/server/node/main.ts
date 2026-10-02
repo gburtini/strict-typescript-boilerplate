@@ -5,6 +5,7 @@ import { InfrastructureError, withSpanPromise } from "@template/core";
 import { serverEnv } from "../env";
 import { createReferenceApi, type ReferenceApi } from "../reference-api";
 import { respond } from "../http-response";
+import { loadImmutableAssets } from "../static-assets";
 
 const root = nodePath.resolve(import.meta.dirname, "..");
 function apiOptions(): { readonly api?: ReferenceApi } {
@@ -15,6 +16,7 @@ function apiOptions(): { readonly api?: ReferenceApi } {
 }
 const resources = apiOptions();
 const { api } = resources;
+const immutableAssets = loadImmutableAssets(root);
 let stopping = false;
 const server = createServer((request, response) => {
   Effect.runFork(
@@ -22,7 +24,12 @@ const server = createServer((request, response) => {
       Effect.tryPromise({
         try: async () => {
           await withSpanPromise("http.request", async () => {
-            await respond(request, response, { ...resources, root, stopping });
+            await respond(request, response, {
+              ...resources,
+              root,
+              stopping,
+              immutableAssets: await immutableAssets,
+            });
           });
         },
         catch: (cause) => new InfrastructureError("HTTP request failed", "http", cause),
@@ -107,10 +114,18 @@ server.on("error", (error) => {
 for (const signal of ["SIGTERM", "SIGINT"]) {
   process.once(signal, shutdown);
 }
-let initialize: Effect.Effect<void, InfrastructureError> = Effect.void;
+let initialize: Effect.Effect<void, InfrastructureError> = Effect.asVoid(
+  Effect.tryPromise({
+    try: async () => {
+      await immutableAssets;
+    },
+    catch: (cause) =>
+      new InfrastructureError("Asset manifest failed", "static-assets", cause),
+  }),
+);
 if (api) {
   const { initialize: apiInitialize } = api;
-  initialize = apiInitialize;
+  initialize = Effect.zipRight(initialize, apiInitialize);
 }
 Effect.runFork(
   Effect.matchCause(initialize, {

@@ -193,10 +193,10 @@
       "test": "apps/web/e2e/registration.browser.ts",
       "method": "execution",
       "owner": "repository-maintainers",
-      "revision": "f47f77500f06df55ac5d5d3461be4c2162d145df",
+      "revision": "c431df5fa76cd4bc920a04d52643ddeab17622ae",
       "command": ["pnpm", "test:integration"],
-      "redState": "server bundle exclusion removed from the production asset boundary. Recorded assertions fail before restoring the source.",
-      "artifact": "docs/evidence/server-assets-red.txt"
+      "redState": "Original private-bundle evidence remains; the real built server failed HTML revalidation and immutable asset header assertions before transport caching was implemented.",
+      "artifact": "docs/evidence/server-cache-red.md"
     },
     {
       "test": "packages/core/src/tests/transport.test.ts",
@@ -247,7 +247,7 @@
       "test": "apps/web/src/tests/static-assets.test.ts",
       "method": "execution",
       "owner": "repository-maintainers",
-      "revision": "f47f77500f06df55ac5d5d3461be4c2162d145df",
+      "revision": "c431df5fa76cd4bc920a04d52643ddeab17622ae",
       "command": [
         "pnpm",
         "--filter",
@@ -257,8 +257,8 @@
         "run",
         "src/tests/static-assets.test.ts"
       ],
-      "redState": "indiscriminate SPA fallback exposes an entry for private and missing paths. Recorded assertions fail before restoring the source.",
-      "artifact": "docs/evidence/static-assets-red.txt"
+      "redState": "Original path guards retain their executed evidence; manifest-listed content hashes failed the immutable caching regression before the cache policy was implemented.",
+      "artifact": "docs/evidence/static-assets-cache-red.md"
     },
     {
       "test": "packages/db/src/tests/devtools/planner-safety.test.ts",

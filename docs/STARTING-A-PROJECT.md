@@ -65,6 +65,11 @@ closing the database and flushing telemetry on SIGTERM/SIGINT. API enablement is
 explicit; the example remains disabled by default. `pnpm test:e2e` exercises this
 built Node server.
 
+Manifest-listed assets with content hashes receive one year of immutable caching.
+HTML, SPA entry responses and other public files use `no-cache` with content
+ETags; matching GET/HEAD validators receive 304 without a body. API, readiness
+and missing-file responses use `no-store`.
+
 `TELEMETRY_SERVICE_NAME` defaults to application package metadata;
 `OTEL_EXPORTER_OTLP_TRACES_ENDPOINT` selects the collector. Exported exception
 payloads and query parameters are redacted. TLS, routing and process supervision

@@ -5,6 +5,7 @@ import tailwindcss from "@tailwindcss/vite";
 import { registrationPlugin } from "./server/main";
 
 export default defineConfig({
+  build: { manifest: true },
   plugins: [
     react(),
     babel({

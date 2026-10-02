@@ -6,6 +6,16 @@ interface ResponseOptions {
   readonly api?: ReferenceApi;
   readonly root: string;
   readonly stopping: boolean;
+  readonly immutableAssets: ReadonlySet<string>;
+}
+
+function matchesEtag(validator: string | undefined, etag: string): boolean {
+  return (
+    validator?.split(",").some((value) => {
+      const tag = value.trim().replace(/^W\//u, "");
+      return tag === "*" || tag === etag;
+    }) === true
+  );
 }
 
 async function respond(
@@ -16,6 +26,7 @@ async function respond(
   const { pathname } = new globalThis.URL(request.url ?? "/", "http://localhost");
   const { api, root, stopping } = options;
   response.setHeader("X-Content-Type-Options", "nosniff");
+  response.setHeader("Cache-Control", "no-store");
   if (pathname === "/readyz") {
     if (api) {
       await api.ready();
@@ -49,14 +60,24 @@ async function respond(
     response.end();
     return;
   }
-  const asset = await readStaticAsset(root, pathname);
+  const asset = await readStaticAsset(root, pathname, options.immutableAssets);
   if (!asset.found) {
     response.writeHead(404);
     response.end("Not found");
     return;
   }
-  response.writeHead(200, {
+  const headers = {
     "Content-Type": asset.contentType,
+    "Cache-Control": asset.cacheControl,
+    ETag: asset.etag,
+  };
+  if (matchesEtag(request.headers["if-none-match"], asset.etag)) {
+    response.writeHead(304, headers);
+    response.end();
+    return;
+  }
+  response.writeHead(200, {
+    ...headers,
     "Content-Length": asset.body.length,
   });
   if (request.method === "HEAD") {
