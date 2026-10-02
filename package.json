@@ -8,7 +8,7 @@
     "architecture:fixtures": "node --experimental-strip-types devtools/scripts/repository/check-architecture-fixtures.ts",
     "ci:policy": "node --experimental-strip-types devtools/scripts/repository/check-ci-policy.ts",
     "build": "pnpm --filter @template/web build",
-    "check": "pnpm check:runtime && pnpm toolchain:check && pnpm format:check && pnpm api:check && pnpm db:migrations:check && pnpm typecheck && pnpm lint && pnpm semantic:check && pnpm exceptions:check && pnpm semgrep:check && pnpm enforcement:fixtures && pnpm architecture:fixtures && pnpm ci:policy && pnpm governance:fixtures && pnpm generated:check && pnpm test:evidence && pnpm enforcement:manifest:check && pnpm deadcode && pnpm deps && pnpm packages && pnpm test",
+    "check": "pnpm check:runtime && pnpm toolchain:check && pnpm format:check && pnpm api:check && pnpm db:migrations:check && pnpm typecheck && pnpm lint && pnpm semantic:check && pnpm exceptions:check && pnpm semgrep:check && pnpm enforcement:fixtures && pnpm architecture:fixtures && pnpm ci:policy && pnpm initialization:fixtures && pnpm governance:fixtures && pnpm generated:check && pnpm test:evidence && pnpm enforcement:manifest:check && pnpm deadcode && pnpm deps && pnpm packages && pnpm test",
     "check:all": "node --experimental-strip-types devtools/scripts/repository/run-full-check.ts",
     "check:runtime": "node --experimental-strip-types devtools/scripts/repository/check-runtime.ts",
     "db:check": "drizzle-kit check --config packages/db/drizzle.config.ts",
@@ -53,7 +53,9 @@
     "compiler:check": "pnpm --filter @template/web compiler:check",
     "start": "pnpm --filter @template/web start",
     "dev:web": "pnpm --filter @template/web dev",
-    "browser:install": "pnpm --filter @template/web exec playwright install chromium"
+    "browser:install": "pnpm --filter @template/web exec playwright install chromium",
+    "init:project": "node --experimental-strip-types devtools/scripts/repository/initialize-project.ts",
+    "initialization:fixtures": "node --experimental-strip-types devtools/scripts/repository/check-initialization-fixtures.ts"
   },
   "devDependencies": {
     "@effect/tsgo": "0.45.0",
