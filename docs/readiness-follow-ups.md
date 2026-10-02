@@ -27,6 +27,9 @@ by offline lockfile regeneration. An isolated empty-cache smoke fixture
 [reproduced the same failure locally](evidence/initialization-cold-cache-red.txt).
 The smoke command now always allocates independent package and metadata caches,
 removing both on exit. Previously a developer's warm cache could hide this failure.
+Cache paths are supplied through pnpm command-line configuration. This avoids checking
+then rewriting `.npmrc`, which CodeQL identified as a filesystem race in
+[run 37044276674](https://github.com/gburtini/strict-typescript-boilerplate/actions/runs/37044276674).
 
 Initialization now allows pnpm to fetch missing metadata with `--prefer-offline`.
 It rejects changes to external importer bindings, package resolutions and

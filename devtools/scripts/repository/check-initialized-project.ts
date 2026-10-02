@@ -34,13 +34,21 @@ const sourceMetadata = sourceMetadataSchema.parse(
 );
 
 function run(cwd: string, command: string, args: string[]): string {
-  const result = spawnSync(command, args, {
+  let invocation = args;
+  if (command === "pnpm") {
+    invocation = [
+      `--config.store-dir=${nodePath.join(cache, "store")}`,
+      `--config.cache-dir=${nodePath.join(cache, "metadata")}`,
+      ...args,
+    ];
+  }
+  const result = spawnSync(command, invocation, {
     cwd,
     encoding: "utf8",
     maxBuffer: 16_777_216,
   });
   const output = `${result.stdout}\n${result.stderr}`.replaceAll("\0", "\n");
-  appendFileSync(log, `$ ${command} ${args.join(" ")}\n${output}\n`);
+  appendFileSync(log, `$ ${command} ${invocation.join(" ")}\n${output}\n`);
   process.stdout.write(output);
   if (result.error || result.status !== 0) {
     throw new Error(`${command} failed in initialized-project verification`, {
@@ -114,15 +122,6 @@ function initializeCopy(): void {
 
 try {
   copySources();
-  const configurationPath = nodePath.join(checkout, ".npmrc");
-  let configuration = "";
-  if (existsSync(configurationPath)) {
-    configuration = readFileSync(configurationPath, "utf8");
-  }
-  writeFileSync(
-    configurationPath,
-    `${configuration}\nstore-dir=${nodePath.join(cache, "store")}\ncache-dir=${nodePath.join(cache, "metadata")}\n`,
-  );
   run(checkout, "git", ["init", "--quiet"]);
   run(checkout, "git", ["add", "--", "."]);
   run(checkout, "git", [
