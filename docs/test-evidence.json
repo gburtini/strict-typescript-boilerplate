@@ -150,6 +150,24 @@
       ],
       "redState": "The SDK span snapshot lost its spanContext method before serialization.",
       "artifact": "docs/evidence/runtime-boundaries-red.txt"
+    },
+    {
+      "test": "packages/core/src/tests/transport.test.ts",
+      "method": "execution",
+      "owner": "repository-maintainers",
+      "revision": "f47f77500f06df55ac5d5d3461be4c2162d145df",
+      "command": [
+        "pnpm",
+        "--filter",
+        "@template/core",
+        "exec",
+        "vitest",
+        "run",
+        "src/tests/transport.test.ts",
+        "src/tests/telemetry-exporter.test.ts"
+      ],
+      "redState": "The real HTTP handler returned 500 for typed outages, then the intermediate implementation returned 503 for defects. Both regressions have recorded failing runs.",
+      "artifact": "docs/evidence/transport-red.md"
     }
   ]
 }
