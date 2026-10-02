@@ -4,7 +4,35 @@ const stepSchema = z.looseObject({
   uses: z.string().optional(),
   run: z.string().optional(),
   if: z.string().optional(),
+  with: z
+    .looseObject({
+      path: z.string().optional(),
+      "include-hidden-files": z.boolean().optional(),
+      "if-no-files-found": z.string().optional(),
+    })
+    .optional(),
 });
+
+function requireInitializationEvidence(steps: z.infer<typeof stepSchema>[]): void {
+  const paths = [
+    ".artifacts/initialization-smoke-*/smoke.log",
+    ".artifacts/initialization-smoke-*/project.json",
+    ".artifacts/initialization-smoke-*/acceptance",
+  ];
+  const upload = steps.find(
+    (step) => step.uses?.startsWith("actions/upload-artifact@") === true,
+  );
+  if (
+    upload?.if !== "always()" ||
+    upload.with?.["include-hidden-files"] !== true ||
+    upload.with["if-no-files-found"] !== "error" ||
+    upload.with.path?.trim() !== paths.join("\n")
+  ) {
+    throw new TypeError(
+      "Initialization evidence must upload hidden artifacts with scoped paths",
+    );
+  }
+}
 const workflowContractSchema = z.looseObject({
   on: z.record(z.string(), z.json()),
   permissions: z.record(z.string(), z.enum(["read", "write", "none"])),
@@ -53,6 +81,7 @@ function validateAcceptanceWorkflow(
   ) {
     throw new TypeError("Initialization must run the smoke command unconditionally");
   }
+  requireInitializationEvidence(initialization.steps ?? []);
   return workflow;
 }
 

@@ -1,0 +1,17 @@
+
+> typescript-boilerplate@0.1.0 governance:fixtures /Users/gburt/Code/toys/strict-typescript-boilerplate
+> node --experimental-strip-types devtools/scripts/repository/check-governance-fixtures.ts
+
+file:///Users/gburt/Code/toys/strict-typescript-boilerplate/devtools/scripts/shared/expect-rejection.ts:10
+  throw new Error(`Invalid fixture was accepted: ${message}`);
+        ^
+
+Error: Invalid fixture was accepted: upload hidden artifacts with scoped paths
+    at expectRejection (file:///Users/gburt/Code/toys/strict-typescript-boilerplate/devtools/scripts/shared/expect-rejection.ts:10:9)
+    at file:///Users/gburt/Code/toys/strict-typescript-boilerplate/devtools/scripts/repository/check-governance-fixtures.ts:109:3
+    at ModuleJob.run (node:internal/modules/esm/module_job:430:25)
+    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:661:26)
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)
+
+Node.js v24.13.1
+ ELIFECYCLE  Command failed with exit code 1.

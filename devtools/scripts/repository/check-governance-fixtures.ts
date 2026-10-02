@@ -101,6 +101,30 @@ expectRejection(
 const acceptanceWorkflow = validateAcceptanceWorkflow(
   parse(readFileSync(".github/workflows/check.yml", "utf8")),
 );
+for (const inputs of [
+  { "include-hidden-files": false },
+  { path: ".artifacts/initialization-smoke-*" },
+  { "if-no-files-found": "ignore" },
+]) {
+  expectRejection(
+    () =>
+      validateAcceptanceWorkflow({
+        ...acceptanceWorkflow,
+        jobs: {
+          ...acceptanceWorkflow.jobs,
+          initialization: {
+            steps: acceptanceWorkflow.jobs.initialization?.steps?.map((step) => {
+              if (step.uses?.startsWith("actions/upload-artifact@") === true) {
+                return { ...step, with: { ...step.with, ...inputs } };
+              }
+              return step;
+            }),
+          },
+        },
+      }),
+    "upload hidden artifacts with scoped paths",
+  );
+}
 for (const initialization of [
   { steps: [{ run: "echo skipped" }] },
   { if: "false", steps: [{ run: "pnpm initialization:smoke" }] },

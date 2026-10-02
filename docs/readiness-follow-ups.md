@@ -19,6 +19,35 @@ The [CI command mutation failed](evidence/initialized-ci-red.txt).
 The [full smoke test failed when canonical lockfile regeneration was removed](evidence/initialized-project-red.txt).
 All temporary mutations were restored.
 
+### Cold-cache CI repair
+
+[Hosted run 37040695090](https://github.com/gburtini/strict-typescript-boilerplate/actions/runs/37040695090)
+failed because a frozen install did not populate the registry metadata needed
+by offline lockfile regeneration. An isolated empty-cache smoke fixture
+[reproduced the same failure locally](evidence/initialization-cold-cache-red.txt).
+The smoke command now always allocates independent package and metadata caches,
+removing both on exit. Previously a developer's warm cache could hide this failure.
+
+Initialization now allows pnpm to fetch missing metadata with `--prefer-offline`.
+It rejects changes to external importer bindings, package resolutions and
+transitive snapshots before continuing, restoring sources and the lockfile on
+failure. Workspace aliases may change with the configured scope; external
+dependency pins must remain unchanged. The resolution fixture accepts scope
+renaming and key reordering, and rejects integrity, transitive and direct-version
+changes. [Removing the guard fails the fixture](evidence/initialization-resolutions-red.txt).
+
+The artifact uploader now includes hidden files for three explicit evidence
+paths: the smoke log, project configuration and acceptance artifacts. It excludes
+the checkout and dependency caches. The previous default skipped the entire
+hidden `.artifacts` directory. CI policy additionally rejects hidden-file opt-out,
+widened paths and ignored missing files. [Removing the hidden-file requirement
+fails the fixture](evidence/initialization-upload-red.txt).
+
+Cold-cache initialization with missing registry metadata now succeeds. No existing
+validation was removed, no dependency or baseline changed, and no lint threshold
+was altered. Artifact inclusion widened only to the named evidence paths; all
+existing acceptance gates remain required. Temporary mutations were restored.
+
 ## Delivery and documentation
 
 The Vite client build now generates its asset manifest. The Node composition

@@ -55,7 +55,11 @@ jobs:
         if: always()
         with:
           name: initialized-project-evidence
-          path: .artifacts/initialization-smoke-*
+          path: |
+            .artifacts/initialization-smoke-*/smoke.log
+            .artifacts/initialization-smoke-*/project.json
+            .artifacts/initialization-smoke-*/acceptance
+          include-hidden-files: true
           if-no-files-found: error
           retention-days: 14
   semgrep:
