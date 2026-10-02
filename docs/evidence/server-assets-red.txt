@@ -7,14 +7,14 @@ Actual exit: 1
 > typescript-boilerplate@0.1.0 test:integration /Users/gburt/Code/toys/strict-typescript-boilerplate
 > node --experimental-strip-types devtools/scripts/database/verify-database.ts
 
- Network strict-check-83d4afad-1d4b-4492-817a-027a25ef9d1d_default Creating 
- Network strict-check-83d4afad-1d4b-4492-817a-027a25ef9d1d_default Created 
- Container strict-check-83d4afad-1d4b-4492-817a-027a25ef9d1d-postgres-1 Creating 
- Container strict-check-83d4afad-1d4b-4492-817a-027a25ef9d1d-postgres-1 Created 
- Container strict-check-83d4afad-1d4b-4492-817a-027a25ef9d1d-postgres-1 Starting 
- Container strict-check-83d4afad-1d4b-4492-817a-027a25ef9d1d-postgres-1 Started 
- Container strict-check-83d4afad-1d4b-4492-817a-027a25ef9d1d-postgres-1 Waiting 
- Container strict-check-83d4afad-1d4b-4492-817a-027a25ef9d1d-postgres-1 Healthy 
+ Network strict-check-83d4afad-1d4b-4492-817a-027a25ef9d1d_default Creating
+ Network strict-check-83d4afad-1d4b-4492-817a-027a25ef9d1d_default Created
+ Container strict-check-83d4afad-1d4b-4492-817a-027a25ef9d1d-postgres-1 Creating
+ Container strict-check-83d4afad-1d4b-4492-817a-027a25ef9d1d-postgres-1 Created
+ Container strict-check-83d4afad-1d4b-4492-817a-027a25ef9d1d-postgres-1 Starting
+ Container strict-check-83d4afad-1d4b-4492-817a-027a25ef9d1d-postgres-1 Started
+ Container strict-check-83d4afad-1d4b-4492-817a-027a25ef9d1d-postgres-1 Waiting
+ Container strict-check-83d4afad-1d4b-4492-817a-027a25ef9d1d-postgres-1 Healthy
 127.0.0.1:32775
 Verifying isolated database at 127.0.0.1:32775
 
@@ -108,17 +108,17 @@ dist/server/main.js  448.27 kB │ gzip: 97.00 kB
 > node --experimental-strip-types scripts/check-react-compiler.ts
 
 React Compiler transformed the application and interactive form.
- Container strict-check-83d4afad-1d4b-4492-817a-027a25ef9d1d-postgres-1 Stopping 
- Container strict-check-83d4afad-1d4b-4492-817a-027a25ef9d1d-postgres-1 Stopped 
- Container strict-check-83d4afad-1d4b-4492-817a-027a25ef9d1d-postgres-1 Removing 
- Container strict-check-83d4afad-1d4b-4492-817a-027a25ef9d1d-postgres-1 Removed 
- Network strict-check-83d4afad-1d4b-4492-817a-027a25ef9d1d_default Removing 
- Network strict-check-83d4afad-1d4b-4492-817a-027a25ef9d1d_default Removed 
+ Container strict-check-83d4afad-1d4b-4492-817a-027a25ef9d1d-postgres-1 Stopping
+ Container strict-check-83d4afad-1d4b-4492-817a-027a25ef9d1d-postgres-1 Stopped
+ Container strict-check-83d4afad-1d4b-4492-817a-027a25ef9d1d-postgres-1 Removing
+ Container strict-check-83d4afad-1d4b-4492-817a-027a25ef9d1d-postgres-1 Removed
+ Network strict-check-83d4afad-1d4b-4492-817a-027a25ef9d1d_default Removing
+ Network strict-check-83d4afad-1d4b-4492-817a-027a25ef9d1d_default Removed
 file:///Users/gburt/Code/toys/strict-typescript-boilerplate/devtools/scripts/database/verify-database.ts:22
     throw new Error(
           ^
 
-Error: pnpm test:e2e failed: 
+Error: pnpm test:e2e failed:
 > typescript-boilerplate@0.1.0 test:e2e /Users/gburt/Code/toys/strict-typescript-boilerplate
 > pnpm --filter @template/web test:e2e
 
@@ -149,7 +149,7 @@ Running 10 tests using 6 workers
 [4/10] [chromium] › e2e/registration.browser.ts:20:1 › keyboard validation and failure preserve input for recovery
 [5/10] [chromium] › e2e/registration.browser.ts:5:1 › registration persists and survives retries
 [6/10] [chromium] › e2e/registration.browser.ts:51:1 › pending requests prevent duplicates and long content reflows
-  1) [chromium] › e2e/registration.browser.ts:79:1 › built server serves the browser without exposing server files 
+  1) [chromium] › e2e/registration.browser.ts:79:1 › built server serves the browser without exposing server files
 
     Error: expect(received).toBe(expected) // Object.is equality
 
@@ -178,7 +178,7 @@ Running 10 tests using 6 workers
 
 [9/10] [narrow-reduced-motion] › e2e/registration.browser.ts:20:1 › keyboard validation and failure preserve input for recovery
 [10/10] [narrow-reduced-motion] › e2e/registration.browser.ts:79:1 › built server serves the browser without exposing server files
-  2) [narrow-reduced-motion] › e2e/registration.browser.ts:79:1 › built server serves the browser without exposing server files 
+  2) [narrow-reduced-motion] › e2e/registration.browser.ts:79:1 › built server serves the browser without exposing server files
 
     Error: expect(received).toBe(expected) // Object.is equality
 
@@ -198,8 +198,8 @@ Running 10 tests using 6 workers
 
 
   2 failed
-    [chromium] › e2e/registration.browser.ts:79:1 › built server serves the browser without exposing server files 
-    [narrow-reduced-motion] › e2e/registration.browser.ts:79:1 › built server serves the browser without exposing server files 
+    [chromium] › e2e/registration.browser.ts:79:1 › built server serves the browser without exposing server files
+    [narrow-reduced-motion] › e2e/registration.browser.ts:79:1 › built server serves the browser without exposing server files
   8 passed (2.0s)
 /Users/gburt/Code/toys/strict-typescript-boilerplate/apps/web:
  ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @template/web@0.1.0 test:e2e: `playwright test`

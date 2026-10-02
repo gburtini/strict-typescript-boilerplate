@@ -3,75 +3,140 @@
   "records": [
     {
       "test": "apps/web/e2e/accessibility.browser.ts",
-      "method": "attestation",
+      "method": "execution",
       "owner": "repository-maintainers",
-      "revision": "52935042f2fcdf42097a78a20a99c4ebf2062c1a",
-      "command": ["pnpm", "test:e2e"],
-      "redState": "Removed accessible labels and confirmed axe reported violations before restoring them."
+      "revision": "f47f77500f06df55ac5d5d3461be4c2162d145df",
+      "command": ["pnpm", "test:integration"],
+      "redState": "unlabeled image violates the real axe image-alt rule. The real integration gate fails before restoration.",
+      "artifact": "docs/evidence/accessibility-red.txt"
     },
     {
       "test": "apps/web/src/tests/app.test.tsx",
-      "method": "attestation",
+      "method": "execution",
       "owner": "repository-maintainers",
-      "revision": "52935042f2fcdf42097a78a20a99c4ebf2062c1a",
-      "command": ["pnpm", "test:unit"],
-      "redState": "Historical test retained; prior failure demonstration needs independent owner review."
+      "revision": "f47f77500f06df55ac5d5d3461be4c2162d145df",
+      "command": [
+        "pnpm",
+        "--filter",
+        "@template/web",
+        "exec",
+        "vitest",
+        "run",
+        "src/tests/app.test.tsx"
+      ],
+      "redState": "starter heading contract removed. The recorded test fails before restoration.",
+      "artifact": "docs/evidence/app-screen-red.txt"
     },
     {
       "test": "packages/db/src/tests/schema.test.ts",
-      "method": "attestation",
+      "method": "execution",
       "owner": "repository-maintainers",
-      "revision": "52935042f2fcdf42097a78a20a99c4ebf2062c1a",
-      "command": ["pnpm", "test:unit"],
-      "redState": "Historical test retained; prior failure demonstration needs independent owner review."
+      "revision": "f47f77500f06df55ac5d5d3461be4c2162d145df",
+      "command": [
+        "pnpm",
+        "--filter",
+        "@template/db",
+        "exec",
+        "vitest",
+        "run",
+        "src/tests/schema.test.ts"
+      ],
+      "redState": "users primary key removed. The recorded test fails before restoration.",
+      "artifact": "docs/evidence/db-schema-red.txt"
     },
     {
       "test": "packages/db/src/tests/query-capture.test.ts",
-      "method": "attestation",
+      "method": "execution",
       "owner": "repository-maintainers",
-      "revision": "52935042f2fcdf42097a78a20a99c4ebf2062c1a",
-      "command": ["pnpm", "test:unit"],
-      "redState": "Historical test retained; prior failure demonstration needs independent owner review."
+      "revision": "f47f77500f06df55ac5d5d3461be4c2162d145df",
+      "command": [
+        "pnpm",
+        "--filter",
+        "@template/db",
+        "exec",
+        "vitest",
+        "run",
+        "src/tests/query-capture.test.ts"
+      ],
+      "redState": "SQL normalization removed. The recorded test fails before restoration.",
+      "artifact": "docs/evidence/query-capture-red.txt"
     },
     {
       "test": "packages/db/src/tests/integration/writer.integration.test.ts",
-      "method": "attestation",
+      "method": "execution",
       "owner": "repository-maintainers",
-      "revision": "52935042f2fcdf42097a78a20a99c4ebf2062c1a",
+      "revision": "f47f77500f06df55ac5d5d3461be4c2162d145df",
       "command": ["pnpm", "test:integration"],
-      "redState": "Confirmed the test fails when the insert is replaced with a read-only query or when the selected user does not match the inserted row."
+      "redState": "database repository returned a different email from the persisted row. The real integration gate fails before restoration.",
+      "artifact": "docs/evidence/database-writer-red.txt"
     },
     {
       "test": "packages/db/src/tests/devtools/map-with-concurrency.test.ts",
-      "method": "attestation",
+      "method": "execution",
       "owner": "repository-maintainers",
-      "revision": "52935042f2fcdf42097a78a20a99c4ebf2062c1a",
-      "command": ["pnpm", "test:unit"],
-      "redState": "Historical test retained; prior failure demonstration needs independent owner review."
+      "revision": "f47f77500f06df55ac5d5d3461be4c2162d145df",
+      "command": [
+        "pnpm",
+        "--filter",
+        "@template/db",
+        "exec",
+        "vitest",
+        "run",
+        "src/tests/devtools/map-with-concurrency.test.ts"
+      ],
+      "redState": "configured worker concurrency ignored. The recorded test fails before restoration.",
+      "artifact": "docs/evidence/concurrency-red.txt"
     },
     {
       "test": "packages/core/src/tests/errors.test.ts",
-      "method": "attestation",
+      "method": "execution",
       "owner": "repository-maintainers",
-      "revision": "52935042f2fcdf42097a78a20a99c4ebf2062c1a",
-      "command": ["pnpm", "test:unit"],
-      "redState": "Historical test retained; prior failure demonstration needs independent owner review."
+      "revision": "f47f77500f06df55ac5d5d3461be4c2162d145df",
+      "command": [
+        "pnpm",
+        "--filter",
+        "@template/core",
+        "exec",
+        "vitest",
+        "run",
+        "src/tests/errors.test.ts"
+      ],
+      "redState": "unknown failure cause removed. The recorded test fails before restoration.",
+      "artifact": "docs/evidence/core-errors-red.txt"
     },
     {
       "test": "packages/core/src/tests/retry.test.ts",
-      "method": "attestation",
+      "method": "execution",
       "owner": "repository-maintainers",
-      "revision": "52935042f2fcdf42097a78a20a99c4ebf2062c1a",
-      "command": ["pnpm", "test:unit"],
-      "redState": "Historical test retained; prior failure demonstration needs independent owner review."
+      "revision": "f47f77500f06df55ac5d5d3461be4c2162d145df",
+      "command": [
+        "pnpm",
+        "--filter",
+        "@template/core",
+        "exec",
+        "vitest",
+        "run",
+        "src/tests/retry.test.ts"
+      ],
+      "redState": "retry budget reduced by one. The recorded test fails before restoration.",
+      "artifact": "docs/evidence/core-retry-red.txt"
     },
     {
       "test": "packages/core/src/tests/api/contract.test.ts",
-      "method": "attestation",
+      "method": "execution",
       "owner": "repository-maintainers",
-      "revision": "52935042f2fcdf42097a78a20a99c4ebf2062c1a",
-      "command": ["pnpm", "test:unit"],
-      "redState": "Historical test retained; prior failure demonstration needs independent owner review."
+      "revision": "f47f77500f06df55ac5d5d3461be4c2162d145df",
+      "command": [
+        "pnpm",
+        "--filter",
+        "@template/core",
+        "exec",
+        "vitest",
+        "run",
+        "src/tests/api/contract.test.ts"
+      ],
+      "redState": "health response contract changed. The recorded test fails before restoration.",
+      "artifact": "docs/evidence/api-contract-red.txt"
     },
     {
       "test": "packages/core/src/tests/registration.test.ts",
@@ -134,24 +199,6 @@
       "artifact": "docs/evidence/server-assets-red.txt"
     },
     {
-      "test": "packages/core/src/tests/telemetry-exporter.test.ts",
-      "method": "execution",
-      "owner": "repository-maintainers",
-      "revision": "f47f77500f06df55ac5d5d3461be4c2162d145df",
-      "command": [
-        "pnpm",
-        "--filter",
-        "@template/core",
-        "exec",
-        "vitest",
-        "run",
-        "src/tests/transport.test.ts",
-        "src/tests/telemetry-exporter.test.ts"
-      ],
-      "redState": "The SDK span snapshot lost its spanContext method before serialization.",
-      "artifact": "docs/evidence/runtime-boundaries-red.txt"
-    },
-    {
       "test": "packages/core/src/tests/transport.test.ts",
       "method": "execution",
       "owner": "repository-maintainers",
@@ -168,6 +215,24 @@
       ],
       "redState": "The real HTTP handler returned 500 for typed outages, then the intermediate implementation returned 503 for defects. Both regressions have recorded failing runs.",
       "artifact": "docs/evidence/transport-red.md"
+    },
+    {
+      "test": "packages/core/src/tests/telemetry-exporter.test.ts",
+      "method": "execution",
+      "owner": "repository-maintainers",
+      "revision": "f47f77500f06df55ac5d5d3461be4c2162d145df",
+      "command": [
+        "pnpm",
+        "--filter",
+        "@template/core",
+        "exec",
+        "vitest",
+        "run",
+        "src/tests/transport.test.ts",
+        "src/tests/telemetry-exporter.test.ts"
+      ],
+      "redState": "The SDK span snapshot lost its spanContext method before serialization.",
+      "artifact": "docs/evidence/runtime-boundaries-red.txt"
     },
     {
       "test": "packages/core/src/tests/integration/telemetry.integration.test.ts",
