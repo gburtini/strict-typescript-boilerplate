@@ -303,6 +303,16 @@
       "path": "/cases/cause-valid-and-invalid.ts",
       "code": "try { work(); } catch (error) { if (condition) { throw new Error(\"first\", {cause: error}); } throw new Error(\"second\", {cause: unrelated}); }",
       "expected": ["catch-wrapping-preserves-cause"]
+    },
+    {
+      "path": "/devtools/scripts/repository/develop.ts",
+      "code": "const environment = process.env;",
+      "expected": ["no-direct-process-env"]
+    },
+    {
+      "path": "/apps/web/src/application/develop.ts",
+      "code": "const environment = process.env;",
+      "expected": ["no-direct-process-env"]
     }
   ]
 }
