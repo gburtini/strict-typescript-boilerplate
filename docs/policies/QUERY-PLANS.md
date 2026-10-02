@@ -116,12 +116,8 @@ The required `Query Plans` CI job checks out the pull request's base commit and
 proposed merge separately. For each side it resets the database, applies that
 side's migrations and fixture, runs that side's tests with capture enabled,
 and produces plans. It then compares the two fresh artifacts, appends the
-report to `GITHUB_STEP_SUMMARY`, and comments on same-repository pull requests
-when the token can write comments. The uniquely marked
-report comment is edited on subsequent runs and created only when no prior
-marked comment exists; if the report is unavailable, only that marked comment is
-deleted. Forks still get the required check and workflow summary without
-granting write permissions.
+report to `GITHUB_STEP_SUMMARY`, and uploads the scoped plan artifacts for
+review. The workflow uses a read-only token, including for fork pull requests.
 
 ## Disposable write targets
 
