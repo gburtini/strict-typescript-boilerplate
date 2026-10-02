@@ -11,6 +11,17 @@ const fixture = {
   database: "sample_project",
 };
 const project = projectInitializationSchema.parse(fixture);
+const collision = projectInitializationSchema.parse({
+  ...fixture,
+  scope: "@typescript-boilerplate",
+  title: "TypeScript Boilerplate Studio",
+});
+if (
+  initializeText("@template/core TypeScript Boilerplate", collision) !==
+  "@typescript-boilerplate/core TypeScript Boilerplate Studio"
+) {
+  throw new Error("Initialization must preserve configured replacement values");
+}
 if (
   initializeText(
     "@template/core typescript-boilerplate typescript_boilerplate TypeScript Boilerplate",

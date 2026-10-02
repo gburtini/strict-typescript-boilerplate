@@ -1,0 +1,16 @@
+
+> typescript-boilerplate@0.1.0 initialization:fixtures /Users/gburt/Code/toys/strict-typescript-boilerplate
+> node --experimental-strip-types devtools/scripts/repository/check-initialization-fixtures.ts
+
+file:///Users/gburt/Code/toys/strict-typescript-boilerplate/devtools/scripts/repository/check-initialization-fixtures.ts:23
+  throw new Error("Initialization must preserve configured replacement values");
+        ^
+
+Error: Initialization must preserve configured replacement values
+    at file:///Users/gburt/Code/toys/strict-typescript-boilerplate/devtools/scripts/repository/check-initialization-fixtures.ts:23:9
+    at ModuleJob.run (node:internal/modules/esm/module_job:430:25)
+    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:661:26)
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)
+
+Node.js v24.13.1
+ ELIFECYCLE  Command failed with exit code 1.

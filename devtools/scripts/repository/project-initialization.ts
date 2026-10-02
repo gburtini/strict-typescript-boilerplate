@@ -32,11 +32,16 @@ const projectInitializationSchema = z.strictObject({
 type ProjectInitialization = z.infer<typeof projectInitializationSchema>;
 
 function initializeText(source: string, project: ProjectInitialization): string {
-  return source
-    .replaceAll("@template", project.scope)
-    .replaceAll("typescript-boilerplate", project.name)
-    .replaceAll("typescript_boilerplate", project.database)
-    .replaceAll("TypeScript Boilerplate", project.title);
+  const replacements = new Map([
+    ["@template", project.scope],
+    ["typescript-boilerplate", project.name],
+    ["typescript_boilerplate", project.database],
+    ["TypeScript Boilerplate", project.title],
+  ]);
+  return source.replaceAll(
+    /@template|typescript-boilerplate|typescript_boilerplate|TypeScript Boilerplate/gu,
+    (identity) => replacements.get(identity) ?? identity,
+  );
 }
 
 export { initializeText, projectInitializationSchema };
