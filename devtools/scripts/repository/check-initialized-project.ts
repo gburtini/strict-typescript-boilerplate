@@ -14,6 +14,7 @@ import { tmpdir } from "node:os";
 import { z } from "zod";
 import { projectInitializationSchema } from "./project-initialization.ts";
 import { repositoryRoot } from "../shared/repository-paths.ts";
+import { copyRepositorySources } from "../shared/copy-repository.ts";
 
 const project = projectInitializationSchema.parse({
   name: "initialized-project",
@@ -56,21 +57,6 @@ function run(cwd: string, command: string, args: string[]): string {
     });
   }
   return result.stdout;
-}
-
-function copySources(): void {
-  const files = run(repositoryRoot, "git", [
-    "ls-files",
-    "--cached",
-    "--others",
-    "--exclude-standard",
-    "-z",
-  ]).split("\0");
-  for (const file of files.filter((path) => path.length > 0)) {
-    const target = nodePath.join(checkout, file);
-    mkdirSync(nodePath.dirname(target), { recursive: true });
-    cpSync(nodePath.join(repositoryRoot, file), target);
-  }
 }
 
 function verifyIdentity(): void {
@@ -121,7 +107,7 @@ function initializeCopy(): void {
 }
 
 try {
-  copySources();
+  copyRepositorySources(checkout);
   run(checkout, "git", ["init", "--quiet"]);
   run(checkout, "git", ["add", "--", "."]);
   run(checkout, "git", [

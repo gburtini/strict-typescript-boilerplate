@@ -5,6 +5,7 @@ import { tmpdir } from "node:os";
 import { parse, stringify } from "yaml";
 import { z } from "zod";
 import { expectRejection } from "../shared/expect-rejection.ts";
+import { readRepositoryFiles } from "../shared/copy-repository.ts";
 import {
   semgrepConfigurationSchema,
   semgrepFixturesSchema,
@@ -145,19 +146,9 @@ function checkPermissionEvidence(root: string): void {
 }
 
 function checkRepository(): void {
-  const files = spawnSync(
-    "git",
-    ["ls-files", "--cached", "--others", "--exclude-standard"],
-    { encoding: "utf8" },
+  const sourcePaths = readRepositoryFiles().filter((path) =>
+    /\.(?:[cm]?js|jsx|[cm]?ts|tsx)$/u.test(path),
   );
-  if (files.error || files.status !== 0) {
-    throw new Error(`Unable to inventory repository source: ${files.stderr}`, {
-      cause: files.error,
-    });
-  }
-  const sourcePaths = files.stdout
-    .split("\n")
-    .filter((path) => /\.(?:[cm]?js|jsx|[cm]?ts|tsx)$/u.test(path));
   const report = scan(process.cwd(), sourcePaths);
   const missing = sourcePaths.filter((path) => !report.paths.scanned.includes(path));
   if (report.errors.length > 0 || report.results.length > 0 || missing.length > 0) {
