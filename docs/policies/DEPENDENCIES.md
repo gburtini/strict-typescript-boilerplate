@@ -15,8 +15,11 @@ tracked directly from their upstream release process and requires review.
 - GitHub Actions are pinned to immutable commit SHAs. Update the SHA and its
   version comment together, and review the upstream release before changing it.
 - The repository's CI-policy check verifies SHA pinning and least-privilege
-  workflow permissions; branch protection must require `Check`, `Actionlint`,
-  and the applicable security workflows in the consuming repo.
+  workflow permissions. Branch protection requires `Repository acceptance` and
+  `Trusted enforcement comparison`, as specified in [`GOVERNANCE.md`](GOVERNANCE.md)
+  and `.github/rulesets/default-branch.json`. The acceptance job requires the
+  repository, initialized-project, Actionlint, and applicable security and query-plan
+  jobs to succeed; workflow names are not the required status-check contexts.
 
 `ai@7.0.105` and its exact AI SDK transitive versions are pinned for the
 experimental Jev evaluation API used through Vercel AI Gateway. These releases
