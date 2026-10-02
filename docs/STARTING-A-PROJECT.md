@@ -25,8 +25,10 @@ pnpm check:all
 
 Initialization validates all values before writing, updates imports, workspace
 names, runtime defaults and policy references together, and regenerates the
-lockfile through pnpm without changing dependency versions. Migration history
-and recorded test failure artifacts keep their original identities. The command
+lockfile through pnpm without changing dependency versions.
+Missing registry metadata may require network access; a resolution
+guard rejects dependency changes and restores source replacements and the lockfile.
+Migration history and recorded test failure artifacts keep their original identities. The command
 rejects tracked local changes and a second initialization. Review the resulting
 diff and commit initialization before product work.
 

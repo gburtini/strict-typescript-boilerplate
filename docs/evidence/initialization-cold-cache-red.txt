@@ -1,0 +1,27 @@
+Command: pnpm initialization:smoke
+Revision: 73d445a with isolated empty cache fixture
+Exit: 1
+
+Error: Initialization failed; source replacements restored. Inspect generated outputs with git diff before retrying.
+    at file:///Users/gburt/Code/toys/strict-typescript-boilerplate/.artifacts/initialization-smoke-I0mN0x/checkout/devtools/scripts/repository/initialize-project.ts:91:9
+    at ModuleJob.run (node:internal/modules/esm/module_job:430:25)
+    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:661:26)
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5) {
+  [cause]: Error: pnpm install --offline --lockfile-only failed: Scope: all 6 workspace projects
+  Progress: resolved 1, reused 0, downloaded 0, added 0
+  /Users/gburt/Code/toys/strict-typescript-boilerplate/.artifacts/initialization-smoke-I0mN0x/checkout/devtools/dependency-cruiser:
+   ERR_PNPM_NO_OFFLINE_META  Failed to resolve typescript@>=6.0.0 <7.0.0-0 in package mirror /var/folders/ng/1gzz6d7917j4wf4w73834bnr0000gn/T/initialization-cache-oLVC0o/metadata/metadata-ff-v1.3/registry.npmjs.org/typescript.json
+
+  This error happened while installing the dependencies of @typescript/typescript6@6.0.2
+
+
+      at run (file:///Users/gburt/Code/toys/strict-typescript-boilerplate/.artifacts/initialization-smoke-I0mN0x/checkout/devtools/scripts/repository/initialize-project.ts:21:11)
+      at file:///Users/gburt/Code/toys/strict-typescript-boilerplate/.artifacts/initialization-smoke-I0mN0x/checkout/devtools/scripts/repository/initialize-project.ts:83:24
+      at ModuleJob.run (node:internal/modules/esm/module_job:430:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:661:26)
+      at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5) {
+    [cause]: undefined
+  }
+}
+
+Node.js v24.13.1

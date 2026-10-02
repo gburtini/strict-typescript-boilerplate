@@ -10,6 +10,7 @@ import {
 } from "node:fs";
 import { spawnSync } from "node:child_process";
 import nodePath from "node:path";
+import { tmpdir } from "node:os";
 import { z } from "zod";
 import { projectInitializationSchema } from "./project-initialization.ts";
 import { repositoryRoot } from "../shared/repository-paths.ts";
@@ -25,6 +26,7 @@ const artifacts = mkdtempSync(
   nodePath.join(repositoryRoot, ".artifacts", "initialization-smoke-"),
 );
 const checkout = nodePath.join(artifacts, "checkout");
+const cache = mkdtempSync(nodePath.join(tmpdir(), "initialization-cache-"));
 const log = nodePath.join(artifacts, "smoke.log");
 const sourceMetadataSchema = z.object({ name: z.string().min(1) });
 const sourceMetadata = sourceMetadataSchema.parse(
@@ -112,6 +114,15 @@ function initializeCopy(): void {
 
 try {
   copySources();
+  const configurationPath = nodePath.join(checkout, ".npmrc");
+  let configuration = "";
+  if (existsSync(configurationPath)) {
+    configuration = readFileSync(configurationPath, "utf8");
+  }
+  writeFileSync(
+    configurationPath,
+    `${configuration}\nstore-dir=${nodePath.join(cache, "store")}\ncache-dir=${nodePath.join(cache, "metadata")}\n`,
+  );
   run(checkout, "git", ["init", "--quiet"]);
   run(checkout, "git", ["add", "--", "."]);
   run(checkout, "git", [
@@ -140,6 +151,10 @@ try {
       });
     }
   } finally {
-    rmSync(checkout, { recursive: true, force: true });
+    try {
+      rmSync(checkout, { recursive: true, force: true });
+    } finally {
+      rmSync(cache, { recursive: true, force: true });
+    }
   }
 }

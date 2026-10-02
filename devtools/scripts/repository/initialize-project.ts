@@ -3,6 +3,7 @@ import { spawnSync } from "node:child_process";
 import nodePath from "node:path";
 import { z } from "zod";
 import {
+  assertLockfileResolutionsUnchanged,
   initializeText,
   projectInitializationSchema,
 } from "./project-initialization.ts";
@@ -79,8 +80,12 @@ for (const change of changes) {
   writeFileSync(change.path, change.after);
 }
 try {
-  // Pnpm owns lockfile generation; package resolution stays pinned and offline.
-  process.stdout.write(run("pnpm", ["install", "--offline", "--lockfile-only"]));
+  // Pnpm owns generation and may fetch missing metadata; resolutions must stay pinned.
+  process.stdout.write(run("pnpm", ["install", "--prefer-offline", "--lockfile-only"]));
+  assertLockfileResolutionsUnchanged(
+    lockfileBefore,
+    readFileSync("pnpm-lock.yaml", "utf8"),
+  );
   process.stdout.write(run("pnpm", ["enforcement:manifest:write"]));
   process.stdout.write(run("pnpm", ["format"]));
 } catch (error) {

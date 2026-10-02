@@ -1,4 +1,5 @@
 import {
+  assertLockfileResolutionsUnchanged,
   initializeText,
   projectInitializationSchema,
 } from "./project-initialization.ts";
@@ -42,5 +43,59 @@ for (const invalid of [
   { ...fixture, extra: true },
 ]) {
   expectRejection(() => projectInitializationSchema.parse(invalid), "");
+}
+const dependency = { specifier: "1.0.0", version: "1.0.0" };
+const importer = {
+  dependencies: {
+    external: dependency,
+    "@template/core": { specifier: "workspace:*", version: "link:../core" },
+  },
+};
+const lockfile = {
+  importers: { ".": importer },
+  packages: { "external@1.0.0": { resolution: { integrity: "pinned" } } },
+  snapshots: { "external@1.0.0": {} },
+};
+const before = JSON.stringify(lockfile);
+assertLockfileResolutionsUnchanged(
+  before,
+  JSON.stringify({
+    snapshots: lockfile.snapshots,
+    packages: lockfile.packages,
+    importers: {
+      ".": {
+        dependencies: {
+          "@sample/core": { specifier: "workspace:*", version: "link:../core" },
+          external: dependency,
+        },
+      },
+    },
+  }),
+);
+for (const changed of [
+  {
+    ...lockfile,
+    packages: { "external@1.0.0": { resolution: { integrity: "changed" } } },
+  },
+  {
+    ...lockfile,
+    snapshots: { "external@1.0.0": { dependencies: { transitive: "2.0.0" } } },
+  },
+  {
+    ...lockfile,
+    importers: {
+      ".": {
+        dependencies: {
+          ...importer.dependencies,
+          external: { ...dependency, version: "2.0.0" },
+        },
+      },
+    },
+  },
+]) {
+  expectRejection(
+    () => assertLockfileResolutionsUnchanged(before, JSON.stringify(changed)),
+    "dependency resolutions",
+  );
 }
 process.stdout.write("Project initialization positive and negative fixtures passed.\n");
