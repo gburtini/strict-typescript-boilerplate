@@ -132,6 +132,24 @@
       "command": ["pnpm", "test:integration"],
       "redState": "The previous layout overflowed at 320 CSS pixels with long success content.",
       "artifact": "docs/evidence/registration-reflow-red.md"
+    },
+    {
+      "test": "packages/core/src/tests/telemetry-exporter.test.ts",
+      "method": "execution",
+      "owner": "repository-maintainers",
+      "revision": "f47f77500f06df55ac5d5d3461be4c2162d145df",
+      "command": [
+        "pnpm",
+        "--filter",
+        "@template/core",
+        "exec",
+        "vitest",
+        "run",
+        "src/tests/transport.test.ts",
+        "src/tests/telemetry-exporter.test.ts"
+      ],
+      "redState": "The SDK span snapshot lost its spanContext method before serialization.",
+      "artifact": "docs/evidence/runtime-boundaries-red.txt"
     }
   ]
 }
