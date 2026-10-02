@@ -128,10 +128,10 @@
       "test": "apps/web/e2e/registration.browser.ts",
       "method": "execution",
       "owner": "repository-maintainers",
-      "revision": "5c2a1f9e750471deb943d0de5170cbf1a1767de0",
+      "revision": "f47f77500f06df55ac5d5d3461be4c2162d145df",
       "command": ["pnpm", "test:integration"],
-      "redState": "The previous layout overflowed at 320 CSS pixels with long success content.",
-      "artifact": "docs/evidence/registration-reflow-red.md"
+      "redState": "server bundle exclusion removed from the production asset boundary. Recorded assertions fail before restoring the source.",
+      "artifact": "docs/evidence/server-assets-red.txt"
     },
     {
       "test": "packages/core/src/tests/telemetry-exporter.test.ts",
@@ -177,6 +177,23 @@
       "command": ["pnpm", "--filter", "@template/core", "test:integration"],
       "redState": "Effect spans used the runtime service name for instrumentation scope; the collector regression rejects that drift.",
       "artifact": "docs/evidence/collector-scope-red.txt"
+    },
+    {
+      "test": "apps/web/src/tests/static-assets.test.ts",
+      "method": "execution",
+      "owner": "repository-maintainers",
+      "revision": "f47f77500f06df55ac5d5d3461be4c2162d145df",
+      "command": [
+        "pnpm",
+        "--filter",
+        "@template/web",
+        "exec",
+        "vitest",
+        "run",
+        "src/tests/static-assets.test.ts"
+      ],
+      "redState": "indiscriminate SPA fallback exposes an entry for private and missing paths. Recorded assertions fail before restoring the source.",
+      "artifact": "docs/evidence/static-assets-red.txt"
     }
   ]
 }

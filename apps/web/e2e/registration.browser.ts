@@ -75,3 +75,21 @@ test("pending requests prevent duplicates and long content reflows", async ({
     fullPage: true,
   });
 });
+
+test("built server serves the browser without exposing server files", async ({
+  request,
+}) => {
+  const ready = await request.get("/readyz");
+  expect(ready.status()).toBe(200);
+  const head = await request.head("/");
+  expect(head.headers()["content-type"]).toContain("text/html");
+  expect(await head.body()).toHaveLength(0);
+  const serverFile = await request.get("/server/main.mjs");
+  const missingApi = await request.get("/api/missing");
+  const invalidMethod = await request.post("/");
+  const invalidPath = await request.get("/%E0%A4%A");
+  expect(serverFile.status()).toBe(404);
+  expect(missingApi.status()).toBe(404);
+  expect(invalidMethod.status()).toBe(405);
+  expect(invalidPath.status()).toBe(400);
+});

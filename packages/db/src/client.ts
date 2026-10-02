@@ -1,5 +1,5 @@
 import { drizzle } from "drizzle-orm/postgres-js";
-import type { Logger } from "drizzle-orm";
+import { sql, type Logger } from "drizzle-orm";
 import postgres from "postgres";
 import {
   flushProcessQueryCapture,
@@ -15,13 +15,14 @@ interface DatabaseOptions {
 
 interface DatabaseClient {
   readonly close: () => Promise<void>;
+  readonly ping: () => Promise<void>;
   readonly db: ReturnType<typeof drizzle<typeof databaseSchema>>;
 }
 
 const databaseSchema = { users };
 
 export function createDatabase(options: DatabaseOptions): DatabaseClient {
-  const sql = postgres(options.url, {
+  const connection = postgres(options.url, {
     max: options.maxConnections ?? 10,
     prepare: false,
   });
@@ -37,12 +38,15 @@ export function createDatabase(options: DatabaseOptions): DatabaseClient {
   if (logger) {
     config.logger = logger;
   }
-  const db = drizzle(sql, config);
+  const db = drizzle(connection, config);
 
   return {
+    ping: async () => {
+      await db.execute(sql`SELECT 1`);
+    },
     close: async () => {
       try {
-        await sql.end({ timeout: 5 });
+        await connection.end({ timeout: 5 });
       } finally {
         flushProcessQueryCapture();
       }

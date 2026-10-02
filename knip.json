@@ -26,9 +26,10 @@
         "index.html",
         "src/env.ts",
         "server/main.ts!",
-        "scripts/check-react-compiler.ts"
+        "scripts/check-react-compiler.ts",
+        "server/node/main.ts!"
       ],
-      "project": ["src/**/*.{ts,tsx,css}", "server/**/*.ts", "scripts/**/*.ts"],
+      "project": ["src/**/*.{ts,tsx,css}", "server/**/*.ts!", "scripts/**/*.ts"],
       "ignoreDependencies": ["@template/ui", "@t3-oss/env-core", "zod"]
     },
     "packages/ui": {

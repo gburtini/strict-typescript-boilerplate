@@ -12,8 +12,9 @@ export default defineConfig({
     trace: "on-first-retry",
   },
   webServer: {
-    command: "pnpm preview --host 127.0.0.1 --port 4173",
+    command: "node dist/server/main.mjs",
     reuseExistingServer: false,
+    env: { HOST: "127.0.0.1", PORT: "4173" },
     url: "http://127.0.0.1:4173",
     gracefulShutdown: { signal: "SIGTERM", timeout: 5000 },
   },

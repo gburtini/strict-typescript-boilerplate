@@ -4,12 +4,13 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "vite build --configLoader runner",
+    "build": "vite build --configLoader runner && vite build --config vite.server.config.ts --configLoader runner",
     "dev": "vite --configLoader runner",
     "preview": "vite preview --configLoader runner",
     "test": "vitest run --coverage",
     "test:e2e": "playwright test",
-    "compiler:check": "node --experimental-strip-types scripts/check-react-compiler.ts"
+    "compiler:check": "node --experimental-strip-types scripts/check-react-compiler.ts",
+    "start": "node dist/server/main.mjs"
   },
   "dependencies": {
     "@orpc/server": "1.14.15",

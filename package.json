@@ -50,7 +50,8 @@
     "typecheck": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p devtools/tsconfig.json && tsc --noEmit -p apps/web/tsconfig.json && tsc --noEmit -p packages/ui/tsconfig.json && tsc --noEmit -p packages/core/tsconfig.json && tsc --noEmit -p packages/db/tsconfig.json",
     "governance:fixtures": "node --experimental-strip-types devtools/scripts/repository/check-governance-fixtures.ts",
     "semgrep:check": "node --experimental-strip-types devtools/scripts/repository/check-semgrep.ts",
-    "compiler:check": "pnpm --filter @template/web compiler:check"
+    "compiler:check": "pnpm --filter @template/web compiler:check",
+    "start": "pnpm --filter @template/web start"
   },
   "devDependencies": {
     "@effect/tsgo": "0.45.0",
