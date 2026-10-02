@@ -30,6 +30,11 @@ and recorded test failure artifacts keep their original identities. The command
 rejects tracked local changes and a second initialization. Review the resulting
 diff and commit initialization before product work.
 
+The template's CI also runs `pnpm initialization:smoke`, which initializes a
+fresh copy and runs its full acceptance gate. The same job in a product verifies
+a fresh copy of the initialized project. Tooling fixtures retain their template
+identities so they continue to exercise the original initialization contract.
+
 ## Develop
 
 ```sh

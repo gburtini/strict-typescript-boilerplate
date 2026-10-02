@@ -55,7 +55,8 @@
     "dev:web": "pnpm --filter @template/web dev",
     "browser:install": "pnpm --filter @template/web exec playwright install chromium",
     "init:project": "node --experimental-strip-types devtools/scripts/repository/initialize-project.ts",
-    "initialization:fixtures": "node --experimental-strip-types devtools/scripts/repository/check-initialization-fixtures.ts"
+    "initialization:fixtures": "node --experimental-strip-types devtools/scripts/repository/check-initialization-fixtures.ts",
+    "initialization:smoke": "node --experimental-strip-types devtools/scripts/repository/check-initialized-project.ts"
   },
   "devDependencies": {
     "@effect/tsgo": "0.45.0",

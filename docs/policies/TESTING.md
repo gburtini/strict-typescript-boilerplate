@@ -36,6 +36,16 @@ It removes only its own container and volume on exit. It requires Docker.
 Browser-only profiles still build and run browser evidence. Existing database
 or browser workspaces cannot opt out of their profile obligations.
 
+`pnpm initialization:smoke` verifies a fresh project copy in an owned disposable
+checkout. In the template it initializes new package, database and browser
+identities, reinstalls from the regenerated lockfile with `--frozen-lockfile`,
+and runs `pnpm check:all`, including the build, browser and database checks.
+In an initialized project it verifies a fresh copy of that project's identity.
+The CI acceptance job requires this separate job to succeed. It is separate
+from `pnpm check:all` so a copied project's acceptance cannot recurse into
+another smoke copy. Logs and acceptance artifacts are retained under
+`.artifacts/initialization-smoke-*`; the disposable checkout is removed on exit.
+
 The command runs runtime preflight, formatting, package API checks, type checking,
 linting, enforcement fixtures, dead-code analysis, architecture checks, package
 hygiene, coverage-enabled unit tests, and zero lint-warning enforcement.

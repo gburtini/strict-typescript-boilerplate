@@ -19,10 +19,13 @@ const workflowContractSchema = z.looseObject({
   ),
 });
 
-function validateAcceptanceWorkflow(input: unknown): void {
+function validateAcceptanceWorkflow(
+  input: unknown,
+): z.infer<typeof workflowContractSchema> {
   const workflow = workflowContractSchema.parse(input);
   const required = [
     "repository",
+    "initialization",
     "semgrep",
     "codeql",
     "dependencies",
@@ -41,6 +44,16 @@ function validateAcceptanceWorkflow(input: unknown): void {
   ) {
     throw new TypeError("Acceptance must depend on every applicable gate");
   }
+  const { initialization } = workflow.jobs;
+  if (
+    typeof initialization?.if === "string" ||
+    initialization?.steps?.some(
+      (step) => step.run === "pnpm initialization:smoke" && typeof step.if !== "string",
+    ) !== true
+  ) {
+    throw new TypeError("Initialization must run the smoke command unconditionally");
+  }
+  return workflow;
 }
 
 function requireWorkflowCommand(input: unknown, command: string): void {

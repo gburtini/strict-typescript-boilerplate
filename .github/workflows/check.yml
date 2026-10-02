@@ -35,6 +35,29 @@ jobs:
             .artifacts
           if-no-files-found: error
           retention-days: 14
+  initialization:
+    name: Initialized project contract
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.0.0
+      - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
+        with:
+          version: 10.30.3
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Install browser runtime
+        run: pnpm --filter @template/web exec playwright install --with-deps chromium
+      - run: pnpm initialization:smoke
+      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        if: always()
+        with:
+          name: initialized-project-evidence
+          path: .artifacts/initialization-smoke-*
+          if-no-files-found: error
+          retention-days: 14
   semgrep:
     uses: ./.github/workflows/semgrep.yml
   codeql:
@@ -59,7 +82,17 @@ jobs:
   acceptance:
     name: Repository acceptance
     if: always()
-    needs: [repository, semgrep, codeql, dependencies, plans, actionlint, osv]
+    needs:
+      [
+        repository,
+        initialization,
+        semgrep,
+        codeql,
+        dependencies,
+        plans,
+        actionlint,
+        osv,
+      ]
     runs-on: ubuntu-24.04
     steps:
       - name: Require every applicable gate

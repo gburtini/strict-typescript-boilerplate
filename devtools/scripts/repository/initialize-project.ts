@@ -64,6 +64,7 @@ const eligibleFiles = files.filter(
     path !== "devtools/scripts/repository/project-initialization.ts" &&
     path !== "devtools/scripts/repository/initialize-project.ts" &&
     path !== "devtools/scripts/repository/check-initialization-fixtures.ts" &&
+    path !== "devtools/scripts/repository/check-initialized-project.ts" &&
     path !== configurationPath,
 );
 for (const path of eligibleFiles) {

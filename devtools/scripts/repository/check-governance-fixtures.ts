@@ -98,7 +98,39 @@ expectRejection(
   () => requireWorkflowCommand({ on: {}, jobs: {} }, "pnpm check:all"),
   "permissions",
 );
-validateAcceptanceWorkflow(parse(readFileSync(".github/workflows/check.yml", "utf8")));
+const acceptanceWorkflow = validateAcceptanceWorkflow(
+  parse(readFileSync(".github/workflows/check.yml", "utf8")),
+);
+for (const initialization of [
+  { steps: [{ run: "echo skipped" }] },
+  { if: "false", steps: [{ run: "pnpm initialization:smoke" }] },
+  { steps: [{ if: "false", run: "pnpm initialization:smoke" }] },
+]) {
+  expectRejection(
+    () =>
+      validateAcceptanceWorkflow({
+        ...acceptanceWorkflow,
+        jobs: { ...acceptanceWorkflow.jobs, initialization },
+      }),
+    "smoke command unconditionally",
+  );
+}
+expectRejection(
+  () =>
+    validateAcceptanceWorkflow({
+      ...acceptanceWorkflow,
+      jobs: {
+        ...acceptanceWorkflow.jobs,
+        acceptance: {
+          ...acceptanceWorkflow.jobs.acceptance,
+          needs: acceptanceWorkflow.jobs.acceptance?.needs?.filter(
+            (gate) => gate !== "initialization",
+          ),
+        },
+      },
+    }),
+  "every applicable gate",
+);
 expectRejection(() => validateAcceptanceWorkflow(workflow), "every applicable gate");
 readProjectProfile();
 const acceptance: unknown = JSON.parse(
