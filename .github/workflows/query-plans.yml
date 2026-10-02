@@ -126,5 +126,10 @@ jobs:
         if: always()
         with:
           name: query-plan-comparison
-          path: .artifacts
+          path: |
+            .artifacts/query-plans-base.json
+            .artifacts/query-plans-base.md
+            .artifacts/query-plans.md
+            proposed/.artifacts/query-plans.json
+          include-hidden-files: true
           if-no-files-found: error

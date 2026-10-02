@@ -32,7 +32,10 @@ jobs:
           name: acceptance-evidence
           path: |
             apps/web/test-results
-            .artifacts
+            .artifacts/query-corpus*.json
+            .artifacts/query-plans.json
+            .artifacts/query-plans.md
+          include-hidden-files: true
           if-no-files-found: error
           retention-days: 14
   initialization:

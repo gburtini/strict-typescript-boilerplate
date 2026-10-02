@@ -7,6 +7,7 @@ import {
   requireWorkflowCommand,
   validateSemanticWorkflow,
   validateAcceptanceWorkflow,
+  validateQueryPlanWorkflow,
 } from "./ci-contracts.ts";
 import { parse } from "yaml";
 import { readProjectProfile, validateAcceptance } from "./check-project-profile.ts";
@@ -101,19 +102,51 @@ expectRejection(
 const acceptanceWorkflow = validateAcceptanceWorkflow(
   parse(readFileSync(".github/workflows/check.yml", "utf8")),
 );
+for (const jobName of ["initialization", "repository"]) {
+  for (const inputs of [
+    { "include-hidden-files": false },
+    { path: ".artifacts/initialization-smoke-*" },
+    { path: ".artifacts" },
+    { "if-no-files-found": "ignore" },
+    { name: "unrelated-evidence" },
+  ]) {
+    expectRejection(
+      () =>
+        validateAcceptanceWorkflow({
+          ...acceptanceWorkflow,
+          jobs: {
+            ...acceptanceWorkflow.jobs,
+            [jobName]: {
+              steps: acceptanceWorkflow.jobs[jobName]?.steps?.map((step) => {
+                if (step.uses?.startsWith("actions/upload-artifact@") === true) {
+                  return { ...step, with: { ...step.with, ...inputs } };
+                }
+                return step;
+              }),
+            },
+          },
+        }),
+      "upload hidden artifacts with scoped paths",
+    );
+  }
+}
+const queryPlanWorkflow = validateQueryPlanWorkflow(
+  parse(readFileSync(".github/workflows/query-plans.yml", "utf8")),
+);
 for (const inputs of [
   { "include-hidden-files": false },
-  { path: ".artifacts/initialization-smoke-*" },
+  { path: ".artifacts" },
   { "if-no-files-found": "ignore" },
+  { name: "unrelated-evidence" },
 ]) {
   expectRejection(
     () =>
-      validateAcceptanceWorkflow({
-        ...acceptanceWorkflow,
+      validateQueryPlanWorkflow({
+        ...queryPlanWorkflow,
         jobs: {
-          ...acceptanceWorkflow.jobs,
-          initialization: {
-            steps: acceptanceWorkflow.jobs.initialization?.steps?.map((step) => {
+          ...queryPlanWorkflow.jobs,
+          "query-plans": {
+            steps: queryPlanWorkflow.jobs["query-plans"]?.steps?.map((step) => {
               if (step.uses?.startsWith("actions/upload-artifact@") === true) {
                 return { ...step, with: { ...step.with, ...inputs } };
               }

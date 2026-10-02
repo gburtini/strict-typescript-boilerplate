@@ -51,6 +51,38 @@ validation was removed, no dependency or baseline changed, and no lint threshold
 was altered. Artifact inclusion widened only to the named evidence paths; all
 existing acceptance gates remain required. Temporary mutations were restored.
 
+### Planner artifact review
+
+The downloaded `acceptance-evidence` artifact from
+[run 37045089048](https://github.com/gburtini/strict-typescript-boilerplate/actions/runs/37045089048)
+contained browser screenshots but no query corpus or plans. Its uploader still
+excluded the hidden `.artifacts` directory. The pull-request planner uploader
+used the same default with only a hidden directory as its input, which would
+fail its required upload even after a successful comparison.
+
+Both uploaders now include hidden files through explicit evidence paths. The
+repository artifact retains browser results, captured query corpus files and
+current plan reports. The planner artifact retains base and proposed plan
+reports. Arbitrary files under `.artifacts` are not included. The initialized
+project uploader retains its existing scoped paths. The proposed JSON plan
+snapshot is included from `proposed/.artifacts/query-plans.json`, where the
+planner writes it; only the comparison Markdown and base snapshots live at
+the workflow root.
+
+One shared evidence validator enforces artifact identity, unconditional upload,
+hidden-file inclusion, scoped paths and failure on missing evidence for all
+three uploaders. CI policy now also validates the pull-request planner workflow
+during the local gate. Governance fixtures retain the previous negative cases
+and additionally reject broken repository and planner uploads. Removing each
+new boundary causes its [repository fixture](evidence/acceptance-upload-red.txt)
+or [planner fixture](evidence/query-plan-upload-red.txt) to fail.
+
+No acceptance gate, query capture, plan baseline, dependency, permission or lint
+threshold changed. Evidence inclusion widened to the named hidden files; the
+previously accepted missing repository planner evidence is now rejected.
+The planner workflow still runs only for pull requests. Temporary mutations
+were restored.
+
 ## Delivery and documentation
 
 The Vite client build now generates its asset manifest. The Node composition

@@ -6,6 +6,7 @@ import {
   requireWorkflowCommand,
   validateSemanticWorkflow,
   validateAcceptanceWorkflow,
+  validateQueryPlanWorkflow,
 } from "./ci-contracts.ts";
 
 type Permission = "read" | "write" | "none";
@@ -165,6 +166,9 @@ if (!hasSemanticCheck) {
   failures.push("package.json: check must run deterministic semantic validation");
 }
 validateAcceptanceWorkflow(parse(ciWorkflow));
+validateQueryPlanWorkflow(
+  parse(readFileSync(".github/workflows/query-plans.yml", "utf8")),
+);
 requireWorkflowCommand(parse(ciWorkflow), "pnpm check:all");
 requireWorkflowCommand(
   parse(readFileSync(".github/workflows/semgrep.yml", "utf8")),

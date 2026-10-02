@@ -6,6 +6,7 @@ const stepSchema = z.looseObject({
   if: z.string().optional(),
   with: z
     .looseObject({
+      name: z.string().optional(),
       path: z.string().optional(),
       "include-hidden-files": z.boolean().optional(),
       "if-no-files-found": z.string().optional(),
@@ -13,14 +14,15 @@ const stepSchema = z.looseObject({
     .optional(),
 });
 
-function requireInitializationEvidence(steps: z.infer<typeof stepSchema>[]): void {
-  const paths = [
-    ".artifacts/initialization-smoke-*/smoke.log",
-    ".artifacts/initialization-smoke-*/project.json",
-    ".artifacts/initialization-smoke-*/acceptance",
-  ];
+function requireEvidenceUpload(
+  steps: z.infer<typeof stepSchema>[],
+  artifact: string,
+  paths: readonly string[],
+): void {
   const upload = steps.find(
-    (step) => step.uses?.startsWith("actions/upload-artifact@") === true,
+    (step) =>
+      step.uses?.startsWith("actions/upload-artifact@") === true &&
+      step.with?.name === artifact,
   );
   if (
     upload?.if !== "always()" ||
@@ -28,9 +30,7 @@ function requireInitializationEvidence(steps: z.infer<typeof stepSchema>[]): voi
     upload.with["if-no-files-found"] !== "error" ||
     upload.with.path?.trim() !== paths.join("\n")
   ) {
-    throw new TypeError(
-      "Initialization evidence must upload hidden artifacts with scoped paths",
-    );
+    throw new TypeError(`${artifact} must upload hidden artifacts with scoped paths`);
   }
 }
 const workflowContractSchema = z.looseObject({
@@ -81,7 +81,34 @@ function validateAcceptanceWorkflow(
   ) {
     throw new TypeError("Initialization must run the smoke command unconditionally");
   }
-  requireInitializationEvidence(initialization.steps ?? []);
+  requireEvidenceUpload(initialization.steps ?? [], "initialized-project-evidence", [
+    ".artifacts/initialization-smoke-*/smoke.log",
+    ".artifacts/initialization-smoke-*/project.json",
+    ".artifacts/initialization-smoke-*/acceptance",
+  ]);
+  requireEvidenceUpload(workflow.jobs.repository?.steps ?? [], "acceptance-evidence", [
+    "apps/web/test-results",
+    ".artifacts/query-corpus*.json",
+    ".artifacts/query-plans.json",
+    ".artifacts/query-plans.md",
+  ]);
+  return workflow;
+}
+
+function validateQueryPlanWorkflow(
+  input: unknown,
+): z.infer<typeof workflowContractSchema> {
+  const workflow = workflowContractSchema.parse(input);
+  requireEvidenceUpload(
+    workflow.jobs["query-plans"]?.steps ?? [],
+    "query-plan-comparison",
+    [
+      ".artifacts/query-plans-base.json",
+      ".artifacts/query-plans-base.md",
+      ".artifacts/query-plans.md",
+      "proposed/.artifacts/query-plans.json",
+    ],
+  );
   return workflow;
 }
 
@@ -114,4 +141,9 @@ function validateSemanticWorkflow(input: unknown): void {
   }
 }
 
-export { requireWorkflowCommand, validateSemanticWorkflow, validateAcceptanceWorkflow };
+export {
+  requireWorkflowCommand,
+  validateSemanticWorkflow,
+  validateAcceptanceWorkflow,
+  validateQueryPlanWorkflow,
+};
