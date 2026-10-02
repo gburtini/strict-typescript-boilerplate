@@ -371,11 +371,9 @@ rules:
                   import $PROCESS from "child_process";
                   ...
               - pattern: "$PROCESS.execFileSync(..., { ..., shell: $SHELL, ... }, ...)"
-      - metavariable-pattern:
+      - metavariable-regex:
           metavariable: $SHELL
-          patterns:
-            - pattern: $VALUE
-            - pattern-not: "false"
+          regex: ^(?!false$).+$
 
   - id: no-disabled-tls-verification
     languages: [javascript, typescript]

@@ -33,3 +33,10 @@ Trusted enforcement comparison includes `.semgrep.yml` and
 scan inventory must include every Git-visible JavaScript/TypeScript source file.
 These files provide review evidence; they do not constitute independent owner
 approval or configure server-side branch protection.
+
+## Pinned scanner compatibility
+
+The pinned Semgrep 1.176.1 parser rejects the nested shell-value pattern in
+`no-child-process-shell`. The rule now uses a metavariable regex to exclude only
+the literal `false`; positive fixtures cover a truthy literal, a shell path, and
+a variable value separately. No enforcement cases change acceptance.

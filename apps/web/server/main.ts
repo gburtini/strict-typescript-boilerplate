@@ -1,7 +1,8 @@
-import { Effect } from "effect";
+import { Effect, ManagedRuntime } from "effect";
 import { InfrastructureError } from "@template/core";
 import { BodyLimitPlugin, RPCHandler } from "@orpc/server/node";
 import { createApiRouter } from "@template/core/api";
+import { createTelemetryLive } from "@template/core/telemetry-node";
 import { createDatabase, createUserRepository } from "@template/db";
 import type { Plugin, PreviewServer, ViteDevServer } from "vite";
 import { serverEnv } from "./env";
@@ -10,6 +11,25 @@ function installReferenceApi(server: ViteDevServer | PreviewServer): void {
   if (serverEnv.REFERENCE_API_ENABLED !== "true") {
     return;
   }
+  const runtime = ManagedRuntime.make(
+    createTelemetryLive({ serviceName: serverEnv.TELEMETRY_SERVICE_NAME }),
+  );
+  Effect.runFork(
+    Effect.match(
+      Effect.tryPromise({
+        try: async () => {
+          await runtime.runtime();
+          return true;
+        },
+        catch: (cause) =>
+          new InfrastructureError("Telemetry startup failed", "opentelemetry", cause),
+      }),
+      {
+        onSuccess: () => process.stdout.write("Reference telemetry initialized.\n"),
+        onFailure: () => process.stderr.write("Reference telemetry startup failed.\n"),
+      },
+    ),
+  );
   const database = createDatabase({ url: serverEnv.DATABASE_URL });
   const handler = new RPCHandler(createApiRouter(createUserRepository(database)), {
     plugins: [new BodyLimitPlugin({ maxBodySize: 2048 })],
@@ -19,15 +39,15 @@ function installReferenceApi(server: ViteDevServer | PreviewServer): void {
       Effect.match(
         Effect.tryPromise({
           try: async () => {
-            await database.close();
+            await Promise.all([database.close(), runtime.dispose()]);
           },
           catch: (cause) =>
-            new InfrastructureError("Shutdown failed", "postgres", cause),
+            new InfrastructureError("Shutdown failed", "reference-api", cause),
         }),
         {
-          onSuccess: () => process.stdout.write("Reference database closed.\n"),
+          onSuccess: () => process.stdout.write("Reference API resources closed.\n"),
           onFailure: () =>
-            process.stderr.write("Reference database shutdown failed.\n"),
+            process.stderr.write("Reference API resources failed to close cleanly.\n"),
         },
       ),
     );
@@ -36,7 +56,7 @@ function installReferenceApi(server: ViteDevServer | PreviewServer): void {
     const normalizedRequest = Object.assign(request, {
       originalUrl: request.originalUrl ?? request.url ?? "/",
     });
-    Effect.runFork(
+    runtime.runFork(
       Effect.match(
         Effect.tryPromise({
           try: async () => {

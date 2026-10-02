@@ -122,8 +122,13 @@
     },
     {
       "path": "/cases/no-child-process-shell-bad.ts",
-      "code": "import { spawn as start, execFileSync } from \"node:child_process\"; start(command, args, {shell: true}); execFileSync(command, args, {shell: \"/bin/sh\"});",
-      "expected": ["no-child-process-shell", "no-child-process-shell"]
+      "code": "import { spawn as start } from \"node:child_process\"; start(command, args, {shell: true});",
+      "expected": ["no-child-process-shell"]
+    },
+    {
+      "path": "/cases/no-child-process-shell-exec-file-bad.ts",
+      "code": "import { execFileSync } from \"node:child_process\"; execFileSync(command, args, {shell: \"/bin/sh\"});",
+      "expected": ["no-child-process-shell"]
     },
     {
       "path": "/cases/no-child-process-shell-good.ts",

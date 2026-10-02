@@ -5,6 +5,7 @@ const serverEnv = createEnv({
   runtimeEnv: process.env,
   server: {
     REFERENCE_API_ENABLED: z.enum(["true", "false"]).default("false"),
+    TELEMETRY_SERVICE_NAME: z.string().min(1).default("@template/web"),
     DATABASE_URL: z
       .url()
       .refine(
