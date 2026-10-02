@@ -58,8 +58,6 @@ const eligibleFiles = files.filter(
   (path) =>
     extensions.has(nodePath.extname(path)) &&
     !path.startsWith("packages/db/drizzle/") &&
-    !path.startsWith("docs/evidence/") &&
-    path !== "docs/test-evidence.json" &&
     path !== "docs/ENFORCEMENT-MANIFEST.md" &&
     path !== "pnpm-lock.yaml" &&
     path !== "devtools/scripts/repository/project-initialization.ts" &&

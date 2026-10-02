@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 import { config } from "../../../oxlint.config.ts";
 import { expectRejection } from "../shared/expect-rejection.ts";
 import { validateExceptionRegistry } from "./lint-exceptions.ts";
-import { parseTestEvidence } from "./test-evidence.ts";
+import { verifyRegressionReport } from "./regression-reports.ts";
 import {
   requireWorkflowCommand,
   validateSemanticWorkflow,
@@ -46,30 +46,93 @@ expectRejection(
     ),
   "match approved",
 );
-const record = {
-  test: "owner/src/tests/behavior.test.ts",
-  method: "attestation",
-  owner: "fixture-owner",
-  revision: "abcdef0",
-  command: ["pnpm", "test:unit"],
-  redState: "Removing the boundary validation must reject the fixture.",
+const expectation = {
+  testPath: "owner/src/tests/behavior.test.ts",
+  title: "protects the boundary",
+  failure: "invalid input",
 };
-parseTestEvidence({ schemaVersion: 2, records: [record] }, [record.test]);
+const assertion = {
+  title: expectation.title,
+  status: "passed",
+  failureMessages: [],
+};
+const report = {
+  success: true,
+  numFailedTests: 0,
+  numPendingTests: 0,
+  numTodoTests: 0,
+  testResults: [
+    { name: expectation.testPath, message: "", assertionResults: [assertion] },
+  ],
+};
+verifyRegressionReport(report, expectation, false);
+const mutant = {
+  ...report,
+  success: false,
+  numFailedTests: 1,
+  testResults: [
+    {
+      ...report.testResults[0],
+      assertionResults: [
+        {
+          ...assertion,
+          status: "failed",
+          failureMessages: ["invalid input accepted"],
+        },
+      ],
+    },
+  ],
+};
+verifyRegressionReport(mutant, expectation, true);
 expectRejection(
-  () =>
-    parseTestEvidence({ schemaVersion: 2, records: [record] }, [
-      record.test,
-      "unrecorded.test.ts",
-    ]),
-  "Every test file",
+  () => verifyRegressionReport(report, expectation, true),
+  "Mutation must fail",
+);
+expectRejection(
+  () => verifyRegressionReport(mutant, expectation, false),
+  "baseline must pass",
+);
+expectRejection(
+  () => verifyRegressionReport(mutant, { ...expectation, title: "missing test" }, true),
+  "expected test",
 );
 expectRejection(
   () =>
-    parseTestEvidence(
-      { schemaVersion: 2, records: [{ ...record, method: "execution" }] },
-      [record.test],
+    verifyRegressionReport(
+      mutant,
+      { ...expectation, failure: "different defect" },
+      true,
     ),
-  "inspectable artifact",
+  "intended reason",
+);
+expectRejection(
+  () => verifyRegressionReport({ ...mutant, numFailedTests: 2 }, expectation, true),
+  "all failures",
+);
+expectRejection(
+  () => verifyRegressionReport({ ...mutant, testResults: [] }, expectation, true),
+  "Too small",
+);
+expectRejection(
+  () => verifyRegressionReport({ ...report, numPendingTests: 1 }, expectation, false),
+  "Invalid input",
+);
+expectRejection(
+  () =>
+    verifyRegressionReport(
+      {
+        ...mutant,
+        testResults: [
+          {
+            ...mutant.testResults[0],
+            message: "Failed to load test module",
+          },
+        ],
+      },
+      expectation,
+      true,
+    ),
+  "Invalid input",
 );
 const workflow = {
   on: { push: {} },

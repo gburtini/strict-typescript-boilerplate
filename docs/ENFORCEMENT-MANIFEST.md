@@ -5,7 +5,7 @@
 This file is generated from the base Oxlint configuration, scoped overrides,
 and the dynamic rules registered by oxlint.config.ts. The complete repository
 gate also includes TypeScript, Oxfmt, Knip, dependency-cruiser, Sherif, shadcn
-lint, security workflows, and test evidence.
+lint, security workflows, and executable regression checks.
 
 | Invariant                                                          | Owner                                         | Severity      | Scope                                                                            | Source           |
 | ------------------------------------------------------------------ | --------------------------------------------- | ------------- | -------------------------------------------------------------------------------- | ---------------- |

@@ -91,6 +91,8 @@ function validateAcceptanceWorkflow(
     ".artifacts/query-corpus*.json",
     ".artifacts/query-plans.json",
     ".artifacts/query-plans.md",
+    ".artifacts/regressions-*/*.json",
+    ".artifacts/regressions-*/*.log",
   ]);
   return workflow;
 }

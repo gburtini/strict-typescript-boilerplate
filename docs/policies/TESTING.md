@@ -87,10 +87,22 @@ mechanism.
 
 ## Proof that a test can fail
 
-`docs/test-evidence.json` covers every test file. Execution records reference
-an inspectable artifact, revision and exact command. Historical attestations
-remain explicitly labeled and require owner review; prose is not executed
-proof. Do not invent red states or replace execution evidence with attestation.
+`pnpm test:regressions`, included in `pnpm check`, proves representative starter
+contracts by running passing tests, mutating an isolated source copy, and
+requiring the expected assertions to fail for the intended reason. It covers
+retry budgets, SQL normalization, and immutable asset caching. Surviving
+mutations, missing tests, skipped tests, and runner failures fail this check.
+These canaries complement the full test suites and coverage gate; they do not
+claim mutation coverage of every test.
+
+Run output belongs in ignored `.artifacts/` and CI artifacts, not in `docs/`.
+CI retains regression reports and logs for 14 days. Record change-specific
+failure demonstrations in the pull request or its attached artifacts. Keep
+durable policies, test fixtures, and reviewed baselines in the repository.
+The former per-file ledger and archived transcripts checked historical file
+presence rather than current behavior; executable canaries replace that
+bookkeeping. There is no requirement to maintain a permanent transcript for
+each test file.
 
 Every new test must have a demonstrated failure mode. Before considering the
 test complete, actively break the assumption it is meant to protect and confirm

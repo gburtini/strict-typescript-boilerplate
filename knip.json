@@ -9,7 +9,7 @@
         "devtools/scripts/repository/check-architecture-fixtures.ts",
         "devtools/scripts/repository/check-ci-policy.ts",
         "devtools/scripts/repository/check-generated.ts",
-        "devtools/scripts/repository/check-test-evidence.ts",
+        "devtools/scripts/repository/check-regressions.ts",
         "devtools/scripts/repository/check-coverage-ratchet.ts",
         "devtools/scripts/repository/check-db-migrations.ts",
         "devtools/scripts/repository/generate-enforcement-manifest.ts"

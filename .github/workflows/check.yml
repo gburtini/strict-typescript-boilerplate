@@ -35,6 +35,8 @@ jobs:
             .artifacts/query-corpus*.json
             .artifacts/query-plans.json
             .artifacts/query-plans.md
+            .artifacts/regressions-*/*.json
+            .artifacts/regressions-*/*.log
           include-hidden-files: true
           if-no-files-found: error
           retention-days: 14
