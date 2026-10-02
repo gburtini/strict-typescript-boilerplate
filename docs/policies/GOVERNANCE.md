@@ -13,6 +13,8 @@ review, dismissal of stale approvals, approval of the latest push, and the
 `Repository acceptance` and `Trusted enforcement comparison` status checks.
 Disallow force pushes, branch deletion, and agent bypass of the ruleset. Grant
 agents branch write access without administration or approval authority.
+The reusable import is `.github/rulesets/default-branch.json`; per-project setup
+is documented in `docs/STARTING-A-PROJECT.md`.
 These server settings require repository administration; files alone do not
 activate them. Record verification evidence and date when configured. The
 template assigns responsibility to roles and does not prescribe individuals or

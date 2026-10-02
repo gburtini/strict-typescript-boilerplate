@@ -74,6 +74,7 @@ node --version
 corepack enable
 corepack install
 pnpm install
+pnpm browser:install
 pnpm check:all
 ```
 
@@ -111,21 +112,14 @@ project rule can be checked automatically, add that check to `devtools/`.
 
 ## Customize for a project
 
-Keep the `@template/*` names while this repository remains a template. Before
-using it for a product, search the repository for these values and replace them:
+Keep the template generic until you create a product checkout. Use the validated
+`pnpm init:project` command to initialize identities together, then follow
+[Start a project](docs/STARTING-A-PROJECT.md) for development, portable Node
+execution and repository governance setup.
 
-- `@template/`
-- `typescript-boilerplate`
-- `TypeScript Boilerplate`
-- starter/example screen names and copy
-
-Make the package scope, root package name, database name, telemetry scope, UI
-copy, and generated metadata changes in one initialization commit. Update
-package manifests and imports to use the new scope before starting feature work.
-
-Review environment defaults, package exports, test evidence, migration metadata,
-and deployment workflows. Then run the commands in [Usage](#usage) from the
-renamed repository root.
+`pnpm dev` starts a disposable local database, applies migrations and wires the
+reference API to its assigned port. `pnpm build` and `pnpm start` run the built
+Node server; browser tests exercise that server.
 
 ## UI primitives
 
