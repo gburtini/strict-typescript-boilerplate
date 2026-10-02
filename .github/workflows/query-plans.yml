@@ -15,17 +15,18 @@ jobs:
         image: postgres:18.3-alpine
         env:
           POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: typescript_boilerplate
+          POSTGRES_DB: planner_ci
         ports:
           - 5432:5432
         options: >-
-          --health-cmd "pg_isready -U postgres -d typescript_boilerplate"
+          --health-cmd "pg_isready -U postgres -d planner_ci"
           --health-interval 2s
           --health-timeout 5s
           --health-retries 20
     env:
-      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/typescript_boilerplate
-      QUERY_PLAN_DATABASE_URL: postgresql://postgres:postgres@localhost:5432/typescript_boilerplate
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/planner_ci
+      QUERY_PLAN_DATABASE_URL: postgresql://postgres:postgres@localhost:5432/planner_ci
+      QUERY_PLAN_DISPOSABLE_DATABASE: planner_ci
     steps:
       - name: Check out base
         uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.0.0

@@ -1,13 +1,16 @@
 import { readFile } from "node:fs/promises";
 import nodePath from "node:path";
 import postgres from "postgres";
-import { productionStatsSchema } from "@template/db/devtools/query-plans";
+import {
+  disposableDatabaseSchema,
+  productionStatsSchema,
+} from "@template/db/devtools/query-plans";
 import { repositoryRoot } from "../shared/repository-paths.ts";
 
-const databaseUrl = process.env.QUERY_PLAN_DATABASE_URL;
-if (typeof databaseUrl !== "string" || databaseUrl.length === 0) {
-  throw new TypeError("QUERY_PLAN_DATABASE_URL is required");
-}
+const { url: databaseUrl } = disposableDatabaseSchema.parse({
+  url: process.env.QUERY_PLAN_DATABASE_URL,
+  expectedDatabase: process.env.QUERY_PLAN_DISPOSABLE_DATABASE,
+});
 
 const fixture = await readFile(
   nodePath.resolve(repositoryRoot, "devtools/query-plans/fixture.sql"),

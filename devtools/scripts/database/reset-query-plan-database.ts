@@ -1,27 +1,11 @@
 import postgres from "postgres";
+import { disposableDatabaseSchema } from "@template/db/devtools/query-plans";
 
-const databaseUrl = process.env.QUERY_PLAN_DATABASE_URL;
-if (typeof databaseUrl !== "string" || databaseUrl.length === 0) {
-  throw new TypeError("QUERY_PLAN_DATABASE_URL is required");
-}
-
-const databasePathMatch = /\/(?<databaseName>[a-zA-Z0-9_-]+)(?:[?#].*)?$/u.exec(
-  databaseUrl,
-);
-const targetDatabase = databasePathMatch?.groups?.databaseName ?? "";
-if (
-  targetDatabase.length === 0 ||
-  targetDatabase === "postgres" ||
-  targetDatabase === "template0" ||
-  targetDatabase === "template1"
-) {
-  throw new TypeError(`Refusing to reset protected database: ${targetDatabase}`);
-}
-
-const administrativeUrl = databaseUrl.replace(
-  /\/[a-zA-Z0-9_-]+(?=[?#]|$)/u,
-  "/postgres",
-);
+const target = disposableDatabaseSchema.parse({
+  url: process.env.QUERY_PLAN_DATABASE_URL,
+  expectedDatabase: process.env.QUERY_PLAN_DISPOSABLE_DATABASE,
+});
+const { administrativeUrl, databaseName: targetDatabase } = target;
 const sql = postgres(administrativeUrl, { max: 1, prepare: false });
 try {
   await sql`

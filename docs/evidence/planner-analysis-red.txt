@@ -1,0 +1,56 @@
+
+ RUN  v4.1.11 /Users/gburt/Code/toys/strict-typescript-boilerplate/packages/db
+
+ ❯ src/tests/devtools/planner-safety.test.ts (3 tests | 2 failed) 6ms
+     × blocks a selective sequential scan of a large relation 3ms
+     × shows both plans for cost changes without a shape change 0ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/tests/devtools/planner-safety.test.ts > planner safety > blocks a selective sequential scan of a large relation
+AssertionError: expected [] to have a length of 1 but got +0
+
+- Expected
++ Received
+
+- 1
++ 0
+
+ ❯ src/tests/devtools/planner-safety.test.ts:22:86
+     20|   it("blocks a selective sequential scan of a large relation", () => {
+     21|     expect.hasAssertions();
+     22|     expect(comparePlans(artifact(1_000_000, 300), artifact(10_000, 300…
+       |                                                                                      ^
+     23|   });
+     24|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/tests/devtools/planner-safety.test.ts > planner safety > shows both plans for cost changes without a shape change
+AssertionError: expected [] to have a length of 1 but got +0
+
+- Expected
++ Received
+
+- 1
++ 0
+
+ ❯ src/tests/devtools/planner-safety.test.ts:28:32
+     26|     expect.hasAssertions();
+     27|     const comparison = comparePlans(artifact(10_000, 900), artifact(10…
+     28|     expect(comparison.changed).toHaveLength(1);
+       |                                ^
+     29|     expect(renderComparison(comparison)).toContain("**Base plan**");
+     30|     expect(comparison.violations).toHaveLength(1);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 1 passed (3)
+   Start at  08:37:14
+   Duration  107ms (transform 18ms, setup 0ms, import 38ms, tests 6ms, environment 0ms)
+
+undefined
+/Users/gburt/Code/toys/strict-typescript-boilerplate/packages/db:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run src/tests/devtools/planner-safety.test.ts

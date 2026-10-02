@@ -122,3 +122,16 @@ report comment is edited on subsequent runs and created only when no prior
 marked comment exists; if the report is unavailable, only that marked comment is
 deleted. Forks still get the required check and workflow summary without
 granting write permissions.
+
+## Disposable write targets
+
+Reset and fixture preparation require a loopback `planner_*` database whose
+name exactly matches `QUERY_PLAN_DISPOSABLE_DATABASE`. URL query overrides and
+fragments are rejected before connecting. Ordinary development and product
+databases cannot be seeded or reset through these commands. `pnpm check:all`
+creates and cleans up its own unique Docker database.
+
+Scan risk uses analyzed relation size, rather than filtered output rows. Both
+base and current plans appear for cost or shape changes. Missing relation
+statistics require investigation; absolute high cost, large scans and doubled
+cost remain blocking evidence.

@@ -26,3 +26,16 @@ export type {
 export { mapWithConcurrency } from "./map-with-concurrency.ts";
 export { productionStatsSchema } from "./query-plan-stats.ts";
 export type { ProductionStats } from "./query-plan-stats.ts";
+
+export {
+  comparePlans,
+  explainStatement,
+  maxPlanRows,
+  planFingerprint,
+  planNodeSchema,
+  readPlanResult,
+  renderComparison,
+} from "./plan-analysis.ts";
+export type { PlanArtifact, PlanEntry, PlanNode } from "./plan-analysis.ts";
+
+export { disposableDatabaseSchema } from "./disposable-database.ts";

@@ -194,6 +194,23 @@
       ],
       "redState": "indiscriminate SPA fallback exposes an entry for private and missing paths. Recorded assertions fail before restoring the source.",
       "artifact": "docs/evidence/static-assets-red.txt"
+    },
+    {
+      "test": "packages/db/src/tests/devtools/planner-safety.test.ts",
+      "method": "execution",
+      "owner": "repository-maintainers",
+      "revision": "f47f77500f06df55ac5d5d3461be4c2162d145df",
+      "command": [
+        "pnpm",
+        "--filter",
+        "@template/db",
+        "exec",
+        "vitest",
+        "run",
+        "src/tests/devtools/planner-safety.test.ts"
+      ],
+      "redState": "Selective large scans and cost-only changes failed their regression assertions before the analysis fix. Removing the disposable identity guard also fails the target assertions.",
+      "artifact": "docs/evidence/planner-safety-red.md"
     }
   ]
 }
