@@ -1,6 +1,9 @@
 import { z } from "zod";
 
 const stepSchema = z.looseObject({
+  name: z.string().optional(),
+  "working-directory": z.string().optional(),
+  env: z.record(z.string(), z.string()).optional(),
   uses: z.string().optional(),
   run: z.string().optional(),
   if: z.string().optional(),
@@ -101,16 +104,32 @@ function validateQueryPlanWorkflow(
   input: unknown,
 ): z.infer<typeof workflowContractSchema> {
   const workflow = workflowContractSchema.parse(input);
-  requireEvidenceUpload(
-    workflow.jobs["query-plans"]?.steps ?? [],
-    "query-plan-comparison",
-    [
-      ".artifacts/query-plans-base.json",
-      ".artifacts/query-plans-base.md",
-      ".artifacts/query-plans.md",
-      "proposed/.artifacts/query-plans.json",
-    ],
+  const steps = workflow.jobs["query-plans"]?.steps ?? [];
+  const base = steps.find((step) => step.name === "Generate base query plans");
+  const comparison = steps.find(
+    (step) => step.name === "Compare proposed query plans with base",
   );
+  if (
+    base?.["working-directory"] !== "proposed" ||
+    base.run !== "pnpm db:plans" ||
+    typeof base.if === "string" ||
+    base.env?.QUERY_PLAN_CORPUS !== "../base/.artifacts/query-corpus.json" ||
+    base.env.QUERY_PLAN_ARTIFACT !== "../.artifacts/query-plans-base.json" ||
+    comparison?.["working-directory"] !== "proposed" ||
+    comparison.run !== "pnpm db:plans" ||
+    comparison.env?.QUERY_PLAN_BASELINE !== "../.artifacts/query-plans-base.json" ||
+    typeof comparison.if === "string"
+  ) {
+    throw new TypeError("Query plans must compare fresh base and proposed artifacts");
+  }
+  requireEvidenceUpload(steps, "query-plan-comparison", [
+    ".artifacts/query-plans-base.json",
+    ".artifacts/query-plans-base.md",
+    ".artifacts/query-plans.md",
+    "proposed/.artifacts/query-plans.json",
+    "base/.artifacts/query-corpus.json",
+    "proposed/.artifacts/query-corpus.json",
+  ]);
   return workflow;
 }
 

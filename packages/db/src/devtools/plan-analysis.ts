@@ -152,16 +152,17 @@ function readPlanResult(rows: readonly unknown[]): PlanNode {
   return document.Plan;
 }
 
-function comparePlans(current: PlanArtifact, baseline: PlanArtifact): PlanComparison {
+function comparePlans(current: PlanArtifact, baseline?: PlanArtifact): PlanComparison {
+  const baselineQueries = baseline?.queries ?? [];
   const baselineByFingerprint = new Map(
-    baseline.queries.map((entry) => [entry.fingerprint, entry]),
+    baselineQueries.map((entry) => [entry.fingerprint, entry]),
   );
   const currentFingerprints = new Set(
     current.queries.map((entry) => entry.fingerprint),
   );
   const added: PlanEntry[] = [];
   const changed: PlanEntry[] = [];
-  const removed = baseline.queries.filter(
+  const removed = baselineQueries.filter(
     (entry) => !currentFingerprints.has(entry.fingerprint),
   );
   const unchanged: PlanEntry[] = [];
@@ -196,7 +197,7 @@ function comparePlans(current: PlanArtifact, baseline: PlanArtifact): PlanCompar
       );
     }
   }
-  if (current.databaseVersion !== baseline.databaseVersion) {
+  if (baseline && current.databaseVersion !== baseline.databaseVersion) {
     violations.push(
       `PostgreSQL version changed (${baseline.databaseVersion} -> ${current.databaseVersion}); plans are not directly comparable`,
     );

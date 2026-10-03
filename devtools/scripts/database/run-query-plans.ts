@@ -1,5 +1,5 @@
-import { existsSync } from "node:fs";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
+import nodePath from "node:path";
 import postgres from "postgres";
 import { z } from "zod";
 import {
@@ -51,7 +51,10 @@ function attachRelationSizes(
   };
 }
 
-async function readArtifact(path: string): Promise<PlanArtifact> {
+async function readArtifact(path?: string): Promise<PlanArtifact | undefined> {
+  if (typeof path !== "string") {
+    return path;
+  }
   const planEntrySchema = z.object({
     fingerprint: z.string(),
     maxPlanRows: z.number(),
@@ -67,7 +70,9 @@ async function readArtifact(path: string): Promise<PlanArtifact> {
     version: z.literal(1),
   });
   try {
-    const document: unknown = JSON.parse(await readFile(path, "utf8"));
+    const document: unknown = JSON.parse(
+      await readFile(resolveRepositoryPath(path), "utf8"),
+    );
     return planArtifactSchema.parse(document);
   } catch (error) {
     throw new TypeError(`Plan artifact is invalid: ${path}`, { cause: error });
@@ -75,21 +80,13 @@ async function readArtifact(path: string): Promise<PlanArtifact> {
 }
 
 const databaseUrl = process.env.QUERY_PLAN_DATABASE_URL;
-const generatedCorpusPath = resolveRepositoryPath(".artifacts/query-corpus.json");
-let corpusPath = "devtools/query-plans/corpus.json";
-if (existsSync(generatedCorpusPath)) {
-  corpusPath = ".artifacts/query-corpus.json";
-}
-if (
-  typeof process.env.QUERY_PLAN_CORPUS === "string" &&
-  process.env.QUERY_PLAN_CORPUS.length > 0
-) {
-  corpusPath = process.env.QUERY_PLAN_CORPUS;
-}
-corpusPath = resolveRepositoryPath(corpusPath);
-const baselinePath = resolveRepositoryPath(
-  process.env.QUERY_PLAN_BASELINE ?? "devtools/query-plans/baseline.json",
+const corpusPath = resolveRepositoryPath(
+  process.env.QUERY_PLAN_CORPUS ?? ".artifacts/query-corpus.json",
 );
+const artifactPath = resolveRepositoryPath(
+  process.env.QUERY_PLAN_ARTIFACT ?? ".artifacts/query-plans.json",
+);
+const baseline = await readArtifact(process.env.QUERY_PLAN_BASELINE);
 const outputPath = resolveRepositoryPath(
   process.env.QUERY_PLAN_OUTPUT ?? ".artifacts/query-plans.md",
 );
@@ -98,6 +95,9 @@ if (typeof databaseUrl !== "string" || databaseUrl.length === 0) {
 }
 
 const corpus = queryCorpusSchema.parse(JSON.parse(await readFile(corpusPath, "utf8")));
+if (corpus.queries.length === 0) {
+  throw new TypeError("The captured query corpus is empty");
+}
 const sql = postgres(databaseUrl, { max: 1, prepare: false });
 const planEntries: PlanEntry[] = [];
 let databaseVersion = "unknown";
@@ -144,25 +144,12 @@ try {
 }
 
 const current: PlanArtifact = { databaseVersion, queries: planEntries, version: 1 };
-await mkdir(resolveRepositoryPath(".artifacts"), { recursive: true });
+await mkdir(nodePath.dirname(artifactPath), { recursive: true });
+await mkdir(nodePath.dirname(outputPath), { recursive: true });
 const currentJson = `${JSON.stringify(current, (_key: string, value: unknown): unknown => value, 2)}\n`;
-await writeFile(
-  resolveRepositoryPath(".artifacts/query-plans.json"),
-  currentJson,
-  "utf8",
-);
-if (process.env.QUERY_PLAN_WRITE_BASELINE === "1") {
-  await writeFile(baselinePath, currentJson, "utf8");
-  await writeFile(
-    outputPath,
-    "## Database query-plan baseline\n\nBaseline initialized from the pinned planner fixture.\n",
-    "utf8",
-  );
-} else {
-  const baseline = await readArtifact(baselinePath);
-  const comparison = comparePlans(current, baseline);
-  await writeFile(outputPath, renderComparison(comparison), "utf8");
-  if (comparison.violations.length > 0) {
-    process.exitCode = 1;
-  }
+await writeFile(artifactPath, currentJson, "utf8");
+const comparison = comparePlans(current, baseline);
+await writeFile(outputPath, renderComparison(comparison), "utf8");
+if (comparison.violations.length > 0) {
+  process.exitCode = 1;
 }

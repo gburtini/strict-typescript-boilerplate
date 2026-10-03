@@ -196,6 +196,29 @@ for (const jobName of ["initialization", "repository"]) {
 const queryPlanWorkflow = validateQueryPlanWorkflow(
   parse(readFileSync(".github/workflows/query-plans.yml", "utf8")),
 );
+for (const env of [
+  {},
+  { QUERY_PLAN_BASELINE: "proposed/.artifacts/query-plans.json" },
+]) {
+  expectRejection(
+    () =>
+      validateQueryPlanWorkflow({
+        ...queryPlanWorkflow,
+        jobs: {
+          ...queryPlanWorkflow.jobs,
+          "query-plans": {
+            steps: queryPlanWorkflow.jobs["query-plans"]?.steps?.map((step) => {
+              if (step.name === "Compare proposed query plans with base") {
+                return { ...step, env };
+              }
+              return step;
+            }),
+          },
+        },
+      }),
+    "compare fresh base and proposed artifacts",
+  );
+}
 for (const inputs of [
   { "include-hidden-files": false },
   { path: ".artifacts" },

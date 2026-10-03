@@ -77,14 +77,12 @@ jobs:
         working-directory: base
         run: pnpm db:query-corpus:merge
       - name: Generate base query plans
-        working-directory: base
+        working-directory: proposed
         env:
-          QUERY_PLAN_BASELINE: ../.artifacts/query-plans-base.json
+          QUERY_PLAN_CORPUS: ../base/.artifacts/query-corpus.json
+          QUERY_PLAN_ARTIFACT: ../.artifacts/query-plans-base.json
           QUERY_PLAN_OUTPUT: ../.artifacts/query-plans-base.md
-          QUERY_PLAN_WRITE_BASELINE: "1"
-        run: |
-          mkdir -p ../.artifacts
-          pnpm db:plans
+        run: pnpm db:plans
       - name: Prepare proposed database
         working-directory: proposed
         run: pnpm db:plans:reset
@@ -131,5 +129,7 @@ jobs:
             .artifacts/query-plans-base.md
             .artifacts/query-plans.md
             proposed/.artifacts/query-plans.json
+            base/.artifacts/query-corpus.json
+            proposed/.artifacts/query-corpus.json
           include-hidden-files: true
           if-no-files-found: error

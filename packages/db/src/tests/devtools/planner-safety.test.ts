@@ -73,4 +73,37 @@ describe("planner safety", () => {
     expect(renderComparison(comparison)).toContain("**Base plan**");
     expect(comparison.violations).toHaveLength(1);
   });
+
+  it("assesses fresh captures without a baseline and still blocks unsafe plans", () => {
+    expect.hasAssertions();
+    const safe = comparePlans(artifact(10_000, 300));
+    expect(safe.added).toHaveLength(1);
+    expect(safe.violations).toHaveLength(0);
+    expect(renderComparison(safe)).toContain("**Current plan**");
+    expect(comparePlans(artifact(1_000_000, 300)).violations).toHaveLength(1);
+    expect(comparePlans(artifact(10_000, 100_001)).violations).toHaveLength(1);
+  });
+
+  it("reports changed access paths even when the captured SQL is unchanged", () => {
+    expect.hasAssertions();
+    const current = artifact(10_000, 300);
+    const previous: PlanArtifact = {
+      ...current,
+      queries: current.queries.map((entry) => ({
+        ...entry,
+        planFingerprint: "indexed-shape",
+        plan: {
+          ...entry.plan,
+          "Node Type": "Index Scan",
+          "Index Name": "users_email_unique",
+        },
+      })),
+    };
+    const comparison = comparePlans(current, previous);
+    expect(comparison.added).toHaveLength(0);
+    expect(comparison.removed).toHaveLength(0);
+    expect(comparison.changed).toHaveLength(1);
+    expect(renderComparison(comparison)).toContain("**Base plan**");
+    expect(renderComparison(comparison)).toContain("users_email_unique");
+  });
 });
