@@ -28,6 +28,7 @@ export { productionStatsSchema } from "./query-plan-stats.ts";
 export type { ProductionStats } from "./query-plan-stats.ts";
 
 export {
+  planArtifactSchema,
   comparePlans,
   explainStatement,
   maxPlanRows,

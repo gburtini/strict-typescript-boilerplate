@@ -41,6 +41,21 @@ interface PlanArtifact {
   readonly version: 1;
 }
 
+const planEntrySchema = z.object({
+  fingerprint: z.string(),
+  maxPlanRows: z.number(),
+  plan: planNodeSchema,
+  planFingerprint: z.string(),
+  sql: z.string(),
+  testSources: z.array(z.string()),
+  totalCost: z.number(),
+});
+const planArtifactSchema = z.object({
+  databaseVersion: z.string(),
+  queries: z.array(planEntrySchema).min(1),
+  version: z.literal(1),
+});
+
 interface PlanComparison {
   readonly added: readonly PlanEntry[];
   readonly changed: readonly PlanEntry[];
@@ -326,6 +341,7 @@ function renderComparison(comparison: PlanComparison): string {
 }
 
 export {
+  planArtifactSchema,
   comparePlans,
   explainStatement,
   maxPlanRows,

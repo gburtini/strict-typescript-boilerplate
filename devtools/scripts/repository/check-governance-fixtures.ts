@@ -196,9 +196,9 @@ for (const jobName of ["initialization", "repository"]) {
 const queryPlanWorkflow = validateQueryPlanWorkflow(
   parse(readFileSync(".github/workflows/query-plans.yml", "utf8")),
 );
-for (const env of [
-  {},
-  { QUERY_PLAN_BASELINE: "proposed/.artifacts/query-plans.json" },
+for (const command of [
+  "pnpm db:plans",
+  "pnpm db:plans:compare .artifacts/query-plans.json .artifacts/query-plans.json ../.artifacts/query-plans.md",
 ]) {
   expectRejection(
     () =>
@@ -208,8 +208,8 @@ for (const env of [
           ...queryPlanWorkflow.jobs,
           "query-plans": {
             steps: queryPlanWorkflow.jobs["query-plans"]?.steps?.map((step) => {
-              if (step.name === "Compare proposed query plans with base") {
-                return { ...step, env };
+              if (step.run?.startsWith("pnpm db:plans:compare ") === true) {
+                return { ...step, run: command };
               }
               return step;
             }),
@@ -217,6 +217,24 @@ for (const env of [
         },
       }),
     "compare fresh base and proposed artifacts",
+  );
+}
+for (const directory of ["base", "proposed"]) {
+  expectRejection(
+    () =>
+      validateQueryPlanWorkflow({
+        ...queryPlanWorkflow,
+        jobs: {
+          ...queryPlanWorkflow.jobs,
+          "query-plans": {
+            steps: queryPlanWorkflow.jobs["query-plans"]?.steps?.filter(
+              (step) =>
+                step.run !== "pnpm db:plans" || step["working-directory"] !== directory,
+            ),
+          },
+        },
+      }),
+    "generate both branch artifacts",
   );
 }
 for (const inputs of [

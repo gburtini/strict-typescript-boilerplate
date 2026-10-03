@@ -85,8 +85,10 @@ The runner executes `EXPLAIN (FORMAT JSON, GENERIC_PLAN TRUE)` for every
 captured query, stores the current plans in `.artifacts/query-plans.json`, and
 emits `.artifacts/query-plans.md`. Local runs assess all captured queries as
 new plans, blocking large scans and absolute high costs without a historical
-baseline. Setting `QUERY_PLAN_BASELINE` explicitly enables comparison with a
-fresh base artifact; a missing or invalid supplied baseline fails the run.
+baseline. Generation and comparison are separate commands: `pnpm db:plans`
+always checks the current capture and writes local artifacts, while
+`pnpm db:plans:compare` requires two plan artifacts and compares them without
+connecting to a database. Missing, invalid, or empty plan artifacts fail.
 The comparison reports added, removed, changed, and unchanged plans, originating
 test sources, plan shape, estimated rows, and cost. It evaluates unchanged SQL
 as well, since schema and index changes can alter its plan. Changed entries
@@ -101,14 +103,13 @@ When `QUERY_PLAN_CAPTURE=1`, `@template/db` automatically attaches a process
 capture logger to `createDatabase()`. Each test process writes a redacted
 `.artifacts/query-corpus-<pid>.json` shard. CI merges those shards with
 `pnpm db:query-corpus:merge`; `pnpm db:plans` requires the merged
-`.artifacts/query-corpus.json` by default. `QUERY_PLAN_CORPUS` selects an
-explicit captured artifact when needed. Missing or empty captures fail; there
-is no committed-corpus fallback. Each verification run clears old capture
+`.artifacts/query-corpus.json`. Missing or empty captures fail; there is no
+committed-corpus fallback. Each verification run clears old capture
 shards before executing its tests.
 
-`QUERY_PLAN_ARTIFACT` and `QUERY_PLAN_OUTPUT` select output paths for the JSON
-plans and Markdown report. They do not establish or overwrite a committed
-baseline, and writing an artifact does not bypass plan risk checks.
+The generator always writes `.artifacts/query-plans.json` and
+`.artifacts/query-plans.md` in its own checkout. It has no baseline or output
+mode switches, and writing an artifact does not bypass plan risk checks.
 
 ## Pull-request reports
 
@@ -118,13 +119,25 @@ The report command compares two captured corpus artifacts and emits Markdown:
 pnpm db:query-corpus:report baseline.json current.json
 ```
 
+To compare plans already generated in two checkouts:
+
+```sh
+pnpm db:plans:compare ../base/.artifacts/query-plans.json .artifacts/query-plans.json
+```
+
+The optional third argument selects the Markdown report path; the default is
+`.artifacts/query-plans.md`. Paths are relative to the checkout running the
+comparison. The command fails on scan/cost violations or mismatched PostgreSQL
+versions and still writes the report for investigation.
+
 The required `Query Plans` CI job checks out the pull request's base commit and
 proposed merge separately. For each side it resets the database, applies that
 side's migrations and fixture, runs that side's tests with capture enabled,
-and produces plans. The proposed runner plans both captured corpora against
-their respective database states so this workflow also works when the base
-still has the older runner. It then compares the two fresh artifacts, appends
-the report to `GITHUB_STEP_SUMMARY`, and uploads both corpora and the scoped
+and generates plans using that side's own runner. Each checkout keeps its
+corpus and plans under its own `.artifacts/` directory. The proposed checkout
+then runs the offline comparison command on those two fresh plan artifacts.
+The workflow appends the report to `GITHUB_STEP_SUMMARY`, and uploads both
+corpora and the scoped
 plan artifacts for review. Removed queries remain visible, including removals
 caused by lost test coverage. The workflow uses a read-only token, including
 for fork pull requests.

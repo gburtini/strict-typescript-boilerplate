@@ -1,5 +1,4 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
-import nodePath from "node:path";
 import postgres from "postgres";
 import { z } from "zod";
 import {
@@ -7,7 +6,6 @@ import {
   explainStatement,
   maxPlanRows,
   planFingerprint,
-  planNodeSchema,
   readPlanResult,
   renderComparison,
   type PlanArtifact,
@@ -51,45 +49,10 @@ function attachRelationSizes(
   };
 }
 
-async function readArtifact(path?: string): Promise<PlanArtifact | undefined> {
-  if (typeof path !== "string") {
-    return path;
-  }
-  const planEntrySchema = z.object({
-    fingerprint: z.string(),
-    maxPlanRows: z.number(),
-    plan: planNodeSchema,
-    planFingerprint: z.string(),
-    sql: z.string(),
-    testSources: z.array(z.string()),
-    totalCost: z.number(),
-  });
-  const planArtifactSchema = z.object({
-    databaseVersion: z.string(),
-    queries: z.array(planEntrySchema),
-    version: z.literal(1),
-  });
-  try {
-    const document: unknown = JSON.parse(
-      await readFile(resolveRepositoryPath(path), "utf8"),
-    );
-    return planArtifactSchema.parse(document);
-  } catch (error) {
-    throw new TypeError(`Plan artifact is invalid: ${path}`, { cause: error });
-  }
-}
-
 const databaseUrl = process.env.QUERY_PLAN_DATABASE_URL;
-const corpusPath = resolveRepositoryPath(
-  process.env.QUERY_PLAN_CORPUS ?? ".artifacts/query-corpus.json",
-);
-const artifactPath = resolveRepositoryPath(
-  process.env.QUERY_PLAN_ARTIFACT ?? ".artifacts/query-plans.json",
-);
-const baseline = await readArtifact(process.env.QUERY_PLAN_BASELINE);
-const outputPath = resolveRepositoryPath(
-  process.env.QUERY_PLAN_OUTPUT ?? ".artifacts/query-plans.md",
-);
+const corpusPath = resolveRepositoryPath(".artifacts/query-corpus.json");
+const artifactPath = resolveRepositoryPath(".artifacts/query-plans.json");
+const outputPath = resolveRepositoryPath(".artifacts/query-plans.md");
 if (typeof databaseUrl !== "string" || databaseUrl.length === 0) {
   throw new TypeError("QUERY_PLAN_DATABASE_URL is required");
 }
@@ -144,11 +107,10 @@ try {
 }
 
 const current: PlanArtifact = { databaseVersion, queries: planEntries, version: 1 };
-await mkdir(nodePath.dirname(artifactPath), { recursive: true });
-await mkdir(nodePath.dirname(outputPath), { recursive: true });
+await mkdir(resolveRepositoryPath(".artifacts"), { recursive: true });
 const currentJson = `${JSON.stringify(current, (_key: string, value: unknown): unknown => value, 2)}\n`;
 await writeFile(artifactPath, currentJson, "utf8");
-const comparison = comparePlans(current, baseline);
+const comparison = comparePlans(current);
 await writeFile(outputPath, renderComparison(comparison), "utf8");
 if (comparison.violations.length > 0) {
   process.exitCode = 1;

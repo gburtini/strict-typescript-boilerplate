@@ -19,6 +19,7 @@
     "db:query-corpus:report": "node --experimental-strip-types devtools/scripts/database/report-query-corpus.ts",
     "db:query-corpus:merge": "pnpm --filter @template/db query-corpus:merge",
     "db:query-plan-stats:export": "pnpm --filter @template/db query-plan-stats:export",
+    "db:plans:compare": "node --experimental-strip-types devtools/scripts/database/compare-query-plans.ts",
     "db:plans": "pnpm --filter @template/db query-plans",
     "db:plans:prepare": "pnpm --filter @template/db query-plans:prepare",
     "db:plans:reset": "pnpm --filter @template/db query-plans:reset",
