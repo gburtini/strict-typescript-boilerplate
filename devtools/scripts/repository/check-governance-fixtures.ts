@@ -196,6 +196,47 @@ for (const jobName of ["initialization", "repository"]) {
 const queryPlanWorkflow = validateQueryPlanWorkflow(
   parse(readFileSync(".github/workflows/query-plans.yml", "utf8")),
 );
+for (const command of [
+  "pnpm db:plans",
+  "pnpm db:plans:compare .artifacts/query-plans.json .artifacts/query-plans.json ../.artifacts/query-plans.md",
+]) {
+  expectRejection(
+    () =>
+      validateQueryPlanWorkflow({
+        ...queryPlanWorkflow,
+        jobs: {
+          ...queryPlanWorkflow.jobs,
+          "query-plans": {
+            steps: queryPlanWorkflow.jobs["query-plans"]?.steps?.map((step) => {
+              if (step.run?.startsWith("pnpm db:plans:compare ") === true) {
+                return { ...step, run: command };
+              }
+              return step;
+            }),
+          },
+        },
+      }),
+    "compare fresh base and proposed artifacts",
+  );
+}
+for (const directory of ["base", "proposed"]) {
+  expectRejection(
+    () =>
+      validateQueryPlanWorkflow({
+        ...queryPlanWorkflow,
+        jobs: {
+          ...queryPlanWorkflow.jobs,
+          "query-plans": {
+            steps: queryPlanWorkflow.jobs["query-plans"]?.steps?.filter(
+              (step) =>
+                step.run !== "pnpm db:plans" || step["working-directory"] !== directory,
+            ),
+          },
+        },
+      }),
+    "generate both branch artifacts",
+  );
+}
 for (const inputs of [
   { "include-hidden-files": false },
   { path: ".artifacts" },

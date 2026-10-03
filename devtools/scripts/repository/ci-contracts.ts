@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 const stepSchema = z.looseObject({
+  "working-directory": z.string().optional(),
   uses: z.string().optional(),
   run: z.string().optional(),
   if: z.string().optional(),
@@ -101,16 +102,39 @@ function validateQueryPlanWorkflow(
   input: unknown,
 ): z.infer<typeof workflowContractSchema> {
   const workflow = workflowContractSchema.parse(input);
-  requireEvidenceUpload(
-    workflow.jobs["query-plans"]?.steps ?? [],
-    "query-plan-comparison",
-    [
-      ".artifacts/query-plans-base.json",
-      ".artifacts/query-plans-base.md",
-      ".artifacts/query-plans.md",
-      "proposed/.artifacts/query-plans.json",
-    ],
-  );
+  const steps = workflow.jobs["query-plans"]?.steps ?? [];
+  for (const directory of ["base", "proposed"]) {
+    if (
+      !steps.some(
+        (step) =>
+          step["working-directory"] === directory &&
+          step.run === "pnpm db:plans" &&
+          typeof step.if !== "string",
+      )
+    ) {
+      throw new TypeError("Query plans must generate both branch artifacts");
+    }
+  }
+  if (
+    !steps.some(
+      (step) =>
+        step["working-directory"] === "proposed" &&
+        step.run ===
+          "pnpm db:plans:compare ../base/.artifacts/query-plans.json .artifacts/query-plans.json ../.artifacts/query-plans.md" &&
+        typeof step.if !== "string",
+    )
+  ) {
+    throw new TypeError("Query plans must compare fresh base and proposed artifacts");
+  }
+  requireEvidenceUpload(steps, "query-plan-comparison", [
+    ".artifacts/query-plans.md",
+    "base/.artifacts/query-plans.json",
+    "base/.artifacts/query-plans.md",
+    "proposed/.artifacts/query-plans.json",
+    "proposed/.artifacts/query-plans.md",
+    "base/.artifacts/query-corpus.json",
+    "proposed/.artifacts/query-corpus.json",
+  ]);
   return workflow;
 }
 

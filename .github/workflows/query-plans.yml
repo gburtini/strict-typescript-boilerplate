@@ -78,13 +78,7 @@ jobs:
         run: pnpm db:query-corpus:merge
       - name: Generate base query plans
         working-directory: base
-        env:
-          QUERY_PLAN_BASELINE: ../.artifacts/query-plans-base.json
-          QUERY_PLAN_OUTPUT: ../.artifacts/query-plans-base.md
-          QUERY_PLAN_WRITE_BASELINE: "1"
-        run: |
-          mkdir -p ../.artifacts
-          pnpm db:plans
+        run: pnpm db:plans
       - name: Prepare proposed database
         working-directory: proposed
         run: pnpm db:plans:reset
@@ -108,12 +102,12 @@ jobs:
       - name: Merge proposed query corpus
         working-directory: proposed
         run: pnpm db:query-corpus:merge
-      - name: Compare proposed query plans with base
+      - name: Generate proposed query plans
         working-directory: proposed
-        env:
-          QUERY_PLAN_BASELINE: ../.artifacts/query-plans-base.json
-          QUERY_PLAN_OUTPUT: ../.artifacts/query-plans.md
         run: pnpm db:plans
+      - name: Compare query plans
+        working-directory: proposed
+        run: pnpm db:plans:compare ../base/.artifacts/query-plans.json .artifacts/query-plans.json ../.artifacts/query-plans.md
       - name: Publish planner report
         if: always()
         run: |
@@ -127,9 +121,12 @@ jobs:
         with:
           name: query-plan-comparison
           path: |
-            .artifacts/query-plans-base.json
-            .artifacts/query-plans-base.md
             .artifacts/query-plans.md
+            base/.artifacts/query-plans.json
+            base/.artifacts/query-plans.md
             proposed/.artifacts/query-plans.json
+            proposed/.artifacts/query-plans.md
+            base/.artifacts/query-corpus.json
+            proposed/.artifacts/query-corpus.json
           include-hidden-files: true
           if-no-files-found: error
