@@ -12,6 +12,7 @@ for (const entry of REACT_DOCTOR_RULES) {
   if (
     (entry.rule.framework === "global" ||
       selectedFrameworks.has(entry.rule.framework)) &&
+    entry.key !== "react-doctor/no-multi-component-file" &&
     !(
       "disabledWhen" in entry.rule &&
       entry.rule.disabledWhen.some((capability) => selectedFrameworks.has(capability))

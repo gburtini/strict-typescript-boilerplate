@@ -59,6 +59,13 @@ would make the code worse.
 - Do not mutate props, state, hook results, or module globals.
 - Follow hook rules and make effect dependencies explicit.
 - Use functional components with explicit props and return types.
+- A file may contain multiple cohesive React components. Keep components
+  private by default and export at most one component per file. Split components
+  when they have independent behavior or test ownership, are reused elsewhere,
+  or make the file difficult to navigate.
+- Functions that return JSX are PascalCase components and are rendered through
+  JSX. Return `null` when a component renders nothing. Lowercase helpers return
+  data or values, not JSX.
 - Prefer semantic HTML and accessible queries in tests.
 - Use existing `@template/ui` primitives before creating controls locally.
 

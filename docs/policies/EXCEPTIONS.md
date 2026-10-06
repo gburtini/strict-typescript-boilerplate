@@ -86,9 +86,7 @@ permission to weaken enforcement:
 - `jsx-a11y/label-has-associated-control` — the shared label primitive owns
   its association behavior: `packages/ui/src/components/ui/label.tsx`.
 - `import/no-default-export` — configuration files only.
-- `react/no-multi-comp`,
-  `react-quality/no-giant-component`, and
-  `react-quality/no-multi-component-file` — test files only.
+- `react/no-multi-comp` and `react-quality/no-giant-component` — test files only.
 - `eslint/require-await`, `typescript/require-await`, `vitest/no-hooks`, and
   `vitest/require-top-level-describe` — test setup only.
 - `vitest/prefer-importing-vitest-globals` — end-to-end tests only.

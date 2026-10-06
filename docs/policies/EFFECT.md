@@ -24,3 +24,8 @@ Use the core helpers for the baseline semantics:
 
 Terminal runners belong at runtime composition roots. They are not allowed in
 domain or application modules.
+
+Use one-shot callback adapters for one-shot events and document their lifecycle:
+what starts the callback, whether it can be interrupted, and how interruption
+releases any registered listener or resource. Use stream abstractions only when
+the boundary can emit repeatedly.

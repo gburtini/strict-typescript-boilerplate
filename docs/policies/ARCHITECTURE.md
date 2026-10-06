@@ -105,6 +105,17 @@ queue boundaries. TypeScript types are not runtime validation.
 Environment variables are validated once with T3 Env and Zod at startup. Raw
 `process.env` or `import.meta.env` access is forbidden outside the environment
 module. Public request boundaries use oRPC contracts with runtime schemas.
+Use global browser usage data to identify supported browser families, including
+only families with at least 5% usage by default. Record the data date, selected
+families, and minimum versions in the application build configuration or its
+adjacent documentation. Revisit the set as usage changes. Choose browser APIs
+that exist in those targets; transpilation cannot supply missing runtime APIs.
+As of September 2026, StatCounter's worldwide desktop and mobile data reports
+Chrome at 66.36%, Safari at 18.27%, and Edge at 6.04%; Firefox is below the
+default threshold at 2.8%. The web starter targets Chrome 111, Edge 111, Safari
+16.4, and iOS Safari 16.4, matching the current Vite Baseline minimums for those
+families. See [StatCounter browser usage](https://gs.statcounter.com/browser-market-share)
+and [Vite browser compatibility](https://v8.vite.dev/guide/build#browser-compatibility).
 
 Telemetry is an adapter. Domain code may add semantic spans through the core
 Effect helper, but exporters, SDK registration, credentials, and transport

@@ -16,7 +16,7 @@ describe("application", () => {
     expect(
       screen.getByRole("heading", {
         name: /a strict React \+ TypeScript starting point\./u,
-      }),
-    ).toBeDefined();
+      }).textContent,
+    ).toContain("TypeScript Boilerplate");
   }, 5000);
 });

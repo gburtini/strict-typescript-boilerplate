@@ -491,16 +491,6 @@
     },
     {
       "kind": "rule",
-      "rule": "react-quality/no-multi-component-file",
-      "scope": ["**/*.test.*", "**/*.spec.*", "test/**", "tests/**"],
-      "value": "off",
-      "reason": "Existing scoped contract documented in EXCEPTIONS.md; preserve production checks outside this scope.",
-      "owner": "repository-maintainers",
-      "tracking": "docs/adr/0001-enforcement-model.md",
-      "evidence": "docs/ENFORCEMENT-MANIFEST.md"
-    },
-    {
-      "kind": "rule",
       "rule": "eslint/require-await",
       "scope": ["**/test-setup.*"],
       "value": "off",

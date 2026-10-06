@@ -81,6 +81,9 @@ Do not replace cheap unit or integration evidence with end-to-end tests.
 Use given/when/then behavior and externally observable results. Prefer accessible
 roles, labels, and visible content in React tests. Avoid assertions on class
 names, incidental DOM structure, private state, or mock call choreography.
+Testing Library `getBy*` and `findBy*` queries already fail when no element
+matches. Do not add a redundant defined/truthy assertion around the returned
+element; assert its expected visible content, accessible state, or behavior.
 
 Bug fixes should normally include a regression test that exercises the failure
 mechanism.
@@ -122,6 +125,10 @@ this proof.
 
 ## Determinism and isolation
 
+Configure React Testing Library cleanup once in the workspace test setup hook.
+Individual tests should not repeat `cleanup()` or manually unmount rendered
+trees unless unmounting is the behavior under test.
+
 Unit tests reject outbound `fetch` by default. Fake timers are opt-in for tests
 that explicitly control time; prefer an injected clock when the behavior is
 important enough to test as a contract. The default test timeout is configured
@@ -145,6 +152,8 @@ immediate domain collaborators, or ordinary application modules. Do not write a
 test whose only meaningful assertion is that a mock was called; the observable
 result must also be asserted. The active `no-mock-only-tests` rule rejects the
 weakest form of this failure, but reviewers must enforce the broader policy.
+Name test ports and deferred results after their role. Explain which boundary a
+test double replaces when the surrounding test does not make that clear.
 
 Focused tests are errors. Skipped tests require a concrete reason and should be
 uncommon. Coverage is a guardrail, not the objective; do not add meaningless

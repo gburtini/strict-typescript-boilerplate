@@ -6,6 +6,11 @@ why an existing primitive or workflow cannot satisfy a new abstraction.
 
 ## Interaction matrix
 
+Keep fixed product branding in a clearly named code constant. Use a
+`VITE_` variable only for values that genuinely vary by deployment. Use the
+single Unicode ellipsis (`…`) in product copy, including ongoing and loading
+messages.
+
 Record feature evidence in `docs/features/`. Each concern needs behavior and a
 test path, or an explicit reason it does not apply:
 

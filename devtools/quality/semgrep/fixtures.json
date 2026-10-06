@@ -121,6 +121,67 @@
       "expected": []
     },
     {
+      "path": "/cases/no-testing-library-query-defined-assertion-bad.ts",
+      "code": "expect(screen.getByRole(\"button\")).toBeDefined(); await expect(screen.findByText(\"Saved\")).resolves.toBeDefined();",
+      "expected": [
+        "no-testing-library-query-defined-assertion",
+        "no-testing-library-query-defined-assertion"
+      ]
+    },
+    {
+      "path": "/cases/no-testing-library-query-defined-assertion-good.ts",
+      "code": "expect(screen.getByRole(\"button\").textContent).toContain(\"Save\"); await screen.findByText(\"Saved\"); expect(result).toBeDefined();",
+      "expected": []
+    },
+    {
+      "path": "/cases/react-component-name-pascal-case-bad.ts",
+      "code": "function multiplayerAction(multiplayer: boolean, onPlayWithFriends: () => void): ReactElement | false { if (!multiplayer) return false; return createElement(Button, {onClick: onPlayWithFriends}); }",
+      "expected": [
+        "react-component-name-pascal-case",
+        "react-component-returns-null-not-false"
+      ]
+    },
+    {
+      "path": "/cases/react-component-name-pascal-case-good.ts",
+      "code": "function MultiplayerAction(): ReactElement { return createElement(Button); } function multiplayerIsEnabled(): boolean { return true; }",
+      "expected": []
+    },
+    {
+      "path": "/cases/react-component-name-pascal-case-arrow.ts",
+      "code": "const multiplayerAction = (): ReactElement => { return createElement(Button); };",
+      "expected": ["react-component-name-pascal-case"]
+    },
+    {
+      "path": "/cases/react-component-returns-null-not-false-bad.ts",
+      "code": "function MultiplayerAction(): ReactElement | false { return false; }",
+      "expected": ["react-component-returns-null-not-false"]
+    },
+    {
+      "path": "/cases/react-component-returns-null-not-false-good.ts",
+      "code": "function MultiplayerAction(): ReactElement | null { if (!enabled) return null; return createElement(Button); }",
+      "expected": []
+    },
+    {
+      "path": "/cases/react-component-returns-null-not-false-ternary.ts",
+      "code": "function MultiplayerAction(): ReactElement | false { return enabled ? createElement(Button) : false; }",
+      "expected": ["react-component-returns-null-not-false"]
+    },
+    {
+      "path": "/cases/one-exported-react-component-per-file-bad.ts",
+      "code": "export function Header(): ReactElement { return createElement(\"header\"); } export function Footer(): ReactElement { return createElement(\"footer\"); }",
+      "expected": ["one-exported-react-component-per-file"]
+    },
+    {
+      "path": "/cases/one-exported-react-component-per-file-good.ts",
+      "code": "export function Page(): ReactElement { return createElement(\"main\", null, createElement(PrivateHeader)); } function PrivateHeader(): ReactElement { return createElement(\"header\"); }",
+      "expected": []
+    },
+    {
+      "path": "/cases/one-exported-react-component-per-file-arrow.ts",
+      "code": "export function Page(): ReactElement { return createElement(\"main\"); } export const Footer = (): ReactElement => { return createElement(\"footer\"); };",
+      "expected": ["one-exported-react-component-per-file"]
+    },
+    {
       "path": "/cases/no-child-process-shell-bad.ts",
       "code": "import { spawn as start } from \"node:child_process\"; start(command, args, {shell: true});",
       "expected": ["no-child-process-shell"]

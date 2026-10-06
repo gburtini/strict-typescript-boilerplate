@@ -1,8 +1,9 @@
 import { Card } from "@template/ui";
 import type { ReactElement } from "react";
-import { env } from "../env";
 import { RegistrationForm } from "./registration-form";
 import type { RegistrationPort } from "../application/registration";
+
+const STARTER_PRODUCT_NAME = "TypeScript Boilerplate";
 
 interface StarterCardProps {
   readonly register: RegistrationPort;
@@ -18,7 +19,7 @@ export function StarterCard({ register }: StarterCardProps): ReactElement {
         className="max-w-xl text-4xl leading-none text-foreground sm:text-6xl"
         id="app-title"
       >
-        {env.VITE_APP_NAME}: a strict React + TypeScript starting point.
+        {STARTER_PRODUCT_NAME}: a strict React + TypeScript starting point.
       </h1>
       <p className="my-6 max-w-xl text-lg leading-relaxed text-muted-foreground">
         Correctness, consistency, and design-system boundaries are checked by one

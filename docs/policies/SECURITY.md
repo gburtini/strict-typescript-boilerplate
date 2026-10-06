@@ -108,13 +108,16 @@ at every approved path. A suppression fixture proves inline suppression cannot
 hide a finding. Files with boundary permissions also contain a universal-ban
 fixture to prove the permissions remain rule-specific.
 
-The initial rules detect dynamic code construction, credential assignments,
+The rules detect dynamic code construction, credential assignments,
 shell execution, empty catches, literal throws, lost causes in direct error
-wrapping, raw HTTP, direct Promise collection over map, string timers, shell
-options, disabled TLS verification, and environment access. Imported subprocess
-APIs are matched through their import declarations, with alias and unrelated-name
-fixtures. The collection rule enforces canonical syntax; it does not infer
-runtime collection size or recognize a limiter hidden in the callback.
+wrapping, raw HTTP, direct Promise collection over map, string timers,
+redundant Testing Library presence assertions, shell options, disabled TLS
+verification, environment access, and lowercase names for functions returning
+React elements, false React component returns, and multiple exported React
+components in one file. Imported subprocess APIs are matched through their
+import declarations, with alias and unrelated-name fixtures. The collection
+rule enforces canonical syntax; it does not infer runtime collection size or
+recognize a limiter hidden in the callback.
 
 These are syntactic contracts, not a proof of all data flows. The wrapper rule
 requires a cause drawn from an enclosing catch, supports

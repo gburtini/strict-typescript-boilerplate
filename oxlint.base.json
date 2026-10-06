@@ -306,8 +306,7 @@
         ],
         "eslint/max-statements": ["error", 80],
         "react/no-multi-comp": "off",
-        "react-quality/no-giant-component": "off",
-        "react-quality/no-multi-component-file": "off"
+        "react-quality/no-giant-component": "off"
       }
     },
     {

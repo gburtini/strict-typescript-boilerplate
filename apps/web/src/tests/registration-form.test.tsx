@@ -16,36 +16,32 @@ async function savedRegistration(): Promise<RegistrationResult> {
 describe("registration form", () => {
   it("explains invalid input and focuses the field", async () => {
     expect.hasAssertions();
-    const view = render(<RegistrationForm register={unavailableRegistration} />);
+    render(<RegistrationForm register={unavailableRegistration} />);
     fireEvent.change(screen.getByRole("textbox", { name: "Email address" }), {
       target: { value: "invalid" },
     });
     fireEvent.click(screen.getByRole("button", { name: "Save registration" }));
-    await expect(
-      screen.findByText("Enter a valid email address."),
-    ).resolves.toBeDefined();
+    await screen.findByText("Enter a valid email address.");
     expect(document.activeElement).toBe(
       screen.getByRole("textbox", { name: "Email address" }),
     );
-    view.unmount();
   });
 
   it("preserves input after failure and lets the user recover", async () => {
     expect.hasAssertions();
-    const view = render(<RegistrationForm register={unavailableRegistration} />);
+    const { rerender } = render(
+      <RegistrationForm register={unavailableRegistration} />,
+    );
     fireEvent.change(screen.getByRole("textbox", { name: "Email address" }), {
       target: { value: "test@example.test" },
     });
     fireEvent.click(screen.getByRole("button", { name: "Save registration" }));
-    await expect(
-      screen.findByText("Registration could not be saved. Try again."),
-    ).resolves.toBeDefined();
+    await screen.findByText("Registration could not be saved. Try again.");
     expect(
       screen.getByRole("textbox", { name: "Email address" }).getAttribute("value"),
     ).toBe("test@example.test");
-    view.rerender(<RegistrationForm register={savedRegistration} />);
+    rerender(<RegistrationForm register={savedRegistration} />);
     fireEvent.click(screen.getByRole("button", { name: "Save registration" }));
-    await expect(screen.findByText("Saved test@example.test.")).resolves.toBeDefined();
-    view.unmount();
+    await screen.findByText("Saved test@example.test.");
   });
 });

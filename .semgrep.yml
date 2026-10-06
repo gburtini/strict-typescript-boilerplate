@@ -205,6 +205,78 @@ rules:
       - pattern: window.setTimeout("...", ...)
       - pattern: window.setInterval("...", ...)
 
+  - id: no-testing-library-query-defined-assertion
+    languages: [javascript, typescript]
+    message: Testing Library queries already fail when unmatched; assert expected content or state instead of calling toBeDefined().
+    severity: ERROR
+    patterns:
+      - pattern-either:
+          - pattern: expect($SCREEN.$QUERY_METHOD(...)).toBeDefined()
+          - pattern: await expect($SCREEN.$QUERY_METHOD(...)).resolves.toBeDefined()
+      - metavariable-regex:
+          metavariable: $QUERY_METHOD
+          regex: ^(?:getBy|findBy).+$
+
+  - id: react-component-name-pascal-case
+    languages: [javascript, typescript]
+    message: Functions returning React elements are components; use a PascalCase name so JSX treats the function as a component.
+    severity: ERROR
+    patterns:
+      - pattern-either:
+          - pattern: "function $NAME(...): $RETURN { ... }"
+          - pattern: "const $NAME = (...): $RETURN => { ... }"
+      - metavariable-regex:
+          metavariable: $NAME
+          regex: ^[a-z].*$
+      - metavariable-regex:
+          metavariable: $RETURN
+          regex: (?:ReactElement|ReactNode|JSX\.Element)
+
+  - id: react-component-returns-null-not-false
+    languages: [javascript, typescript]
+    message: React components must return null when they render nothing; false is not a component return value.
+    severity: ERROR
+    patterns:
+      - pattern-either:
+          - pattern-inside: "function $NAME(...): $RETURN { ... }"
+          - pattern-inside: "const $NAME = (...): $RETURN => { ... }"
+      - metavariable-regex:
+          metavariable: $RETURN
+          regex: (?:ReactElement|ReactNode|JSX\.Element)
+      - pattern-either:
+          - pattern: "return false;"
+          - pattern: "return $CONDITION ? $ELEMENT : false;"
+          - pattern: "return $CONDITION ? false : $ELEMENT;"
+
+  - id: one-exported-react-component-per-file
+    languages: [javascript, typescript]
+    message: Export at most one React component per file; keep cohesive supporting components private.
+    severity: ERROR
+    patterns:
+      - pattern-either:
+          - pattern: |
+              export function $FIRST(...): $FIRST_RETURN { ... }
+              ...
+              export function $SECOND(...): $SECOND_RETURN { ... }
+          - pattern: |
+              export const $FIRST = (...): $FIRST_RETURN => { ... };
+              ...
+              export const $SECOND = (...): $SECOND_RETURN => { ... };
+          - pattern: |
+              export function $FIRST(...): $FIRST_RETURN { ... }
+              ...
+              export const $SECOND = (...): $SECOND_RETURN => { ... };
+          - pattern: |
+              export const $FIRST = (...): $FIRST_RETURN => { ... };
+              ...
+              export function $SECOND(...): $SECOND_RETURN { ... }
+      - metavariable-regex:
+          metavariable: $FIRST_RETURN
+          regex: (?:ReactElement|ReactNode|JSX\.Element)
+      - metavariable-regex:
+          metavariable: $SECOND_RETURN
+          regex: (?:ReactElement|ReactNode|JSX\.Element)
+
   - id: no-child-process-shell
     languages: [javascript, typescript]
     message: Subprocess options must not enable a shell; omit shell or set it to false.
