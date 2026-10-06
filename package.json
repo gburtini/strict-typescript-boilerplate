@@ -60,7 +60,8 @@
     "initialization:smoke": "node --experimental-strip-types devtools/scripts/repository/check-initialized-project.ts"
   },
   "devDependencies": {
-    "@effect/tsgo": "0.45.0",
+    "@effect/tsgo": "0.47.1",
+    "@gdp-ts/core": "0.1.0",
     "@rikalabs/oxlint-standards": "0.8.1",
     "@shadcn/lint": "0.1.1",
     "@template/db": "workspace:*",
@@ -73,9 +74,9 @@
     "eslint-plugin-drizzle": "0.2.3",
     "knip": "6.35.0",
     "oxfmt": "0.66.0",
-    "oxlint": "1.81.0",
+    "oxlint": "1.86.0",
     "oxlint-plugin-react-doctor": "0.9.12",
-    "oxlint-tsgolint": "7.0.2001",
+    "oxlint-tsgolint": "7.0.2003",
     "postgres": "3.4.9",
     "sherif": "1.13.0",
     "typescript": "npm:typescript@7.0.2",

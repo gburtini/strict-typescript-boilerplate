@@ -29,7 +29,7 @@ const apiRouter = implement({ health: apiContract.health }).router({
   }),
 });
 
-type ApiRouter = Router<typeof apiContract, Record<never, never>>;
+type ApiRouter = Router<typeof apiContract, Record<string, never>>;
 
 interface ApiRuntime {
   readonly run: <Value, Failure>(

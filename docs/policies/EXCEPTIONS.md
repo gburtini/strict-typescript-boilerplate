@@ -50,55 +50,12 @@ exclusions without an explicit, reviewed change to their boundary contract.
 
 ## Current configuration registry
 
-The following deliberate `off` rules are scoped overrides, not general
-permission to weaken enforcement:
-
-- `eslint/func-style`, `eslint/no-magic-numbers`, `eslint/one-var`,
-  `eslint/sort-imports`, `eslint/sort-keys`, and `eslint/sort-vars` — these
-  low-signal declaration-order rules are not part of the repository's
-  correctness or canonical-form contract.
-- `unicorn/max-nested-calls` — schema and configuration construction often
-  nests declarative builders; correctness is enforced by the resulting Zod
-  schema and the typed value it produces, not by flattening the declaration.
-- `import/no-relative-parent-imports`, `import/no-named-export`, and
-  `import/prefer-default-export` — repository conventions and framework entry
-  points handle these cases.
-- `react/react-in-jsx-scope`, `react/forbid-component-props`,
-  `react/jsx-filename-extension`, `react/jsx-no-literals`,
-  `react/jsx-max-depth`, and `react/jsx-props-no-spreading` — modern JSX or
-  intentional component-library implementation boundaries.
-- `typescript/prefer-readonly-parameter-types` — not universally expressible
-  across all supported project shapes.
-- `vitest/no-importing-vitest-globals`, `vitest/require-test-timeout` — local
-  test configuration owns these choices.
-- `vitest/require-hook` — disabled globally to neutralize the Vitest plugin
-  default, then enabled for all repository test-file globs.
-- `vitest/prefer-to-be-falsy`, `vitest/prefer-to-be-truthy` — strict boolean
-  matchers are the canonical test assertion form.
-- `@rikalabs/no-unlisted-external-imports`,
-  `@rikalabs/no-generic-module-names`, and
-  `@rikalabs/no-placeholder-implementation` — reserved for projects that opt
-  into those stricter repository-specific checks.
-- `react-quality/forbid-component-props`,
-  `react-quality/jsx-props-no-spreading`, `react-quality/react-in-jsx-scope`,
-  and `shadcn/no-restyle` — design-system implementation scope:
-  `packages/ui/**`.
-- `jsx-a11y/label-has-associated-control` — the shared label primitive owns
-  its association behavior: `packages/ui/src/components/ui/label.tsx`.
-- `import/no-default-export` — configuration files only.
-- `react/no-multi-comp` and `react-quality/no-giant-component` — test files only.
-- `eslint/require-await`, `typescript/require-await`, `vitest/no-hooks`, and
-  `vitest/require-top-level-describe` — test setup only.
-- `vitest/prefer-importing-vitest-globals` — end-to-end tests only.
-- `eslint/no-restricted-imports`, `import/group-exports`, and
-  `import/no-namespace` — database schema and
-  client implementation only:
-  Drizzle schema declarations have dependency order, and the adapter is the
-  explicitly permitted owner of the restricted database imports.
-- `eslint/no-restricted-properties` — generated migrations and explicitly
-  marked database internals only; this is the narrow escape hatch for SQL
-  syntax that cannot be expressed by Drizzle. Application and adapter source
-  code must use parameterized `sql\`\`` or the typed query builder.
+The machine registry in `devtools/quality/exceptions.json` is the source for
+the exact disabled rules, values, scopes, owners, reasons, and evidence. The
+generated enforcement manifest reports the effective configuration. Review
+the registry record for the rationale behind each deliberate `off` rule or
+scoped override; a configured exception without a matching registry record is
+invalid.
 
 The current ignored paths are `dist`, `coverage`, and `node_modules`; they are
 generated or dependency output and must never be used to hide source files.

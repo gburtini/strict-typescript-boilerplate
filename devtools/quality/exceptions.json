@@ -3,6 +3,16 @@
   "exceptions": [
     {
       "kind": "rule",
+      "rule": "gdp-ts/no-define-proof",
+      "scope": ["apps/**/proofs/**", "packages/**/proofs/**"],
+      "value": "off",
+      "reason": "Trusted proof modules must privately define the proofs they mint; exported provers and type assertions remain lint errors.",
+      "owner": "repository-maintainers",
+      "tracking": "docs/policies/SECURITY.md",
+      "evidence": "docs/ENFORCEMENT-MANIFEST.md"
+    },
+    {
+      "kind": "rule",
       "rule": "eslint/func-style",
       "scope": ["**"],
       "value": "off",

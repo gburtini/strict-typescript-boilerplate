@@ -7,6 +7,16 @@ packages:
 # ecosystem and security review. Explicit exceptions require documentation.
 minimumReleaseAge: 10080
 minimumReleaseAgeExclude:
+  - "@gdp-ts/core@0.1.0"
+  - "@effect/tsgo@0.47.1"
+  - "source-map-js@1.2.2"
+  - "@effect/tsgo-darwin-arm64@0.47.1"
+  - "@effect/tsgo-darwin-x64@0.47.1"
+  - "@effect/tsgo-linux-arm64@0.47.1"
+  - "@effect/tsgo-linux-arm@0.47.1"
+  - "@effect/tsgo-linux-x64@0.47.1"
+  - "@effect/tsgo-win32-arm64@0.47.1"
+  - "@effect/tsgo-win32-x64@0.47.1"
   - "@shadcn/lint"
   - "dependency-cruiser"
   - "enhanced-resolve"
@@ -17,6 +27,8 @@ minimumReleaseAgeExclude:
 overrides:
   brace-expansion@5.0.9: 5.0.12
   esbuild@0.18.20: 0.25.12
+  source-map-js@<1.2.2: 1.2.2
+  tinypool@<2.1.2: 2.1.2
 
 # dependency-cruiser loads its compiler from its own package boundary. Keep
 # that legacy compiler isolated from the TypeScript 7 application toolchain.

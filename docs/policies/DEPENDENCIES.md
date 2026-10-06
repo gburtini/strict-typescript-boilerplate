@@ -3,6 +3,14 @@
 pnpm enforces a seven-day minimum release age for new package versions. The
 exception list in `pnpm-workspace.yaml` is for packages that are intentionally
 tracked directly from their upstream release process and requires review.
+The exact `@gdp-ts/core@0.1.0` and `@effect/tsgo@0.47.1` entries, including the
+matching Effect platform binaries, are one-version exceptions needed for the
+requested GDP integration; remove each after its release has aged past seven
+days.
+
+`source-map-js@1.2.2` is temporarily excluded from the age gate to remediate
+GHSA-68fv-2mgg-jv7q (owner: repository maintainers; tracking: PR #15). It
+reaches seven days on 2026-10-07; remove the exact-version exclusion after that.
 
 - Review the lockfile and transitive changes with every dependency update.
 - Prefer packages with maintained provenance, clear licensing, and a concrete
