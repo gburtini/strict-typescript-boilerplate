@@ -3,6 +3,10 @@
 pnpm enforces a seven-day minimum release age for new package versions. The
 exception list in `pnpm-workspace.yaml` is for packages that are intentionally
 tracked directly from their upstream release process and requires review.
+The exact `@gdp-ts/core@0.1.0` and `@effect/tsgo@0.47.1` entries, including the
+matching Effect platform binaries, are one-version exceptions needed for the
+requested GDP integration; remove each after its release has aged past seven
+days.
 
 - Review the lockfile and transitive changes with every dependency update.
 - Prefer packages with maintained provenance, clear licensing, and a concrete

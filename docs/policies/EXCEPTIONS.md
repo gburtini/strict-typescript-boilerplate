@@ -83,6 +83,10 @@ permission to weaken enforcement:
   `react-quality/jsx-props-no-spreading`, `react-quality/react-in-jsx-scope`,
   and `shadcn/no-restyle` — design-system implementation scope:
   `packages/ui/**`.
+- `gdp-ts/no-define-proof` — trusted authorization proof modules only. The
+  private prover must be created in the module that performs the check;
+  `gdp-ts/no-exported-prover` keeps it private, while proof assertions, `any`,
+  and other type assertions remain errors everywhere.
 - `jsx-a11y/label-has-associated-control` — the shared label primitive owns
   its association behavior: `packages/ui/src/components/ui/label.tsx`.
 - `import/no-default-export` — configuration files only.

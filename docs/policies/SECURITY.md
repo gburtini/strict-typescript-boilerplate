@@ -17,6 +17,32 @@ Authentication establishes identity; authorization determines permission.
 Protected actions require server-side authorization checks. UI visibility and
 client state are not authorization.
 
+Use `gdp-ts` when a sensitive function must require evidence that an
+authorization check succeeded for the exact values being used. Keep runtime
+validation in Zod schemas, derive branded ID types from those same schemas, and
+pass parsed IDs to `name()` at the call site. Put each proof check in a small
+module under `proofs/`; keep `defineProof()` private there, export a `Proof`
+interface and a check that returns that proof in `Option` or `Option.none()`, and
+make sensitive functions accept the matching `Named` values and proof. Keep
+names and proofs inside the `name()` callback. GDP linting is strict: `any` and
+type assertions remain forbidden in proof modules too.
+
+The starter's [`@template/core/examples/gdp`](../../packages/core/src/examples/gdp/profile-access.ts)
+shows the complete flow: parse the authenticated user ID and profile with the
+shared Zod schemas, name them together, mint an ownership proof only when the
+IDs match, and pass that proof to the function that reads the private email. A
+non-owner gets `Option.none()`.
+
+Call the example with the authenticated ID and untrusted profile input:
+
+```ts
+import { readOwnProfileEmail } from "@template/core/examples/gdp";
+
+const email = readOwnProfileEmail(session.userId, requestBody);
+```
+
+The result is `Option.Option<string>`; only an owner receives `Option.some(email)`.
+
 Secrets must not enter client bundles, logs, errors, analytics, or source
 control. Read them through centralized validated configuration rather than
 arbitrary application modules.

@@ -1,4 +1,7 @@
-export async function mapWithConcurrency<Item extends NonNullable<unknown>, Result>(
+export async function mapWithConcurrency<
+  Item extends string | number | bigint | boolean | symbol | object,
+  Result,
+>(
   items: readonly Item[],
   concurrency: number,
   mapItem: (item: Item) => Promise<Result>,

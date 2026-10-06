@@ -31,6 +31,10 @@
     {
       "name": "shadcn",
       "specifier": "@shadcn/lint"
+    },
+    {
+      "name": "gdp-ts",
+      "specifier": "@gdp-ts/core/lint/plugin"
     }
   ],
   "settings": {
@@ -84,6 +88,11 @@
     "react/no-danger-with-children": "error",
     "react/no-find-dom-node": "error",
     "react/no-string-refs": "error",
+    "gdp-ts/no-define-proof": "error",
+    "gdp-ts/no-exported-prover": "error",
+    "gdp-ts/no-proof-assertion": "error",
+    "gdp-ts/no-type-assertion": "error",
+    "gdp-ts/no-any": "error",
     "typescript/no-require-imports": "error",
     "typescript/only-throw-error": "error",
     "typescript/no-unsafe-function-type": "error",
@@ -256,6 +265,12 @@
       "files": ["packages/ui/src/components/ui/label.tsx"],
       "rules": {
         "jsx-a11y/label-has-associated-control": "off"
+      }
+    },
+    {
+      "files": ["apps/**/proofs/**", "packages/**/proofs/**"],
+      "rules": {
+        "gdp-ts/no-define-proof": "off"
       }
     },
     {

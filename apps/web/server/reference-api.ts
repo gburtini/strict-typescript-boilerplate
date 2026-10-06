@@ -8,7 +8,7 @@ import { serverEnv } from "./env";
 import metadata from "../package.json";
 
 interface ReferenceApi {
-  readonly handler: RPCHandler<Record<never, never>>;
+  readonly handler: RPCHandler<Record<string, never>>;
   readonly initialize: Effect.Effect<void, InfrastructureError>;
   readonly ready: () => Promise<void>;
   readonly close: Effect.Effect<void, InfrastructureError>;
