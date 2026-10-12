@@ -86,6 +86,6 @@ does not fail the command.
 The evaluator records the resolved model ID returned by the Gateway so model
 alias changes are visible. The current Gateway model identifier is an alias,
 so the resolved ID must be checked alongside probability changes during SDK or
-model updates. The exact AI SDK dependency and fresh transitive releases have a
-version-specific, temporary release-age exception documented in
-`docs/policies/DEPENDENCIES.md` and `docs/policies/EXCEPTIONS.md`.
+model updates. The exact AI SDK dependency and its transitive versions have
+aged past the seven-day minimum release age and need no age-gate exception, as
+documented in `docs/policies/DEPENDENCIES.md` and `docs/policies/EXCEPTIONS.md`.
