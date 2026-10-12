@@ -68,13 +68,14 @@ function runSemgrep(root: string, arguments_: readonly string[]): string {
 function scan(
   root: string,
   targets: readonly string[] = ["."],
+  configPath = ".semgrep.yml",
 ): z.infer<typeof scanSchema> {
   return scanSchema.parse(
     JSON.parse(
       runSemgrep(root, [
         "scan",
         "--config",
-        ".semgrep.yml",
+        configPath,
         "--strict",
         "--disable-nosem",
         "--metrics=off",
@@ -85,8 +86,8 @@ function scan(
   );
 }
 
-function checkFixtures(root: string): void {
-  const report = scan(root);
+function checkFixtures(root: string, configPath = ".semgrep.yml"): void {
+  const report = scan(root, ["."], configPath);
   if (
     report.errors.length > 0 ||
     new Set(fixtures.map((fixture) => fixture.path)).size !== fixtures.length ||
@@ -127,8 +128,9 @@ function checkPermissionEvidence(root: string): void {
       return unrestrictedRule;
     }),
   };
-  writeFileSync(nodePath.join(root, ".semgrep.yml"), stringify(unrestricted));
-  const report = scan(root);
+  const configPath = ".semgrep-unrestricted.yml";
+  writeFileSync(nodePath.join(root, configPath), stringify(unrestricted));
+  const report = scan(root, ["."], configPath);
   for (const permission of registry.permissions) {
     for (const path of permission.scope) {
       if (
@@ -213,6 +215,7 @@ for (const permission of registry.permissions) {
 }
 const fixtureRoot = mkdtempSync(nodePath.join(tmpdir(), "semgrep-fixtures-"));
 try {
+  // Keep each scan's configuration immutable across Docker bind mounts.
   writeFileSync(nodePath.join(fixtureRoot, ".semgrep.yml"), stringify(configuration));
   for (const fixture of fixtures) {
     const path = nodePath.join(fixtureRoot, fixture.path);
@@ -222,7 +225,7 @@ try {
   checkFixtures(fixtureRoot);
   checkPermissionEvidence(fixtureRoot);
   writeFileSync(
-    nodePath.join(fixtureRoot, ".semgrep.yml"),
+    nodePath.join(fixtureRoot, ".semgrep-missing-rule.yml"),
     stringify({
       rules: configuration.rules.filter(
         (rule) => rule.id !== "no-eval-or-dynamic-function",
@@ -230,7 +233,7 @@ try {
     }),
   );
   expectRejection(
-    () => checkFixtures(fixtureRoot),
+    () => checkFixtures(fixtureRoot, ".semgrep-missing-rule.yml"),
     "cases/no-eval-or-dynamic-function-bad.ts",
   );
 } finally {
