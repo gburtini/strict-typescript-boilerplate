@@ -58,7 +58,6 @@ const eligibleFiles = files.filter(
   (path) =>
     extensions.has(nodePath.extname(path)) &&
     !path.startsWith("packages/db/drizzle/") &&
-    path !== "docs/ENFORCEMENT-MANIFEST.md" &&
     path !== "pnpm-lock.yaml" &&
     path !== "devtools/scripts/repository/project-initialization.ts" &&
     path !== "devtools/scripts/repository/initialize-project.ts" &&
@@ -84,7 +83,6 @@ try {
     lockfileBefore,
     readFileSync("pnpm-lock.yaml", "utf8"),
   );
-  process.stdout.write(run("pnpm", ["enforcement:manifest:write"]));
   process.stdout.write(run("pnpm", ["format"]));
 } catch (error) {
   for (const change of changes) {

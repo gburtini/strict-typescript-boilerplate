@@ -5,14 +5,13 @@
       "entry": [
         "devtools/scripts/repository/check-package-exports.ts",
         "devtools/scripts/repository/check-enforcement-fixtures.ts",
-        "devtools/scripts/repository/check-exceptions.ts",
+        "devtools/scripts/repository/check-suppressions.ts",
         "devtools/scripts/repository/check-architecture-fixtures.ts",
         "devtools/scripts/repository/check-ci-policy.ts",
         "devtools/scripts/repository/check-generated.ts",
         "devtools/scripts/repository/check-regressions.ts",
         "devtools/scripts/repository/check-coverage-ratchet.ts",
-        "devtools/scripts/repository/check-db-migrations.ts",
-        "devtools/scripts/repository/generate-enforcement-manifest.ts"
+        "devtools/scripts/repository/check-db-migrations.ts"
       ],
       "ignoreDependencies": ["@effect/tsgo"],
       "project": ["devtools/scripts/**/*.ts"]

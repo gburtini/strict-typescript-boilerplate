@@ -20,5 +20,5 @@
     "noUncheckedSideEffectImports": true,
     "jsx": "react-jsx"
   },
-  "include": ["oxlint.config.ts"]
+  "include": ["devtools/scripts/repository/check-runtime.ts"]
 }

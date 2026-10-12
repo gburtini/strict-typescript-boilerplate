@@ -74,3 +74,7 @@ would make the code worse.
 Suppressions are exceptional. They must be narrow, adjacent to the affected
 line, and explain the concrete reason. Anonymous lint or TypeScript suppressions
 are invalid policy, even when the tool accepts them.
+
+Oxlint uses the single static `.oxlintrc.jsonc` for rules, ignores, and
+necessary scoped overrides. Keep enforcement strict and do not duplicate config
+entries in a registry or generated manifest.

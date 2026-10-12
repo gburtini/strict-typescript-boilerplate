@@ -17,8 +17,10 @@ The repository uses separate enforcement layers with one required command:
 - shadcn lint owns design-system usage and component styling contracts.
 - Knip, dependency-cruiser, and Sherif own graph and package invariants.
 
-All warnings are fatal. Rules may be relaxed only in explicit file overrides,
-and every suppression must explain the reason.
+All warnings are fatal. The static `.oxlintrc.jsonc` is the single source of
+truth for lint rules, ignores, and necessary file overrides. Config entries are
+not copied into a registry or generated manifest. Every source suppression must
+explain its reason.
 
 ## Consequences
 

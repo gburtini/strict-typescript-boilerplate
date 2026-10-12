@@ -25,7 +25,7 @@ jobs:
           git -c core.quotePath=true diff --no-ext-diff --no-textconv --stat HEAD origin/proposed -- \
             .semgrep.yml .semgrepignore .nvmrc .node-version knip.json .github AGENTS.md ':(glob)**/AGENTS.md' docs devtools apps/web/scripts \
             ':(glob)**/*config*' ':(glob)**/package.json' package.json pnpm-workspace.yaml \
-            pnpm-lock.yaml oxlint.base.json oxlint.config.ts project-profile.json \
+            pnpm-lock.yaml .oxlintrc.jsonc project-profile.json \
             generated-files.json ':(glob)**/coverage-baseline.json' > enforcement-review.txt
           {
             echo '## Trusted enforcement comparison'
@@ -37,7 +37,7 @@ jobs:
           git diff --no-ext-diff --no-textconv HEAD origin/proposed -- \
             .semgrep.yml .semgrepignore .nvmrc .node-version knip.json .github AGENTS.md ':(glob)**/AGENTS.md' docs devtools apps/web/scripts \
             ':(glob)**/*config*' ':(glob)**/package.json' package.json pnpm-workspace.yaml \
-            pnpm-lock.yaml oxlint.base.json oxlint.config.ts project-profile.json \
+            pnpm-lock.yaml .oxlintrc.jsonc project-profile.json \
             generated-files.json ':(glob)**/coverage-baseline.json' > enforcement-contract.diff
       - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:

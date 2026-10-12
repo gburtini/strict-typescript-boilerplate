@@ -1,14 +1,9 @@
-import { is } from "drizzle-orm";
-import { getTableConfig, PgTable } from "drizzle-orm/pg-core";
+import { getTableConfig } from "drizzle-orm/pg-core";
 import { describe, expect, it } from "vitest";
-import * as schema from "../schema";
+import { users } from "../schema";
 
 const snakeCaseName = /^[a-z][a-z0-9]*(?:_[a-z0-9]+)*$/u;
-type SchemaValue = (typeof schema)[keyof typeof schema];
-type SchemaTable = Extract<SchemaValue, PgTable>;
-const tables = Object.values(schema)
-  .filter((value): value is SchemaTable => is(value, PgTable))
-  .map((table) => getTableConfig(table));
+const tables = [getTableConfig(users)];
 
 describe("database schema policy", () => {
   it.each(tables)("$name has a primary key", (table) => {

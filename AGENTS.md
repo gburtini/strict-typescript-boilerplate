@@ -50,6 +50,18 @@ Fix failures at their cause. Do not:
 - use `React.useState`; import React APIs by their canonical named form;
 - use raw colors, arbitrary Tailwind values, inline styles, or restyle UI primitives.
 
+## Oxlint
+
+- Keep one static `.oxlintrc.jsonc` as the source of truth for plugins, rules,
+  overrides, and ignored paths.
+- Keep lint strict: the repository lint command denies warnings and reports
+  unused suppressions as errors.
+- Put any necessary scoped override directly in that config. Do not generate
+  rules dynamically or copy disabled rules and overrides into a second registry
+  or manifest.
+- Keep overrides only for concrete framework, tool, or test boundaries. Prefer
+  fixing the code or removing a rule that cannot express a useful invariant.
+
 ## Code quality
 
 - Keep TypeScript strict and use `unknown` at untrusted boundaries.
@@ -71,8 +83,8 @@ Fix failures at their cause. Do not:
 - Respect dependency-cruiser boundaries and keep imports canonical.
 - Use the existing shadcn primitives from `packages/ui/`; do not invent
   one-off controls or bypass their variants.
-- React Doctor recommendations are warnings by upstream mode, but
-  `pnpm check:all` denies warnings. Fix them rather than suppressing them.
+- React Doctor rules are part of the static Oxlint config and warnings are
+  denied. Fix findings rather than suppressing them.
 
 ## Tests
 

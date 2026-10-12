@@ -1,7 +1,5 @@
 import { readFileSync } from "node:fs";
-import { config } from "../../../oxlint.config.ts";
 import { expectRejection } from "../shared/expect-rejection.ts";
-import { validateExceptionRegistry } from "./lint-exceptions.ts";
 import { verifyRegressionReport } from "./regression-reports.ts";
 import {
   requireWorkflowCommand,
@@ -12,40 +10,6 @@ import {
 import { parse } from "yaml";
 import { readProjectProfile, validateAcceptance } from "./check-project-profile.ts";
 
-const registry: unknown = JSON.parse(
-  readFileSync("devtools/quality/exceptions.json", "utf8"),
-);
-validateExceptionRegistry(config, registry);
-expectRejection(
-  () =>
-    validateExceptionRegistry(
-      { ...config, rules: { ...config.rules, "typescript/no-explicit-any": "off" } },
-      registry,
-    ),
-  "match approved",
-);
-expectRejection(
-  () =>
-    validateExceptionRegistry(
-      { ...config, ignorePatterns: [...config.ignorePatterns, "apps"] },
-      registry,
-    ),
-  "match approved",
-);
-expectRejection(
-  () =>
-    validateExceptionRegistry(
-      {
-        ...config,
-        overrides: [
-          ...config.overrides,
-          { files: ["apps/**"], rules: { "typescript/no-floating-promises": "off" } },
-        ],
-      },
-      registry,
-    ),
-  "match approved",
-);
 const expectation = {
   testPath: "owner/src/tests/behavior.test.ts",
   title: "protects the boundary",
@@ -309,16 +273,4 @@ expectRejection(
     }),
   "every concern",
 );
-if (
-  Object.hasOwn(config.rules, "react-quality/preact-no-react-hooks") ||
-  !Object.entries(config.rules).some(
-    ([rule, severity]) =>
-      rule === "react-quality/react-compiler-no-manual-memoization" &&
-      severity === "warn",
-  )
-) {
-  throw new Error(
-    "Framework applicability must retain React Compiler and reject Preact-only advice",
-  );
-}
 process.stdout.write("Governance positive and negative fixtures passed.\n");
