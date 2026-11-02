@@ -24,7 +24,7 @@
     "@orpc/contract": "1.14.15",
     "@orpc/server": "1.14.15",
     "effect": "3.22.2",
-    "zod": "4.1.13"
+    "zod": "4.6.6"
   },
   "devDependencies": {
     "vitest": "4.1.11"
